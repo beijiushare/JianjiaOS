@@ -2,6 +2,11 @@ import { Composer } from '@/components/Composer'
 import { MessageBubble } from '@/components/MessageBubble'
 import { ScreenShell } from '@/components/ScreenShell'
 import { selectChatMessages, useMessagesStore } from '@/messages/store'
+import {
+  abortDownload,
+  installDownloaded,
+  startDownload,
+} from '@/update/bridge'
 
 /**
  * 聊天详情页。
@@ -29,7 +34,15 @@ export function ChatPage() {
       {list.length === 0 ? (
         <p className="chat-empty">暂无消息</p>
       ) : (
-        list.map((m) => <MessageBubble key={m.id} message={m} />)
+        list.map((m) => (
+          <MessageBubble
+            key={m.id}
+            message={m}
+            onUpdate={() => void startDownload(m.id)}
+            onCancel={() => void abortDownload(m.id)}
+            onInstall={() => void installDownloaded(m.id)}
+          />
+        ))
       )}
     </ScreenShell>
   )
