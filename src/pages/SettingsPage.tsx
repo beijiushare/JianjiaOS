@@ -7,8 +7,8 @@ import { ScreenShell } from '@/components/ScreenShell'
 export function SettingsPage() {
   return (
     <ScreenShell title="设置">
-      <p className="dev-note">设置页（骨架）</p>
-      <p className="dev-note dev-note--sm">
+      <p className="placeholder">设置页</p>
+      <p className="placeholder placeholder--sm">
         「关于」分组：版本号 + 检查更新
       </p>
     </ScreenShell>

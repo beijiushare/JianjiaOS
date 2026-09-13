@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 
+import ArrowLeftIcon from '@/assets/icons/arrow-left-line.svg?react'
 import { handleBack } from '@/nav/useBackHandler'
 
 interface ScreenShellProps {
@@ -22,8 +23,7 @@ export function ScreenShell({ title, children }: ScreenShellProps) {
           aria-label="返回"
           onClick={handleBack}
         >
-          {/* TODO(骨架): 替换为 RemixIcon Arrows/arrow-left-line.svg */}
-          <span className="icon-btn__glyph">←</span>
+          <ArrowLeftIcon className="icon-btn__icon" />
         </button>
         <h1 className="screen-title">{title}</h1>
       </header>

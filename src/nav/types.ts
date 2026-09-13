@@ -8,11 +8,20 @@ export type PageId = 'messages' | 'chat' | 'settings'
 
 export type DrawerId = 'appDrawer'
 
-/** 横向转场（translateX）：自右侧滑入 */
+/**
+ * push 页的入场方向。
+ * - `right`：自右侧滑入（默认，表示「前进」）
+ * - `left` ：自左侧滑入（用于反向入口，如底栏最左侧的消息按钮）
+ * 退场时沿原路返回。
+ */
+export type EnterFrom = 'right' | 'left'
+
+/** 横向转场（translateX） */
 export interface PushLayer {
   key: string
   kind: 'push'
   page: PageId
+  enterFrom: EnterFrom
 }
 
 /**

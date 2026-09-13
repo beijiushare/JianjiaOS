@@ -44,6 +44,18 @@
   --color-gray:                     #C4C9CC;
   --color-list-icon:                #ABAFB1;
 
+  /* ── 自定义补充（非 telegram-tt 原值）─────────────────
+     供需要「明显边框」的控件使用（如搜索框）。
+     值取自 text-secondary，但语义独立 —— 边框色未必与次要文字色同步变化。
+     深色主题下需反转为浅灰，否则在深背景上不可见。 */
+  --color-border-strong:            #707579;
+
+  /* 底部栏顶边等「需要看得见的长分隔线」。
+     Telegram 的 borders/dividers 在 1px 细线上对比不足：
+     浅色 #DADCE0 on #FFFFFF 差约 13%，深色 #303030 on #212121 仅差约 6%。
+     故为这类线条单独取值，两套主题各保证约 25–30% 的亮度差。 */
+  --color-divider-strong:           #ABAFB1;
+
   /* ── 语义色 ────────────────────────────────────────── */
   --color-error:                    #e53935;
   --color-warning:                  #fb8c00;
@@ -62,7 +74,14 @@
 
   /* ── 浮层 ──────────────────────────────────────────── */
   --color-toast-background:         #202020CC;
-  --color-background-compact-menu:  #FFFFFFBB;
+  /* 毛玻璃浮层底（搜索框、抽屉）。
+     ⚠️ 透明度已偏离 telegram-tt 原值（原 #FFFFFFBB / 深 #212121DD），
+        当前不透明度：浅 47% / 深 60%。与 backdrop-filter 配合使用，
+        单独调透明度而不带模糊会退化为普通半透明色块。
+     两处共用，改动会同时生效。
+     ⚠️ 不宜再低：搜索框内的 placeholder 文字压在此底色上，
+        不透明度低于约 40% 时，背后内容会明显干扰文字可读性。 */
+  --color-background-compact-menu:  #FFFFFF77;
   --color-hover-overlay:            #00000006;
   --color-background-menu-separator:#0000001a;
 
@@ -171,10 +190,12 @@
     --color-dividers-android:        #0F0F0F;
     --color-gray:                    #717579;
     --color-list-icon:               #A2A2A2;
+    --color-border-strong:           #AAAAAA;
+    --color-divider-strong:          #6D6D6D;
 
     /* ── 浮层 ────────────────────────────────────────── */
     --color-toast-background:        #000000CC;
-    --color-background-compact-menu: #212121DD;
+    --color-background-compact-menu: #21212199;
     --color-hover-overlay:           #ffffff06;
     --color-background-menu-separator:#ffffff1a;
 

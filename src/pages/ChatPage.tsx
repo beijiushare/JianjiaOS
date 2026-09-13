@@ -7,8 +7,8 @@ import { ScreenShell } from '@/components/ScreenShell'
 export function ChatPage() {
   return (
     <ScreenShell title="系统消息">
-      <p className="dev-note">聊天详情页（骨架）</p>
-      <p className="dev-note dev-note--sm">
+      <p className="placeholder">聊天详情页</p>
+      <p className="placeholder placeholder--sm">
         消息气泡流 + 更新卡片 + 禁用态输入条
       </p>
     </ScreenShell>

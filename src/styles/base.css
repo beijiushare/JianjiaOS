@@ -47,6 +47,22 @@ button {
   color: inherit;
 }
 
+/*
+  完全去除按钮的焦点轮廓。
+
+  ⚠️ 只写 :focus 是不够的：触摸设备上点击 <button>，Chrome 同样会为
+     :focus-visible 绘制轮廓，导致点击过的按钮持续显示一圈边框
+     （按钮 border-radius: 50% 时即为圆框）。本应用以触摸交互为主，直接去除。
+
+  ⚠️ 若将来需要键盘可访问性，不要简单恢复 :focus-visible（问题会重现）。
+     正确做法是检测输入方式：首次 keydown 时给 <html> 打标记，
+     仅在键盘触发时应用焦点样式。
+*/
+button:focus,
+button:focus-visible {
+  outline: none;
+}
+
 h1,
 h2,
 h3,

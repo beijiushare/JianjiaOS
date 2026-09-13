@@ -94,21 +94,41 @@
   to   { opacity: 0; }
 }
 
-/* push 页：横向转场 */
+/* push 页：横向转场。默认自右滑入（表示「前进」） */
 .layer--push {
-  animation: layer-in-push var(--slide-duration) var(--slide-easing) both;
+  animation: layer-in-right var(--slide-duration) var(--slide-easing) both;
 }
 .layer--push.is-exiting {
-  animation: layer-out-push var(--slide-duration) var(--slide-easing) both;
+  animation: layer-out-right var(--slide-duration) var(--slide-easing) both;
 }
 
-@keyframes layer-in-push {
+/*
+  自左滑入（反向入口，如底栏最左侧的消息按钮）。
+  只覆盖 animation-name —— 时长与缓动沿用上面两条，改一处即可全局生效。
+*/
+.layer--push.layer--from-left {
+  animation-name: layer-in-left;
+}
+.layer--push.layer--from-left.is-exiting {
+  animation-name: layer-out-left;
+}
+
+@keyframes layer-in-right {
   from { transform: translateX(100%); }
   to   { transform: translateX(0); }
 }
-@keyframes layer-out-push {
+@keyframes layer-out-right {
   from { transform: translateX(0); }
   to   { transform: translateX(100%); }
+}
+
+@keyframes layer-in-left {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+@keyframes layer-out-left {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
 }
 
 /* 抽屉页：纵向转场（转场方向与时长均与 push 页不同，见 tokens.css） */
@@ -161,13 +181,240 @@
 
 .screen-body {
   flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
   overflow-y: auto;
   padding: 1rem;
 }
 
-/* 主屏：内容居中（骨架期布局） */
-.screen--home {
+/* ==========================================================================
+   主屏 · 应用搜索页
+   ========================================================================== */
+
+/*
+  position: relative 是 Orb 背景层的定位基准。
+  isolation: isolate 用于隔离层叠 —— 背景层与内容层都带 z-index，
+  若不隔离，它们会参与 .app-root 那一层的排序，其中 z-index: 1 的内容层
+  将盖住导航层（.layer 的 z-index 为 auto，即 0），导致进入子页面后
+  主屏内容仍浮在最上面。
+*/
+.home-body {
+  position: relative;
+  isolation: isolate;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/*
+  Orb 背景层：铺满，位于内容层之下。
+
+  transform: scale() 用于整体缩小 Orb —— 它比改着色器里的 innerRadius 更省事，
+  且不改动组件源码。缩放后四周露出的是父级背景色（透明 → .screen 的白/黑）。
+*/
+.home-orb {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  transform: scale(0.85);
+}
+
+/* 内容层：必须显式定位才压得住 .home-orb —— 定位元素默认在静态元素之上 */
+.home-content {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
+  gap: 1.25rem;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+/* 未读提示：可点击跳转消息列表，外观为次要色小字，不做成按钮 */
+.home-unread {
+  align-self: center;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   搜索框
+   ========================================================================== */
+
+/*
+  深灰边框 + 毛玻璃底。
+  半透明底（background-compact-menu）配合 backdrop-filter 才构成毛玻璃；
+  若底色不透明，backdrop-filter 看不出任何效果。
+
+  ⚠️ backdrop-filter 与 filter 同样会创建 containing block，
+     使后代的 position: fixed 失效。搜索框内不使用 fixed，当前安全。
+*/
+.search-input {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.5rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 1.375rem;
+  background: var(--color-background-compact-menu);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+.search-input__icon {
+  flex: 0 0 auto;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--color-icon-secondary);
+}
+
+.search-input__field {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  background: none;
+  color: var(--color-text);
+  font-size: 1rem;
+  outline: none;
+}
+
+.search-input__field::placeholder {
+  color: var(--color-placeholders);
+}
+
+.search-input__clear {
+  flex: 0 0 auto;
+  display: inline-flex;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   底部导航栏
+   ========================================================================== */
+
+/*
+  ⚠️ 不要给 .bottom-bar 设 z-index。
+     .screen--home 未创建层叠上下文，其子元素的 z-index 会直接参与 .app-root
+     那一层的排序；而 .layer 的 z-index 是 auto（即 0），结果是 bar 盖在所有
+     子页面之上 —— 进入设置页后底栏仍然可见。
+     bar 与子页面的遮挡关系由「.layer 是定位元素、.screen 是静态元素」天然决定。
+
+  ⚠️ 顶边不使用 border-top。凸起会盖住它的中间段，使顶边断成两截。
+     改用 filter: drop-shadow —— 它按渲染后的 alpha 区域投射，会沿着
+     「直线 + 凸起」的连续轮廓走，两端自然衔接。
+     偏移 -1.5px、模糊 0 = 一条约 1.5px 的描边（偏移量即线宽）。
+
+  ⚠️ 用 --color-divider-strong，不用 --color-borders / --color-dividers。
+     Telegram 那两个值在 1px 细线上对比不足（浅色差约 13%，深色仅约 6%），
+     线条几乎不可见。divider-strong 是为此单独取的，两套主题各约 25–30% 亮度差。
+
+  ⚠️ filter 会创建 containing block，使后代的 position: fixed 失效。
+     bar 内不使用 fixed，当前安全。
+*/
+.bottom-bar {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: var(--bottom-bar-height);
+  background: var(--color-background);
+  filter: drop-shadow(0 -1.5px 0 var(--color-divider-strong));
+}
+
+/*
+  中间凸起：圆形，顶端高出 bar 顶边 1rem。
+
+  尺寸关系：圆直径 5rem，bottom: -0.5rem（圆底边沉入 bar 下方 0.5rem），
+  故圆顶端距 bar 底边 5 - 0.5 = 4.5rem，而 bar 高 3.5rem —— 凸出 1rem。
+  调整凸出高度只改 bottom 即可，不必动圆直径（直径决定弧度）。
+
+  clip-path 保留圆的上部 30%（1.5rem），略多于凸出所需的 1rem：
+  多出的部分落在 bar 内部，与 bar 同色不可见，但能确保衔接处不留空隙。
+  不裁剪的话，圆埋在 bar 内的下半部分虽不可见，其轮廓仍会经父级的
+  drop-shadow 投出阴影，在 bar 内部留下一条多余的弧线。
+
+  沉入 bar 下方的那 0.5rem 会被 .screen 的 overflow: hidden 裁掉。
+*/
+.bottom-bar__notch {
+  position: absolute;
+  left: 50%;
+  bottom: -0.5rem;
+  width: 5rem;
+  height: 5rem;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: var(--color-background);
+  clip-path: polygon(0 0, 100% 0, 100% 30%, 0 30%);
+}
+
+/*
+  ⚠️ 按钮必须是定位元素。
+     凸起是 position: absolute（定位元素），而定位元素恒在静态元素之上 ——
+     若按钮保持 static，凸起会盖住指纹按钮，与 DOM 顺序无关
+     （DOM 顺序只在层叠层级相同时才起作用）。
+     两者都定位后 z-index 均为 auto，此时才由 DOM 顺序决定：凸起在前，按钮在后。
+*/
+.bottom-bar__btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-icon-secondary);
+  cursor: pointer;
+}
+
+.bottom-bar__btn:active {
+  background: var(--color-hover-overlay);
+}
+
+/* 指纹：主色 + 更大的图标，作为 bar 的视觉重心落在凸起之内 */
+.bottom-bar__btn--primary {
+  color: var(--color-primary);
+}
+
+/*
+  按钮 2.75rem（44px）是触摸目标的下限，不再缩小；
+  压缩与按钮边缘的间距靠放大图标完成。
+*/
+.bottom-bar__icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+/*
+  ⚠️ 按钮必须 ≥ 图标尺寸。图标只是画在按钮上的图形，按钮才是可点击区域；
+     图标超出按钮的部分点不动。此处留 2px 边。
+
+  用 translateY 而非 margin 上移：transform 不参与布局，不会影响两侧按钮的对齐。
+*/
+.bottom-bar__btn--primary {
+  width: 3.25rem;
+  height: 3.25rem;
+  transform: translateY(-0.5rem);
+}
+
+.bottom-bar__btn--primary .bottom-bar__icon {
+  width: 3rem;
+  height: 3rem;
 }
 
 /* ==========================================================================
@@ -192,9 +439,9 @@
   background: var(--color-hover-overlay);
 }
 
-.icon-btn__glyph {
-  font-size: 1.25rem;
-  line-height: 1;
+.icon-btn__icon {
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 /* ==========================================================================
@@ -253,6 +500,13 @@
   color: #fff;
   font-size: 0.875rem;
   white-space: nowrap;
+
+  /* ⚠️ 必须显式声明，不能只写在 keyframes 里。
+     animation-fill-mode 默认为 none，动画播完后元素会丢弃 keyframes 中的
+     transform，回落到此处声明的值。若省略，translateX(-50%) 会在动画结束时
+     消失，元素仅剩 left: 50%，视觉上从居中跳到偏右。 */
+  transform: translateX(-50%);
+
   animation: toast-in var(--select-transition);
 }
 
@@ -262,40 +516,16 @@
 }
 
 /* ==========================================================================
-   骨架期临时样式 —— 正式界面完成后删除本节
+   骨架页面占位文字 —— 各页面正式实现完成后逐项删除
    ========================================================================== */
 
-.dev-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: 1rem;
-}
-
-.dev-btn {
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--color-borders);
-  border-radius: var(--border-radius-button);
-  background: var(--color-background);
-  color: var(--color-text);
-  font-size: 1rem;
-  text-align: left;
-  cursor: pointer;
-}
-
-.dev-btn--accent {
-  border-color: transparent;
-  background: var(--color-primary);
-  color: #fff;
-}
-
-.dev-note {
+.placeholder {
   color: var(--color-text);
   font-size: 1rem;
   font-weight: var(--font-weight-medium);
 }
 
-.dev-note--sm {
+.placeholder--sm {
   color: var(--color-text-secondary);
   font-size: 0.875rem;
   font-weight: var(--font-weight-normal);

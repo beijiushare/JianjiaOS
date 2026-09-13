@@ -48,13 +48,25 @@ export function LayerHost({ layers, exitingKeys }: LayerHostProps) {
         const exiting = exitingKeys.has(layer.key)
         const exitClass = exiting ? ' is-exiting' : ''
 
+        // 只有 push 页有横向方向之分，抽屉固定纵向
+        const layerClass = [
+          'layer',
+          `layer--${layer.kind}`,
+          layer.kind === 'push' && layer.enterFrom === 'left'
+            ? 'layer--from-left'
+            : '',
+          exiting ? 'is-exiting' : '',
+        ]
+          .filter(Boolean)
+          .join(' ')
+
         return (
           <Fragment key={layer.key}>
             <div
               className={`scrim scrim--${layer.kind}${exitClass}`}
               aria-hidden="true"
             />
-            <div className={`layer layer--${layer.kind}${exitClass}`}>
+            <div className={layerClass}>
               <Cmp />
             </div>
           </Fragment>

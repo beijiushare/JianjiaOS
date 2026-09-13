@@ -9,9 +9,9 @@ export function AppDrawer() {
     <div className="drawer">
       <div className="drawer-handle" aria-hidden="true" />
       <div className="drawer-body">
-        <p className="dev-note">应用抽屉（纵向转场）</p>
-        <p className="dev-note dev-note--sm">
-          返回键 / Esc 应关闭本层并回到主屏
+        <p className="placeholder">应用抽屉</p>
+        <p className="placeholder placeholder--sm">
+          应用网格 + 搜索框，规格见设计文档 §4.3
         </p>
       </div>
     </div>

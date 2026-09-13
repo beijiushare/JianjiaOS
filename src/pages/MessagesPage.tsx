@@ -7,8 +7,8 @@ import { ScreenShell } from '@/components/ScreenShell'
 export function MessagesPage() {
   return (
     <ScreenShell title="消息">
-      <p className="dev-note">消息列表页（骨架）</p>
-      <p className="dev-note dev-note--sm">
+      <p className="placeholder">消息列表页</p>
+      <p className="placeholder placeholder--sm">
         Telegram 会话列表，当前仅有「系统消息」一条
       </p>
     </ScreenShell>
