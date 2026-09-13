@@ -301,6 +301,101 @@
 }
 
 /* ==========================================================================
+   列表行与分组容器（设置页起点，会话列表后续复用）
+   ========================================================================== */
+
+/* 副背景色页面，与白色的分组容器拉开层次 */
+.screen-body--muted {
+  background: var(--color-background-secondary);
+}
+
+.list-group + .list-group {
+  margin-top: 1.5rem;
+}
+
+.list-group__title {
+  margin-bottom: 0.5rem;
+  padding-left: 1rem;
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-medium);
+}
+
+.list-group__body {
+  border-radius: var(--border-radius-default);
+  background: var(--color-background);
+  overflow: hidden; /* 首尾行不越出圆角 */
+}
+
+/*
+  行间分割线：由容器绘制而非行本身，用「相邻兄弟」选择器排除首行，
+  最后一行下方自然不会多出线条。
+
+  左缩进 3.5rem 对齐文字 = padding 1rem + 图标 1.5rem + gap 1rem。
+*/
+.list-group__body > * + *::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 3.5rem;
+  right: 0;
+  height: 1px;
+  background: var(--color-borders);
+}
+
+.list-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  min-height: var(--list-item-height);
+  padding: 0 1rem;
+  border: none;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 1rem;
+  text-align: left;
+}
+
+.list-item--clickable {
+  cursor: pointer;
+}
+
+.list-item--clickable:active {
+  background: var(--color-item-active);
+}
+
+.list-item__icon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--color-icon-secondary);
+}
+
+.list-item__icon > svg {
+  width: 100%;
+  height: 100%;
+}
+
+.list-item__title {
+  flex: 1 1 auto;
+}
+
+.list-item__value {
+  flex: 0 0 auto;
+  color: var(--color-text-secondary);
+}
+
+.list-item__chevron {
+  flex: 0 0 auto;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--color-icon-secondary);
+}
+
+/* ==========================================================================
    底部导航栏
    ========================================================================== */
 
