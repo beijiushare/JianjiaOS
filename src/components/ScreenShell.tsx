@@ -7,17 +7,20 @@ interface ScreenShellProps {
   title: string
   /** 追加到内容区 `.screen-body` 上的修饰类，用于按页面调整背景等 */
   bodyClassName?: string
+  /** 固定在内容区下方的元素，如聊天输入条 */
+  footer?: ReactNode
   children: ReactNode
 }
 
 /**
- * 子页面外壳：顶部栏（返回按钮 + 标题）+ 内容区。
+ * 子页面外壳：顶部栏（返回按钮 + 标题）+ 内容区 + 可选底栏。
  *
  * 顶部栏高度取 `--column-header-height`（4rem），与 Telegram 栏目头尺寸一致。
  */
 export function ScreenShell({
   title,
   bodyClassName,
+  footer,
   children,
 }: ScreenShellProps) {
   return (
@@ -43,6 +46,8 @@ export function ScreenShell({
       >
         {children}
       </div>
+
+      {footer !== undefined && <div className="screen-footer">{footer}</div>}
     </div>
   )
 }

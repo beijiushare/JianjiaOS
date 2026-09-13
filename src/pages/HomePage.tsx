@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { BottomBar } from '@/components/BottomBar'
 import Orb from '@/components/Orb'
 import { SearchInput } from '@/components/SearchInput'
-import { useMessagesStore } from '@/messages/store'
+import { selectUnreadCount, useMessagesStore } from '@/messages/store'
 import { useNavStore } from '@/nav/store'
 
 /**
@@ -63,7 +63,8 @@ export function HomePage() {
   const [query, setQuery] = useState('')
   /** 搜索框聚焦时激活 Orb 的扭曲/旋转动效 */
   const [searchFocused, setSearchFocused] = useState(false)
-  const unreadCount = useMessagesStore((s) => s.unreadCount)
+  // 未读数由 messages 派生，不单独存储
+  const unreadCount = useMessagesStore(selectUnreadCount)
   const push = useNavStore((s) => s.push)
 
   // 传给 Orb 的容器底色。hue 等参数保持文档示例原值，仅此项按实际背景适配。
