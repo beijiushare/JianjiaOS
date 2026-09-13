@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 
+import { APP_REGISTRY, type AppInfo } from '@/apps/registry'
 import { BottomBar } from '@/components/BottomBar'
+import { ListItem } from '@/components/ListItem'
 import Orb from '@/components/Orb'
 import { SearchInput } from '@/components/SearchInput'
 import { selectUnreadCount, useMessagesStore } from '@/messages/store'
@@ -19,9 +21,6 @@ import { useNavStore } from '@/nav/store'
  *
  * 用 getComputedStyle 而非硬编码：tokens.css 是颜色的唯一真相，
  * 改主题色时自动跟随，不会出现两份定义。
- *
- * useState 的惰性初始化在首次渲染前同步执行，此时样式已由 Vite 注入完毕，
- * 首帧即可拿到正确值，不会先黑一下。
  */
 function useCssColor(varName: string, fallback: string): string {
   const read = (): string =>
@@ -31,15 +30,9 @@ function useCssColor(varName: string, fallback: string): string {
   const [color, setColor] = useState(read)
 
   useEffect(() => {
-    const mq = window.matchMedia('(prefers-color-scheme: dark)')
     // 系统主题切换时 CSS 变量会变，需重新读取
-    const onChange = (): void => {
-      setColor(
-        getComputedStyle(document.documentElement)
-          .getPropertyValue(varName)
-          .trim() || fallback,
-      )
-    }
+    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    const onChange = (): void => setColor(read())
     mq.addEventListener('change', onChange)
     return () => mq.removeEventListener('change', onChange)
   }, [varName, fallback])
@@ -50,14 +43,12 @@ function useCssColor(varName: string, fallback: string): string {
 /**
  * 主屏 · 应用搜索页。
  *
- * 布局：Orb 背景层铺满 → 内容层（搜索框 + 未读提示） → 底部导航栏。
- * 主屏不占栈位，恒为底层；栈空等价于「位于主屏」。
+ * 布局：Orb 背景层铺满 → 内容层（搜索框 + 未读提示 + 搜索结果） → 底部导航栏。
+ * 主屏不占栈位，恒为底层；栈空等价于「位于主屏」。规格见设计文档 §4.1。
  *
- * ⚠️ Orb 是常驻的 WebGL 渲染循环。主屏始终挂载（它是导航栈的底层），
+ * ⚠️ Orb 是常驻的 WebGL 渲染循环，而主屏始终挂载（它是导航栈底层），
  *    因此进入子页面后它仍在后台逐帧渲染。若真机出现发热或掉帧，
  *    应改为在栈非空时暂停渲染或卸载 —— 见设计文档 §14。
- *
- * 规格见设计文档 §4.1。
  */
 export function HomePage() {
   const [query, setQuery] = useState('')
@@ -67,8 +58,17 @@ export function HomePage() {
   const unreadCount = useMessagesStore(selectUnreadCount)
   const push = useNavStore((s) => s.push)
 
-  // 传给 Orb 的容器底色。hue 等参数保持文档示例原值，仅此项按实际背景适配。
   const orbBackground = useCssColor('--color-background', '#ffffff')
+
+  const keyword = query.trim().toLowerCase()
+  const results: AppInfo[] =
+    keyword === ''
+      ? []
+      : APP_REGISTRY.filter((a) => a.name.toLowerCase().includes(keyword))
+
+  const openApp = (app: AppInfo): void => {
+    if (app.entry.kind === 'push') push(app.entry.page)
+  }
 
   return (
     <div className="screen screen--home">
@@ -92,13 +92,34 @@ export function HomePage() {
             onBlur={() => setSearchFocused(false)}
           />
 
-          <button
-            type="button"
-            className="home-unread"
-            onClick={() => push('messages')}
-          >
-            {unreadCount > 0 ? `${unreadCount} 条未读消息` : '没有未读消息'}
-          </button>
+          {keyword === '' ? (
+            <button
+              type="button"
+              className="home-unread"
+              onClick={() => push('messages', 'left')}
+            >
+              {unreadCount > 0 ? `${unreadCount} 条未读消息` : '没有未读消息'}
+            </button>
+          ) : results.length === 0 ? (
+            <p className="home-empty">没找到「{query}」</p>
+          ) : (
+            <div className="list-group">
+              <div className="list-group__body">
+                {results.map((app) => {
+                  const Icon = app.icon
+                  return (
+                    <ListItem
+                      key={app.id}
+                      icon={<Icon />}
+                      title={app.name}
+                      chevron
+                      onClick={() => openApp(app)}
+                    />
+                  )
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

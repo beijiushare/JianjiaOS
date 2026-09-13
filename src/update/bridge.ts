@@ -10,11 +10,13 @@ import { useMessagesStore } from '@/messages/store'
 import type { UpdateCardState } from '@/messages/types'
 
 import {
+  type ReleaseInfo,
   UpdateError,
   cancelUpdate,
   checkForUpdate,
   downloadUpdate,
   installUpdate,
+  resumePendingDownload,
 } from './client'
 
 /** 消息 id 自增序列。不用随机数 —— id 要可读、可复现，便于排查 */
@@ -31,23 +33,14 @@ function reasonOf(e: unknown, fallback: string): string {
 }
 
 /**
- * 冷启动检查更新。
+ * 往「系统消息」插一条更新卡片。返回是否真的插入了。
  *
- * 静默执行：
- *   · 无更新 / 检查失败 → 什么都不做，不打扰用户
- *   · 有更新 → 往「系统消息」插一条更新卡片（未读）
- *
- * ⚠️ 必须按版本名去重，否则每次冷启动都会插一条重复消息，
+ * ⚠️ 按版本名去重：否则每次冷启动都会插一条重复消息，
  *    用户一打开应用就看到十几条「发现新版本」。
  */
-export async function autoCheckOnStartup(): Promise<void> {
-  const result = await checkForUpdate()
-  if (result.kind !== 'update') return
-
-  const { versionName } = result.info
+function notifyUpdate(info: ReleaseInfo): boolean {
   const store = useMessagesStore.getState()
-
-  if (store.notifiedVersions.includes(versionName)) return
+  if (store.notifiedVersions.includes(info.versionName)) return false
 
   store.appendMessage({
     id: nextMessageId(),
@@ -57,10 +50,98 @@ export async function autoCheckOnStartup(): Promise<void> {
     read: false,
     kind: {
       type: 'update-card',
-      card: { versionName, state: { status: 'idle' } },
+      card: { versionName: info.versionName, state: { status: 'idle' } },
     },
   })
-  store.markNotified(versionName)
+  store.markNotified(info.versionName)
+  return true
+}
+
+/**
+ * 冷启动检查更新。
+ *
+ * 静默执行：无更新、检查失败都不打扰用户；有更新才插一条更新卡片。
+ */
+export async function autoCheckOnStartup(): Promise<void> {
+  const result = await checkForUpdate()
+  if (result.kind !== 'update') return
+  notifyUpdate(result.info)
+}
+
+/**
+ * 冷启动接管未完成的下载。
+ *
+ * 场景：用户下载到一半把 App 划掉。DownloadManager 仍在系统进程里下，
+ * 但 JS 侧的轮询已消失。重启后靠这个把状态接回来。
+ *
+ * 若上次已经下完只差安装，插一条「下载完成」的卡片 —— 但**不主动拉安装器**，
+ * 安装必须由用户确认（设计文档 §4.5）。
+ */
+export async function resumeOnStartup(): Promise<void> {
+  try {
+    const resumed = await resumePendingDownload()
+    if (!resumed) return
+
+    // 已经就这个版本发过消息 → 把那条卡片的态改成「已下载完成」
+    const store = useMessagesStore.getState()
+    const existing = store.messages.find(
+      (m) =>
+        m.kind.type === 'update-card' &&
+        m.kind.card.versionName === resumed.versionName,
+    )
+
+    if (existing) {
+      setCard(existing.id, { status: 'downloaded' })
+    } else {
+      // 没有对应消息（消息被清过）→ 补一条，否则用户看不到可安装的入口
+      store.appendMessage({
+        id: nextMessageId(),
+        chatId: 'system',
+        from: 'system',
+        ts: Date.now(),
+        read: false,
+        kind: {
+          type: 'update-card',
+          card: {
+            versionName: resumed.versionName,
+            state: { status: 'downloaded' },
+          },
+        },
+      })
+      store.markNotified(resumed.versionName)
+    }
+  } catch (e) {
+    console.warn('[update] 接管未完成下载失败', e)
+  }
+}
+
+/** 手动检查更新的结果，供 UI 决定怎么提示 */
+export type ManualCheckResult =
+  | { kind: 'update' }
+  | { kind: 'up-to-date' }
+  | { kind: 'failed'; reason: string }
+
+/**
+ * 手动检查更新（设置页入口）。
+ *
+ * 与冷启动的区别：**要反馈**。设计文档 §9.2 的约定是
+ * 「自动检查静默，手动检查给提示」。
+ *
+ * 本函数只返回结果，不直接弹 Toast —— 提示方式留给调用方，
+ * 与 client.ts 的 UpdateCheckResult 是同样的分工。
+ */
+export async function manualCheckForUpdate(): Promise<ManualCheckResult> {
+  const result = await checkForUpdate()
+
+  switch (result.kind) {
+    case 'up-to-date':
+      return { kind: 'up-to-date' }
+    case 'failed':
+      return { kind: 'failed', reason: result.reason }
+    case 'update':
+      notifyUpdate(result.info)
+      return { kind: 'update' }
+  }
 }
 
 /**
