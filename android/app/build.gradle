@@ -2,6 +2,22 @@ apply plugin: 'com.android.application'
 // 启用 Kotlin：ApkUpdaterPlugin.kt 需要（见根 build.gradle 的说明）
 apply plugin: 'kotlin-android'
 
+// ---------------------------------------------------------------------------
+// 签名配置
+//
+// 从 android/key.properties 读取，该文件由 CI 在构建时生成（见
+// .github/workflows/*.yml 的 "Write signing key" 步骤），本地开发时不存在。
+//
+// ⚠️ key.jks 与 key.properties 都已被 .gitignore 排除，绝不能提交。
+// ⚠️ 这个 key 是「丢了就完蛋」的东西：覆盖安装要求签名一致，key 丢了
+//    所有已安装用户必须卸载重装、数据全丢。务必备份到密码管理器。
+// ---------------------------------------------------------------------------
+def keystorePropertiesFile = rootProject.file("key.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace = "com.jianjia.os"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -24,12 +40,30 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            // storeFile=key.jks 是相对本 module 目录的，即 android/app/key.jks
+            if (keystorePropertiesFile.exists()) {
+                storeFile file(keystoreProperties['storeFile'] ?: 'key.jks')
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+        }
+    }
+
     buildTypes {
         release {
             // 缩体积。APK 大小直接决定更新时下载等多久
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            // 本地没有 key.properties 时不挂签名配置，否则 gradle 同步就会失败。
+            // 这样本地仍能 assembleDebug 调试，只是产不出可发布的 release 包。
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 

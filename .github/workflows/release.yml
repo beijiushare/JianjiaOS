@@ -1,0 +1,97 @@
+name: Release
+
+# 正式发布。tag = v{VERSION_NAME}-build{VERSION_CODE}，客户端靠它解析版本号。
+#
+# ⚠️ 全流程最关键的一条：VERSION_CODE 用 date +%s 取一次，gradle 与 tag 共用。
+#    两者不同步会导致：
+#      · tag 比 APK 大 → 用户永远收不到更新
+#      · tag 比 APK 小 → 用户每次启动都被提示，装完还提示
+#    两种都没有任何报错。
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_name:
+        description: '展示用版本名，如 0.5.0'
+        required: true
+      notes:
+        description: '更新说明（支持 Markdown，会显示在 App 的更新弹窗里）'
+        required: false
+        default: ''
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # 创建 Release + push tag 需要
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: '17'
+          cache: gradle
+
+      # ★ 取一次，下面 gradle 与 tag 共用
+      - name: Set version
+        run: echo "VERSION_CODE=$(date +%s)" >> $GITHUB_ENV
+
+      - name: Write signing key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > android/app/key.jks
+          cat > android/key.properties <<EOF
+          storeFile=key.jks
+          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          EOF
+
+      - name: Build web
+        run: npm ci && npm run build
+
+      - name: Sync Capacitor
+        run: npx cap sync android
+
+      - name: Build APKs
+        env:
+          APP_VERSION_CODE: ${{ env.VERSION_CODE }}
+          APP_VERSION_NAME: ${{ inputs.version_name }}
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleRelease
+
+      # app-arm64-v8a-release.apk → JianjiaOS-1.20.0-arm64-v8a.apk
+      # ⚠️ 文件名必须含 abi 字符串（arm64-v8a / armeabi-v7a）——
+      #    客户端靠 name.includes(abi) 匹配，这是唯一的硬要求
+      - name: Rename artifacts
+        run: |
+          cd android/app/build/outputs/apk/release
+          for f in app-*-release.apk; do
+            abi=$(echo "$f" | sed -E 's|app-(.*)-release\.apk|\1|')
+            mv "$f" "JianjiaOS-${{ inputs.version_name }}-${abi}.apk"
+          done
+          ls -la
+
+      - name: Publish Release
+        uses: softprops/action-gh-release@v2
+        with:
+          # ★ tag 格式: v{VERSION_NAME}-build{VERSION_CODE}
+          #   客户端正则 ^v[\d.]+-build(\d+)$ 从这里解析版本号
+          tag_name: v${{ inputs.version_name }}-build${{ env.VERSION_CODE }}
+          # ★ Release 标题 —— 客户端把它当「版本名」展示给用户
+          name: ${{ inputs.version_name }}
+          body: ${{ inputs.notes }}
+          files: android/app/build/outputs/apk/release/*.apk
+          # ⚠️ 两者都必须为 false，否则 /releases/latest 拿不到这个 release
+          draft: false
+          prerelease: false
