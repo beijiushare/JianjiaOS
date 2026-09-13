@@ -1,18 +1,70 @@
+import { useState } from 'react'
+
+import { APP_REGISTRY, type AppInfo } from '@/apps/registry'
+import { SearchInput } from '@/components/SearchInput'
+import { useNavStore } from '@/nav/store'
+
 /**
  * 应用抽屉页。
  *
- * 转场方向为纵向（`layer--drawer`），导航语义与其他页面一致，无特殊分支。
- * 正式实现见 `.claude_dist/设计文档/app-shell/README.md` §4.3。
+ * 转场为纵向（`layer--drawer`），导航语义与其他页面一致，无特殊分支。
+ * 规格见设计文档 §4.3。
  */
 export function AppDrawer() {
+  const [query, setQuery] = useState('')
+  const push = useNavStore((s) => s.push)
+  const pop = useNavStore((s) => s.pop)
+
+  const keyword = query.trim().toLowerCase()
+  const apps =
+    keyword === ''
+      ? APP_REGISTRY
+      : APP_REGISTRY.filter((a) => a.name.toLowerCase().includes(keyword))
+
+  const openApp = (app: AppInfo): void => {
+    // 先关闭抽屉再进入目标页：两次状态更新会被 React 批处理为同一帧，
+    // 表现为抽屉下滑与新页滑入同时进行。
+    pop()
+    if (app.entry.kind === 'push') {
+      push(app.entry.page)
+    }
+  }
+
   return (
     <div className="drawer">
       <div className="drawer-handle" aria-hidden="true" />
+
+      <div className="drawer-search">
+        <SearchInput
+          value={query}
+          onChange={setQuery}
+          placeholder="搜索应用"
+        />
+      </div>
+
       <div className="drawer-body">
-        <p className="placeholder">应用抽屉</p>
-        <p className="placeholder placeholder--sm">
-          应用网格 + 搜索框，规格见设计文档 §4.3
-        </p>
+        {apps.length === 0 ? (
+          <p className="drawer-empty">没找到「{query}」</p>
+        ) : (
+          <div className="app-grid">
+            {apps.map((app) => {
+              const Icon = app.icon
+              return (
+                <button
+                  key={app.id}
+                  type="button"
+                  className="app-grid__item"
+                  onClick={() => openApp(app)}
+                >
+                  <span className="app-grid__icon">
+                    <Icon />
+                  </span>
+                  <span className="app-grid__name">{app.name}</span>
+                </button>
+              )
+            })}
+          </div>
+        )}
       </div>
     </div>
   )
