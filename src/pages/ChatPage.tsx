@@ -1,7 +1,11 @@
+import type { CSSProperties } from 'react'
+
 import { Composer } from '@/components/Composer'
 import { MessageBubble } from '@/components/MessageBubble'
 import { ScreenShell } from '@/components/ScreenShell'
 import { selectChatMessages, useMessagesStore } from '@/messages/store'
+import { findBackground } from '@/settings/backgrounds'
+import { useSettingsStore } from '@/settings/store'
 import {
   abortDownload,
   installDownloaded,
@@ -20,12 +24,17 @@ import {
 export function ChatPage() {
   const chat = useMessagesStore((s) => s.chats[0])
   const messages = useMessagesStore((s) => s.messages)
+  const backgroundId = useSettingsStore((s) => s.chatBackgroundId)
 
   const list = selectChatMessages(messages, chat.id)
+  const background = findBackground(backgroundId)
 
   return (
     <ScreenShell
       title={chat.title}
+      screenClassName="screen--chat"
+      // 背景图案经 CSS 变量传给样式层。图案是单色线条画，只能当 mask 用
+      screenStyle={{ '--chat-bg': `url(${background.url})` } as CSSProperties}
       headerClassName="screen-header--chat"
       bodyClassName="screen-body--chat"
       footer={

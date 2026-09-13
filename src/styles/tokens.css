@@ -67,6 +67,9 @@
   --color-scrollbar:                rgba(90, 90, 90, .3);
   /* 未读角标 / 在线状态等「活跃」语义。⚠️ 深色下是紫色，不是绿色 */
   --color-active:                   #00C73E;
+  /* 聊天背景图案的线条色。图案以 mask 方式使用，颜色由此处决定，
+     取半透明值以便叠在主背景色上。telegram-tt 无此变量，为自定。 */
+  --color-chat-pattern:             #00000012;
 
   /* ── 阴影 ──────────────────────────────────────────── */
   --shadow-island:                  0 1px 4px 0 #0000000D;
@@ -199,6 +202,7 @@
     /* ── 线条 ────────────────────────────────────────── */
     /* 深色下 active 变紫（与 --color-primary 同色系） */
     --color-active:                  #8774E1;
+    --color-chat-pattern:            #ffffff0e;
 
     --color-borders:                 #303030;
     --color-borders-input:           #5B5B5A;

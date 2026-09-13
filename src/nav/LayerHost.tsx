@@ -1,6 +1,7 @@
 import { Fragment, type ComponentType } from 'react'
 
 import { AppDrawer } from '@/overlays/AppDrawer'
+import { ChatBackgroundPage } from '@/pages/ChatBackgroundPage'
 import { ChatPage } from '@/pages/ChatPage'
 import { MessagesPage } from '@/pages/MessagesPage'
 import { SettingsPage } from '@/pages/SettingsPage'
@@ -11,6 +12,7 @@ const PAGES: Record<PageId, ComponentType> = {
   messages: MessagesPage,
   chat: ChatPage,
   settings: SettingsPage,
+  chatBackground: ChatBackgroundPage,
 }
 
 const DRAWERS: Record<DrawerId, ComponentType> = {

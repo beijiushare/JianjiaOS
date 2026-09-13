@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react'
 
 import InfoIcon from '@/assets/icons/information-line.svg?react'
+import PaletteIcon from '@/assets/icons/palette-line.svg?react'
 import RefreshIcon from '@/assets/icons/refresh-line.svg?react'
 import { ListItem } from '@/components/ListItem'
 import { ScreenShell } from '@/components/ScreenShell'
 import { showToast } from '@/components/toastStore'
 import { useNavStore } from '@/nav/store'
+import { findBackground } from '@/settings/backgrounds'
+import { useSettingsStore } from '@/settings/store'
 import { getAppVersion } from '@/settings/version'
 import { manualCheckForUpdate } from '@/update/bridge'
 
@@ -19,6 +22,7 @@ export function SettingsPage() {
   const [version, setVersion] = useState('…')
   const [checking, setChecking] = useState(false)
   const push = useNavStore((s) => s.push)
+  const backgroundId = useSettingsStore((s) => s.chatBackgroundId)
 
   useEffect(() => {
     void getAppVersion().then(setVersion)
@@ -52,6 +56,20 @@ export function SettingsPage() {
 
   return (
     <ScreenShell title="设置" bodyClassName="screen-body--muted">
+      <section className="list-group">
+        <h2 className="list-group__title">外观</h2>
+
+        <div className="list-group__body">
+          <ListItem
+            icon={<PaletteIcon />}
+            title="聊天背景"
+            value={findBackground(backgroundId).name}
+            chevron
+            onClick={() => push('chatBackground')}
+          />
+        </div>
+      </section>
+
       <section className="list-group">
         <h2 className="list-group__title">关于</h2>
 
