@@ -1,0 +1,302 @@
+@import './tokens.css';
+@import './base.css';
+
+/* ==========================================================================
+   应用骨架
+   ========================================================================== */
+
+/*
+  使用 fixed + inset 而非 height: 100vh —— 100vh 在 Android WebView 上
+  会因系统栏收缩而计算出错误高度。
+
+  安全区在此统一处理，内部页面与层无需重复计算 env(safe-area-inset-*)。
+*/
+.app-root {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-background);
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ==========================================================================
+   导航层
+   ========================================================================== */
+
+/*
+  层使用 absolute 相对 .app-root（其自身为 fixed，且无 overflow 祖先）。
+  不使用 fixed —— fixed 元素若存在 overflow 祖先，Android WebView 真机不渲染。
+*/
+.layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+
+  /* 不设背景 —— 由内层决定：
+     push 页是 .screen（不透明），抽屉是 .drawer（半透明毛玻璃）。
+     此处若设背景会盖住抽屉的透明度。 */
+}
+
+/*
+  转场遮罩：压暗并模糊其背后的全部内容。
+
+  由 LayerHost 在每个层之前插入，DOM 顺序保证它位于对应层之下、更下层之上，
+  因此新层滑入时，露出的下层恰好呈现「模糊 + 变暗」。
+
+  ⚠️ 必须是独立的静止元素。不可做在层的伪元素或背景上 ——
+     层本体带 translate 动画，附着的遮罩会跟着滑走，导致该遮的区域没被遮住。
+
+  使用 backdrop-filter 而非给下层加 filter: blur()：
+    · 不创建 containing block，不会让后代的 position: fixed 失效
+    · 无需区分「主屏」与「下层页面」，任意层数自动成立
+
+  性能：全屏 backdrop-filter 开销显著，且随半径增长。当前转场结束后 scrim 仍
+  常驻于不透明层之下 —— 若真机掉帧，优先降低下方半径，其次可为 scrim 增加一个
+  在动画结束时置 visibility: hidden 的关键帧。
+*/
+.scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+
+  /* 时长与缓动按层的 kind 覆写（见 .scrim--drawer），
+     故此处分开声明 animation-* 而非使用简写 */
+  animation-name: scrim-in;
+  animation-duration: var(--slide-duration);
+  animation-timing-function: var(--slide-easing);
+  animation-fill-mode: both;
+}
+
+.scrim.is-exiting {
+  animation-name: scrim-out;
+}
+
+/* 遮罩的节奏须与其所属层一致，否则会出现「层已停住、遮罩还在淡」的错位 */
+.scrim--drawer {
+  animation-duration: var(--drawer-duration);
+  animation-timing-function: var(--drawer-easing);
+}
+
+@keyframes scrim-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes scrim-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* push 页：横向转场 */
+.layer--push {
+  animation: layer-in-push var(--slide-duration) var(--slide-easing) both;
+}
+.layer--push.is-exiting {
+  animation: layer-out-push var(--slide-duration) var(--slide-easing) both;
+}
+
+@keyframes layer-in-push {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+@keyframes layer-out-push {
+  from { transform: translateX(0); }
+  to   { transform: translateX(100%); }
+}
+
+/* 抽屉页：纵向转场（转场方向与时长均与 push 页不同，见 tokens.css） */
+.layer--drawer {
+  border-top-left-radius: var(--border-radius-modal);
+  border-top-right-radius: var(--border-radius-modal);
+  overflow: hidden;
+  animation: layer-in-drawer var(--drawer-duration) var(--drawer-easing) both;
+}
+.layer--drawer.is-exiting {
+  animation: layer-out-drawer var(--drawer-duration) var(--drawer-easing) both;
+}
+
+@keyframes layer-in-drawer {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+@keyframes layer-out-drawer {
+  from { transform: translateY(0); }
+  to   { transform: translateY(100%); }
+}
+
+/* ==========================================================================
+   页面外壳
+   ========================================================================== */
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background: var(--color-background);
+}
+
+
+.screen-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: var(--column-header-height);
+  padding: 0 1rem 0 0.5rem;
+}
+
+.screen-title {
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.screen-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+/* 主屏：内容居中（骨架期布局） */
+.screen--home {
+  justify-content: center;
+}
+
+/* ==========================================================================
+   图标按钮
+   ========================================================================== */
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.icon-btn:active {
+  background: var(--color-hover-overlay);
+}
+
+.icon-btn__glyph {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+/* ==========================================================================
+   抽屉
+   ========================================================================== */
+
+/*
+  半透明毛玻璃。底色取 Telegram 的 background-compact-menu
+  （浅 #FFFFFFBB / 深 #212121DD），skill 对该值定义的用途即「紧凑菜单 /
+  浮层，带毛玻璃感」。
+
+  ⚠️ 与 .layer--drawer 的圆角配合：圆角裁剪由该层的 overflow: hidden 完成。
+*/
+.drawer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background: var(--color-background-compact-menu);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+.drawer-handle {
+  flex: 0 0 auto;
+  width: 2.25rem;
+  height: 0.25rem;
+  margin: 0.5rem auto 0;
+  border-radius: 999px;
+  background: var(--color-dividers);
+}
+
+.drawer-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+/* ==========================================================================
+   Toast
+   ========================================================================== */
+
+/*
+  本体为 fixed，必须挂在 #layer-root（body 的直接子节点）下，
+  祖先链中不可存在 overflow / transform 容器，否则真机不渲染。
+*/
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 15%;
+  z-index: 10000;
+  max-width: 80vw;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-toast);
+  background: var(--color-toast-background);
+  color: #fff;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  animation: toast-in var(--select-transition);
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translate(-50%, 0.5rem); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* ==========================================================================
+   骨架期临时样式 —— 正式界面完成后删除本节
+   ========================================================================== */
+
+.dev-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.dev-btn {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-borders);
+  border-radius: var(--border-radius-button);
+  background: var(--color-background);
+  color: var(--color-text);
+  font-size: 1rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dev-btn--accent {
+  border-color: transparent;
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.dev-note {
+  color: var(--color-text);
+  font-size: 1rem;
+  font-weight: var(--font-weight-medium);
+}
+
+.dev-note--sm {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-normal);
+}

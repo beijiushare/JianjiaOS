@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- viewport-fit=cover：允许内容延伸至刘海/圆角区域，配合 CSS env(safe-area-inset-*) 避让 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!-- 使 WebView 的滚动条与表单控件跟随系统深浅色 -->
+    <meta name="color-scheme" content="light dark" />
+    <title>JianjiaOS</title>
+  </head>
+  <body>
+    <!-- React 应用主体，页面内容渲染于此并自行滚动 -->
+    <div id="root"></div>
+
+    <!--
+      全屏浮层容器（Toast / 弹窗，不含导航层）。
+
+      约束：必须是 #root 的兄弟节点，且祖先链中不可存在 overflow / transform /
+      filter 容器 —— position: fixed 的元素嵌在滚动容器内时，
+      Android WebView 真机上完全不渲染（PC 浏览器正常，故该问题仅在真机暴露）。
+    -->
+    <div id="layer-root"></div>
+
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

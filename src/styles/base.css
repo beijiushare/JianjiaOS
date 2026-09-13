@@ -1,0 +1,55 @@
+/* ==========================================================================
+   基础样式：重置 + Telegram 全局约定
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;               /* rem 基准，与 telegram-tt 一致 */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-background);
+
+  user-select: none;
+  -webkit-user-select: none;
+
+  /* 移动端点击高亮由 overlay 表达，不使用系统默认高亮框 */
+  -webkit-tap-highlight-color: transparent;
+
+  /* 禁止整体滚动回弹，滚动仅发生在各内容容器内部 */
+  overscroll-behavior: none;
+}
+
+/** 需要选中文本的区块（如消息正文）手动开启 */
+.selectable {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/** 数字等宽，避免进度类数值刷新时抖动 */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
