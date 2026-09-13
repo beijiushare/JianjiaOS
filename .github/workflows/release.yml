@@ -1,13 +1,5 @@
 name: Release
 
-# 正式发布。tag = v{VERSION_NAME}-build{VERSION_CODE}，客户端靠它解析版本号。
-#
-# ⚠️ 全流程最关键的一条：VERSION_CODE 用 date +%s 取一次，gradle 与 tag 共用。
-#    两者不同步会导致：
-#      · tag 比 APK 大 → 用户永远收不到更新
-#      · tag 比 APK 小 → 用户每次启动都被提示，装完还提示
-#    两种都没有任何报错。
-
 on:
   workflow_dispatch:
     inputs:
@@ -39,7 +31,7 @@ jobs:
           java-version: '17'
           cache: gradle
 
-      # ★ 取一次，下面 gradle 与 tag 共用
+
       - name: Set version
         run: echo "VERSION_CODE=$(date +%s)" >> $GITHUB_ENV
 
@@ -71,8 +63,7 @@ jobs:
           ./gradlew assembleRelease
 
       # app-arm64-v8a-release.apk → JianjiaOS-1.20.0-arm64-v8a.apk
-      # ⚠️ 文件名必须含 abi 字符串（arm64-v8a / armeabi-v7a）——
-      #    客户端靠 name.includes(abi) 匹配，这是唯一的硬要求
+
       - name: Rename artifacts
         run: |
           cd android/app/build/outputs/apk/release
@@ -85,13 +76,12 @@ jobs:
       - name: Publish Release
         uses: softprops/action-gh-release@v2
         with:
-          # ★ tag 格式: v{VERSION_NAME}-build{VERSION_CODE}
-          #   客户端正则 ^v[\d.]+-build(\d+)$ 从这里解析版本号
+
           tag_name: v${{ inputs.version_name }}-build${{ env.VERSION_CODE }}
-          # ★ Release 标题 —— 客户端把它当「版本名」展示给用户
+
           name: ${{ inputs.version_name }}
           body: ${{ inputs.notes }}
           files: android/app/build/outputs/apk/release/*.apk
-          # ⚠️ 两者都必须为 false，否则 /releases/latest 拿不到这个 release
+
           draft: false
           prerelease: false

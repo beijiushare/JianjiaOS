@@ -1,12 +1,5 @@
 name: Build Test APK
 
-# 构建给自己装的测试包。只上传 Artifact，**不创建 Release**。
-#
-# ⚠️ 为什么不能发 Release：客户端用 /releases/latest 检测更新，
-#    测试包一旦发成 Release 就会污染更新源，所有用户都会收到这个测试版。
-#
-# ⚠️ 测试包必须用【同一个 release key】签名 —— 否则覆盖安装正式版时
-#    会因签名不一致而失败，测试就没意义了。
 
 on:
   workflow_dispatch:
