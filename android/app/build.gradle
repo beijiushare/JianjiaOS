@@ -21,6 +21,19 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace = "com.jianjia.os"
     compileSdk = rootProject.ext.compileSdkVersion
+
+    // Java 21：Capacitor 8 的 capacitor-android 模块声明了
+    // sourceCompatibility/targetCompatibility = VERSION_21，
+    // 主模块若用更低版本会报 "invalid source release: 21"。
+    // 对应地，CI 的 setup-java 也必须装 JDK 21（见 .github/workflows/）。
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
+    }
+
+    kotlinOptions {
+        jvmTarget = '21'
+    }
     defaultConfig {
         applicationId "com.jianjia.os"
         minSdkVersion rootProject.ext.minSdkVersion

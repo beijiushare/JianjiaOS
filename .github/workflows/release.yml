@@ -7,7 +7,7 @@ on:
         description: '展示用版本名，如 0.5.0'
         required: true
       notes:
-        description: '更新说明（支持 Markdown，会显示在 App 的更新弹窗里）'
+        description: '更新说明，Markdown格式'
         required: false
         default: ''
 
@@ -28,7 +28,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: zulu
-          java-version: '17'
+          java-version: '21'
           cache: gradle
 
 
