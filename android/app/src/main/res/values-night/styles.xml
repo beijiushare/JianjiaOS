@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+        深色系统下的启动主题。
+
+        ⚠️ 必须覆盖：浅色那个用的是 @drawable/splash —— 一张底色为白的位图，
+           深色系统下启动会闪白。这里换成纯色，与首屏背景一致。
+
+        若将来想要深色的启动 logo，需要另做一张深色底色的 splash 图，
+        再在这里引用它（并用 layer-list 把图片居中叠在底色上）。
+    -->
+    <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
+        <item name="android:background">@color/windowBackground</item>
+    </style>
+
+</resources>

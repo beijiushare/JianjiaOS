@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        启动窗口背景。
+        浅色下启动主题用的是 @drawable/splash（带 logo 的位图），此值暂未被引用；
+        定义它是为了让 values-night 能覆盖同名资源，保持两侧结构对称。
+    -->
+    <color name="windowBackground">#FFFFFF</color>
+</resources>

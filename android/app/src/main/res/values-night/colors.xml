@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        深色系统下的启动窗口背景。
+
+        与 src/styles/tokens.css 里深色的 --color-background 保持一致
+        （当前为 #111B29）。两者必须同步，否则启动瞬间会闪一下异色。
+
+        ⚠️ 启动白屏是 Android 的系统级行为，无法消除，只能让窗口背景与首屏同色
+           来做到「看不见切换」。
+        ⚠️ 不要试图用透明 windowBackground 去「消除」它 —— WebView 就绪前会是黑屏，
+           比白屏更刺眼。
+    -->
+    <color name="windowBackground">#111B29</color>
+</resources>

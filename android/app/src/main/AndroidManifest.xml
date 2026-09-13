@@ -38,4 +38,12 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!--
+        应用内更新：下载 APK 后拉起系统安装器。
+        Android 8.0 (API 26) 起必须声明，且用户还需在系统设置里手动允许
+        「安装未知应用」—— 所以原生侧要检查 canRequestPackageInstalls()，
+        见 ApkUpdaterPlugin.kt。
+    -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 </manifest>

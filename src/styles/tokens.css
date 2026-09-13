@@ -179,8 +179,11 @@
     --color-primary-shade:           #7b71c6;
 
     /* ── 背景 ────────────────────────────────────────── */
-    --color-background:              #212121;
-    --color-background-secondary:    #0F0F0F;
+    /* ⚠️ 深色主背景偏离 telegram-tt 原值(#212121)，用户指定为深蓝黑 #111B29。
+       它同时是底栏、对方气泡、分组容器、输入框的底色，改动会一并生效。
+       副背景色随之调整为同色系的更暗值，避免两者并排时色相打架。 */
+    --color-background:              #111B29;
+    --color-background-secondary:    #0C131D;
     --color-background-sidebar:      #0F0F0F;
     --color-background-own:          #766AC8;
     --color-background-own-selected: #6549d4;

@@ -2,4 +2,13 @@
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
     <external-path name="my_images" path="." />
     <cache-path name="my_cache_images" path="." />
+
+    <!--
+        应用内更新：DownloadManager 的落盘路径是
+          getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)/update.apk
+          = /storage/emulated/0/Android/data/<pkg>/files/Download/update.apk
+        必须与 ApkUpdaterPlugin.kt 里 setDestinationInExternalFilesDir 的
+        实际目录对应，否则 FileProvider 找不到文件，安装会失败。
+    -->
+    <external-files-path name="downloads" path="Download/" />
 </paths>

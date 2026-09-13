@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+// 启用 Kotlin：ApkUpdaterPlugin.kt 需要（见根 build.gradle 的说明）
+apply plugin: 'kotlin-android'
 
 android {
     namespace = "com.jianjia.os"
@@ -7,8 +9,14 @@ android {
         applicationId "com.jianjia.os"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+
+        // 版本号由 CI 注入环境变量（APP_VERSION_CODE = date +%s）。
+        // 本地开发不设环境变量时回退到 1 —— 本地构建不分发，无所谓。
+        // ⚠️ CI 里必须让这里和 git tag 用同一条命令的同一个值，否则
+        //    客户端永远收不到更新（tag 比 APK 大）或每次都被提示（tag 比 APK 小）。
+        versionCode Integer.parseInt(System.getenv("APP_VERSION_CODE") ?: "1")
+        versionName System.getenv("APP_VERSION_NAME") ?: "0.0.0-dev"
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -18,8 +26,22 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // 缩体积。APK 大小直接决定更新时下载等多久
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    // 按 ABI 分包，同时产出 arm64-v8a 与 armeabi-v7a 两个包。
+    // arm64-v8a 覆盖 2015 年后的 64 位设备，armeabi-v7a 兜底老设备。
+    // 客户端按 Build.SUPPORTED_ABIS 选择匹配的包（见 update/client.ts 的 pickApk）。
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'arm64-v8a', 'armeabi-v7a'
+            universalApk false      // 不额外打通用包
         }
     }
 }
