@@ -12,7 +12,10 @@ import {
  * 聊天详情页。
  *
  * 气泡流 + 禁用态输入条。规格见设计文档 §4.5。
- * 当前固定展示「系统消息」会话 —— 消息列表也只有这一项。
+ *
+ * ⚠️ 当前写死取 chats[0]（即「系统消息」），因为消息列表只有这一项。
+ *    接入多会话时，导航层需要支持携带参数（NavLayer 增加 params），
+ *    由消息列表把 chatId 传进来，不能继续用索引取。
  */
 export function ChatPage() {
   const chat = useMessagesStore((s) => s.chats[0])
