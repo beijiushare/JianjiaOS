@@ -26,11 +26,12 @@ export function ChatPage() {
   return (
     <ScreenShell
       title={chat.title}
+      headerClassName="screen-header--chat"
       bodyClassName="screen-body--chat"
       footer={
         <Composer
           disabled={!chat.canReply}
-          placeholder={chat.canReply ? '输入消息' : '系统消息，暂不支持回复'}
+          placeholder={chat.canReply ? '输入消息' : '暂不支持输入'}
         />
       }
     >
