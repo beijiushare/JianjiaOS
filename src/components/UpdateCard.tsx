@@ -1,7 +1,11 @@
 import type { UpdateCard as UpdateCardData } from '@/messages/types'
 
+import { Markdown } from './Markdown'
+
 interface UpdateCardProps {
   card: UpdateCardData
+  /** 本机当前版本名，显示在卡片第一行 */
+  currentVersion?: string
   onUpdate?: () => void
   onCancel?: () => void
   onInstall?: () => void
@@ -10,25 +14,34 @@ interface UpdateCardProps {
 /**
  * 更新卡片，嵌在消息气泡内。
  *
+ * 内容自上而下：
+ *   标题      发现新版本 {新版本名}
+ *   当前版本  本机正在跑的版本
+ *   更新说明  发布时填的 Markdown 原文
+ *   状态与按钮
+ *
  * 状态机见设计文档 §5.2：
  *   idle → downloading → downloaded → installing
  *     └→ cancelled / failed
- *
- * TODO: 按钮动作尚未接入更新模块
- *       （见 .claude_dist/设计文档/capacitor-android-update/），
- *       当前仅展示状态，点按不产生下载行为。
  */
 export function UpdateCard({
   card,
+  currentVersion,
   onUpdate,
   onCancel,
   onInstall,
 }: UpdateCardProps) {
-  const { state, versionName } = card
+  const { state, versionName, notes } = card
 
   return (
     <div className="update-card">
       <p className="update-card__title">发现新版本 {versionName}</p>
+
+      {currentVersion !== undefined && currentVersion !== '' && (
+        <p className="update-card__current">当前版本 {currentVersion}</p>
+      )}
+
+      {notes !== '' && <Markdown text={notes} />}
 
       {state.status === 'downloading' && (
         <div className="update-card__progress">
@@ -50,18 +63,10 @@ export function UpdateCard({
       case 'idle':
         return (
           <>
-            <button
-              type="button"
-              className="btn btn--plain"
-              onClick={onCancel}
-            >
+            <button type="button" className="btn btn--plain" onClick={onCancel}>
               取消
             </button>
-            <button
-              type="button"
-              className="btn btn--primary"
-              onClick={onUpdate}
-            >
+            <button type="button" className="btn btn--primary" onClick={onUpdate}>
               更新
             </button>
           </>

@@ -5,6 +5,8 @@ import { UpdateCard } from './UpdateCard'
 
 interface MessageBubbleProps {
   message: Message
+  /** 本机当前版本名，供更新卡片显示。仅对 update-card 类型有意义 */
+  currentVersion?: string
   /** 以下三个回调仅对 update-card 类型的消息有意义 */
   onUpdate?: () => void
   onCancel?: () => void
@@ -19,6 +21,7 @@ interface MessageBubbleProps {
  */
 export function MessageBubble({
   message,
+  currentVersion,
   onUpdate,
   onCancel,
   onInstall,
@@ -31,6 +34,7 @@ export function MessageBubble({
         ) : (
           <UpdateCard
             card={message.kind.card}
+            currentVersion={currentVersion}
             onUpdate={onUpdate}
             onCancel={onCancel}
             onInstall={onInstall}

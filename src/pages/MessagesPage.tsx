@@ -38,7 +38,7 @@ export function MessagesPage() {
               className="chat-list__row"
               onClick={() => openChat(chat.id)}
             >
-              <Avatar text={chat.avatarText} />
+              <Avatar icon={chat.icon} text={chat.avatarText} />
 
               <span className="chat-list__main">
                 <span className="chat-list__title">{chat.title}</span>

@@ -50,7 +50,11 @@ function notifyUpdate(info: ReleaseInfo): boolean {
     read: false,
     kind: {
       type: 'update-card',
-      card: { versionName: info.versionName, state: { status: 'idle' } },
+      card: {
+        versionName: info.versionName,
+        notes: info.notes,
+        state: { status: 'idle' },
+      },
     },
   })
   store.markNotified(info.versionName)
@@ -104,6 +108,8 @@ export async function resumeOnStartup(): Promise<void> {
           type: 'update-card',
           card: {
             versionName: resumed.versionName,
+            // 接管场景拿不到 Release 说明（它来自 GitHub API），留空
+            notes: '',
             state: { status: 'downloaded' },
           },
         },
@@ -208,7 +214,17 @@ export function injectDevFixture(): void {
     read: false,
     kind: {
       type: 'update-card',
-      card: { versionName: '0.2.0（模拟）', state: { status: 'idle' } },
+      card: {
+        versionName: '0.2.0（模拟）',
+        notes: [
+          '## 本次更新',
+          '',
+          '- 修复了下载完成却提示失败的问题',
+          '- 消息列表的系统消息改用设置图标',
+          '- **重要**：升级后首次启动会重建缓存',
+        ].join('\n'),
+        state: { status: 'idle' },
+      },
     },
   })
 }

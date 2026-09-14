@@ -439,6 +439,12 @@
   line-height: 1;
 }
 
+/* 图标型头像：图标比初字小一圈，四周留白才不显拥挤 */
+.avatar__icon {
+  width: 1.875rem;
+  height: 1.875rem;
+}
+
 /*
   未读角标。
   ⚠️ 底色是 --color-active（浅色绿 #00C73E / 深色紫 #8774E1），不是主色 ——
@@ -729,8 +735,39 @@
   font-weight: var(--font-weight-medium);
 }
 
+.update-card__current {
+  margin-top: 0.125rem;
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+}
+
+/* 更新说明（Markdown）。字号比卡片标题小一档，避免抢过标题 */
+.md {
+  margin-top: 0.375rem;
+  color: var(--color-text);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.md__h {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+}
+
+.md__ul {
+  margin: 0.25rem 0;
+  padding-left: 1.125rem;
+  list-style: disc;
+}
+
+.md__li + .md__li,
+.md__p + .md__p {
+  margin-top: 0.125rem;
+}
+
 .update-card__status {
-  margin-top: 0.25rem;
+  margin-top: 0.5rem;
   color: var(--color-text-secondary);
   font-size: 0.8125rem;
 }

@@ -1,15 +1,19 @@
 import { create } from 'zustand'
 
+import SettingsIcon from '@/assets/icons/settings-3-line.svg?react'
+
 import type { Chat, ChatId, Message, UpdateCardState } from './types'
 
 /**
  * 「系统消息」会话常驻：即使一条消息都没有，它也显示在会话列表里。
  * 设计文档 §5.1。
+ *
+ * 头像用设置图标 —— 系统消息承载的是全应用级的通知，设置图标是最贴近的语义。
  */
 const SYSTEM_CHAT: Chat = {
   id: 'system',
   title: '系统消息',
-  avatarText: '系',
+  icon: SettingsIcon,
   canReply: false,
 }
 

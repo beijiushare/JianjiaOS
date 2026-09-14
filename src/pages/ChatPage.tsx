@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react'
+import { type CSSProperties, useEffect, useState } from 'react'
 
 import { Composer } from '@/components/Composer'
 import { MessageBubble } from '@/components/MessageBubble'
@@ -6,6 +6,7 @@ import { ScreenShell } from '@/components/ScreenShell'
 import { selectChatMessages, useMessagesStore } from '@/messages/store'
 import { findBackground } from '@/settings/backgrounds'
 import { useSettingsStore } from '@/settings/store'
+import { getAppVersion } from '@/settings/version'
 import {
   abortDownload,
   installDownloaded,
@@ -25,6 +26,12 @@ export function ChatPage() {
   const chat = useMessagesStore((s) => s.chats[0])
   const messages = useMessagesStore((s) => s.messages)
   const backgroundId = useSettingsStore((s) => s.chatBackgroundId)
+
+  // 更新卡片要显示「当前版本」，取自原生层的 App.getInfo()
+  const [currentVersion, setCurrentVersion] = useState('')
+  useEffect(() => {
+    void getAppVersion().then(setCurrentVersion)
+  }, [])
 
   const list = selectChatMessages(messages, chat.id)
   const background = findBackground(backgroundId)
@@ -51,6 +58,7 @@ export function ChatPage() {
           <MessageBubble
             key={m.id}
             message={m}
+            currentVersion={currentVersion}
             onUpdate={() => void startDownload(m.id)}
             onCancel={() => void abortDownload(m.id)}
             onInstall={() => void installDownloaded(m.id)}
