@@ -195,6 +195,15 @@ export default function Orb({
 
       vec3 lightCol = (colBase + v1) * mix(1.0, v2 * v3, fadeAmount);
       lightCol = mix(backgroundColor, lightCol, v0);
+
+      // 【本地修改】乘上球体遮罩 v2，让球体外部的颜色归零。
+      // 上游漏了这一步：球外 v0≈0，lightCol 因此等于 backgroundColor，
+      // extractAlpha 会给出一个非零 alpha（= 背景色最大通道，约 0.28），
+      // 于是整个 canvas 变成一块不透明的实心矩形。
+      // 上游假设「传进来的 backgroundColor 就是真实背景，填满也看不出来」——
+      // 这在纯色背景上成立，但本项目主页用的是渐变，矩形边界会露出来。
+      // darkCol 已乘过 v2，此处补齐。
+      lightCol *= v2;
       lightCol = clamp(lightCol, 0.0, 1.0);
 
       vec3 finalCol = mix(darkCol, lightCol, bgLuminance);
