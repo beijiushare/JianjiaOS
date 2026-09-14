@@ -66,6 +66,22 @@ android {
     }
 
     buildTypes {
+        /*
+          debug 也挂 release 签名。
+
+          测试包（CI 的 build-test workflow）用 debug 构建 —— 不混淆、日志可读、
+          WebView 调试自动开启，便于排查问题。但它必须能被装到已有版本之上，
+          所以签名必须和正式包一致，不能沿用 Android 自动生成的 debug key。
+
+          ⚠️ 不加这一段的话，测试包会是另一套签名，覆盖安装正式版时报
+             INSTALL_FAILED_UPDATE_INCOMPATIBLE。
+        */
+        debug {
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.release
+            }
+        }
+
         release {
             // 缩体积。APK 大小直接决定更新时下载等多久
             minifyEnabled true

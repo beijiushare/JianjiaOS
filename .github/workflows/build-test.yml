@@ -56,10 +56,10 @@ jobs:
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleRelease
+          ./gradlew assembleDebug
 
       - uses: actions/upload-artifact@v4
         with:
           name: test-apk-${{ env.VERSION_CODE }}
-          path: android/app/build/outputs/apk/release/*.apk
+          path: android/app/build/outputs/apk/debug/*.apk
           retention-days: 14
