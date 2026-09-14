@@ -7,11 +7,7 @@ import { selectChatMessages, useMessagesStore } from '@/messages/store'
 import { findBackground } from '@/settings/backgrounds'
 import { useSettingsStore } from '@/settings/store'
 import { getAppVersion } from '@/settings/version'
-import {
-  abortDownload,
-  installDownloaded,
-  startDownload,
-} from '@/update/bridge'
+import { installDownloaded, startDownload } from '@/update/bridge'
 
 /**
  * 聊天详情页。
@@ -27,6 +23,22 @@ export function ChatPage() {
   const messages = useMessagesStore((s) => s.messages)
   const backgroundId = useSettingsStore((s) => s.chatBackgroundId)
   const removeMessage = useMessagesStore((s) => s.removeMessage)
+  const markChatRead = useMessagesStore((s) => s.markChatRead)
+
+  /*
+    停留在这个会话期间持续标记已读。
+
+    ⚠️ 只在「进入时标记一次」是不够的 —— 用户在这里点更新，会当场产生
+       好几条新消息（正在下载中 / 下载完成 / 当前已是最新版本），
+       而那些消息发出来时是未读的，没人标记。结果人明明看着，退出后
+       会话列表却显示未读，要重新进来一次才消掉。
+
+    markChatRead 内部做了「无未读则原样返回」的短路，所以这里可以安全地
+    随 messages 变化反复调用，不会形成渲染循环。
+  */
+  useEffect(() => {
+    markChatRead(chat.id)
+  }, [messages, chat.id, markChatRead])
 
   // 更新卡片要显示「当前版本」，取自原生层的 App.getInfo()
   const [currentVersion, setCurrentVersion] = useState('')
@@ -61,7 +73,6 @@ export function ChatPage() {
             message={m}
             currentVersion={currentVersion}
             onUpdate={() => void startDownload()}
-            onCancelDownload={() => void abortDownload(m.id)}
             onInstall={() => void installDownloaded(m.id)}
             onDelete={() => removeMessage(m.id)}
           />

@@ -68,11 +68,18 @@ export const useMessagesStore = create<MessagesState>((set) => ({
     ),
 
   markChatRead: (chatId) =>
-    set((s) => ({
-      messages: s.messages.map((m) =>
-        m.chatId === chatId && !m.read ? { ...m, read: true } : m,
-      ),
-    })),
+    set((s) => {
+      // ⚠️ 没有未读时返回原 state 对象，不产生新数组。
+      //    否则每次调用都会触发订阅者重渲染，而 ChatPage 会在停留期间
+      //    持续调用本方法，形成「渲染 → 标记 → 再渲染」的死循环。
+      if (!s.messages.some((m) => m.chatId === chatId && !m.read)) return s
+
+      return {
+        messages: s.messages.map((m) =>
+          m.chatId === chatId ? { ...m, read: true } : m,
+        ),
+      }
+    }),
 }))
 
 /** 取某会话的消息，按时间升序 */

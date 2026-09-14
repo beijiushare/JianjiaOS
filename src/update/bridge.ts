@@ -20,7 +20,6 @@ import type { DownloadMessageState } from '@/messages/types'
 import {
   type ReleaseInfo,
   UpdateError,
-  cancelUpdate,
   checkForUpdate,
   downloadUpdate,
   installUpdate,
@@ -214,22 +213,6 @@ export async function startDownload(): Promise<void> {
     console.warn(`[update] 下载流程抛错: ${reason}`)
     setDownloadState(downloadId, { status: 'failed', reason })
   }
-}
-
-/**
- * 用户点下载消息上的「取消」：中止下载并删除已落盘的文件。
- *
- * 取消后那条下载消息已无意义，直接移除而不是留成噪音；
- * 但「取消过」这件事本身要说一声，所以补一条文本消息。
- */
-export async function abortDownload(downloadId: string): Promise<void> {
-  try {
-    await cancelUpdate()
-  } catch (e) {
-    console.warn(`[update] 取消下载失败: ${errText(e)}`)
-  }
-  useMessagesStore.getState().removeMessage(downloadId)
-  pushText('已取消本次更新')
 }
 
 /** 用户点下载消息上的「安装」：拉起系统安装器 */

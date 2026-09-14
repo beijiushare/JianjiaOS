@@ -11,7 +11,6 @@ interface MessageBubbleProps {
   /** 本机当前版本名，供更新卡片显示 */
   currentVersion?: string
   onUpdate?: () => void
-  onCancelDownload?: () => void
   onInstall?: () => void
   onDelete?: () => void
 }
@@ -28,7 +27,6 @@ export function MessageBubble({
   message,
   currentVersion,
   onUpdate,
-  onCancelDownload,
   onInstall,
   onDelete,
 }: MessageBubbleProps) {
@@ -94,11 +92,7 @@ export function MessageBubble({
 
       case 'download':
         return (
-          <DownloadMessage
-            state={message.kind.state}
-            onCancel={onCancelDownload}
-            onInstall={onInstall}
-          />
+          <DownloadMessage state={message.kind.state} onInstall={onInstall} />
         )
     }
   }

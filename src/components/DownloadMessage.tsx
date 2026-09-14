@@ -2,7 +2,6 @@ import type { DownloadMessageState } from '@/messages/types'
 
 interface DownloadMessageProps {
   state: DownloadMessageState
-  onCancel?: () => void
   onInstall?: () => void
 }
 
@@ -17,22 +16,13 @@ interface DownloadMessageProps {
  */
 export function DownloadMessage({
   state,
-  onCancel,
   onInstall,
 }: DownloadMessageProps) {
   switch (state.status) {
     case 'downloading':
-      return (
-        <>
-          <p className="download__text">正在下载中…</p>
-
-          <div className="download__actions">
-            <button type="button" className="btn btn--plain" onClick={onCancel}>
-              取消
-            </button>
-          </div>
-        </>
-      )
+      // 不提供「取消」—— 下载很快，中途取消的入口只会让用户以为能暂停，
+      // 实际上除了留个半包什么用都没有。
+      return <p className="download__text">正在下载中…</p>
 
     case 'downloaded':
       return (
