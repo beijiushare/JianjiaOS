@@ -559,6 +559,10 @@
   font-family: inherit;
   font-size: 1rem;
   outline: none;
+
+  /* 靠阴影让它从聊天背景上「浮」起来 —— 底色与聊天区同为主背景色，
+     没有阴影就分不出边界。telegram-tt 的 .composer-wrapper 用的就是这个值。 */
+  box-shadow: var(--shadow-footer);
 }
 
 .composer__field::placeholder {
