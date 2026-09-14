@@ -1025,9 +1025,9 @@
    ========================================================================== */
 
 /*
-  半透明毛玻璃。底色取 Telegram 的 background-compact-menu
-  （浅 #FFFFFFBB / 深 #212121DD），skill 对该值定义的用途即「紧凑菜单 /
-  浮层，带毛玻璃感」。
+  半透明毛玻璃。底色用抽屉专用变量，与搜索框分开 ——
+  抽屉是全屏面板，透出的内容本身有信息量，可以更透；
+  搜索框受 placeholder 可读性约束，需要更实。
 
   ⚠️ 与 .layer--drawer 的圆角配合：圆角裁剪由该层的 overflow: hidden 完成。
 */
@@ -1036,7 +1036,7 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  background: var(--color-background-compact-menu);
+  background: var(--color-drawer-background);
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
 }

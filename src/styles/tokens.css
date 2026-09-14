@@ -110,10 +110,16 @@
      ⚠️ 透明度已偏离 telegram-tt 原值（原 #FFFFFFBB / 深 #212121DD），
         当前不透明度：浅 33% / 深 55%。与 backdrop-filter 配合使用，
         单独调透明度而不带模糊会退化为普通半透明色块。
-     两处共用（抽屉 + 搜索框），改动会同时生效。
      ⚠️ 不宜再低：搜索框内的 placeholder 文字压在此底色上，
-        不透明度低于约 30% 时，背后内容会明显干扰文字可读性。 */
+        不透明度低于约 30% 时，背后内容会明显干扰文字可读性。
+
+     仅搜索框使用。抽屉用自己的 --color-drawer-background。 */
   --color-background-compact-menu:  #FFFFFF55;
+
+  /* 抽屉（全屏毛玻璃面板）底色。与搜索框分开 —— 两者的面积、
+     内容密度、可读性要求都不同，调节时不该互相牵动。
+     比搜索框更透：抽屉后面是主屏，透出的内容本身就有信息量。 */
+  --color-drawer-background:        #FFFFFF44;
   --color-hover-overlay:            #00000006;
   --color-background-menu-separator:#0000001a;
 
@@ -264,6 +270,7 @@
     --color-toast-background:        #000000CC;
     /* 深色值改用新主背景的色系（原 #212121 已与 #263547 的底色不搭） */
     --color-background-compact-menu: #2635478C;
+    --color-drawer-background:       #2635476B;
     --color-hover-overlay:           #ffffff06;
     --color-background-menu-separator:#ffffff1a;
 
