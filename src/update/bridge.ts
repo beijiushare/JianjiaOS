@@ -68,6 +68,11 @@ function notifyUpdate(info: ReleaseInfo): boolean {
  */
 export async function autoCheckOnStartup(): Promise<void> {
   const result = await checkForUpdate()
+  console.log(
+    `[update] 冷启动检查结果 kind=${result.kind}` +
+      (result.kind === 'failed' ? ` reason=${result.reason}` : '') +
+      (result.kind === 'update' ? ` version=${result.info.versionName}` : ''),
+  )
   if (result.kind !== 'update') return
   notifyUpdate(result.info)
 }
@@ -157,10 +162,21 @@ export async function manualCheckForUpdate(): Promise<ManualCheckResult> {
  * 而下载需要 asset 列表与 versionCode。
  */
 export async function startDownload(messageId: string): Promise<void> {
+  // ⚠️ 日志一律拼成单字符串：Capacitor 转发到 logcat 时会把参数序列化，
+  //    传对象只会得到 [object Object]，真实信息全丢。
+  console.log(`[update] 用户点更新，messageId=${messageId}`)
   setCard(messageId, { status: 'downloading', percent: 0 })
 
   try {
     const result = await checkForUpdate()
+    console.log(
+      `[update] 重新检查完成 kind=${result.kind}` +
+        (result.kind === 'failed' ? ` reason=${result.reason}` : '') +
+        (result.kind === 'update'
+          ? ` version=${result.info.versionName} assets=${String(result.info.assets.length)}`
+          : ''),
+    )
+
     if (result.kind !== 'update') {
       setCard(messageId, { status: 'failed', reason: '未找到可用的更新包' })
       return
@@ -169,9 +185,12 @@ export async function startDownload(messageId: string): Promise<void> {
     await downloadUpdate(result.info, (percent) => {
       setCard(messageId, { status: 'downloading', percent })
     })
+    console.log('[update] 下载流程结束，转入待安装')
     setCard(messageId, { status: 'downloaded' })
   } catch (e) {
-    setCard(messageId, { status: 'failed', reason: reasonOf(e, '下载失败') })
+    const reason = reasonOf(e, '下载失败')
+    console.warn(`[update] 下载流程抛错: ${reason}`)
+    setCard(messageId, { status: 'failed', reason })
   }
 }
 

@@ -377,6 +377,19 @@ async function loadPending(): Promise<PendingDownload | null> {
   }
 }
 
+/**
+ * 把未知类型的异常转成可读字符串。
+ *
+ * ⚠️ 日志必须拼成**单个字符串**再输出。
+ *    Capacitor 会把 console 的参数序列化后转发到 logcat，传对象进去只会得到
+ *    `[object Object]`、传 undefined 得到 `undefined` —— 真正的错误信息全丢。
+ *    本项目为此白抓过两次日志，务必遵守。
+ */
+function errText(e: unknown): string {
+  if (e instanceof Error) return `${e.name}: ${e.message}`
+  return String(e)
+}
+
 /** 单次下载 + 轮询到完成，不换源 */
 async function downloadOnce(
   url: string,
@@ -386,7 +399,9 @@ async function downloadOnce(
   onProgress?: (pct: number) => void,
 ): Promise<void> {
   // 入队（插件内部会先删掉上次的残留文件）
+  console.log(`[update] 入队下载 url=${url}`)
   const { id } = await ApkUpdater.download({ url })
+  console.log(`[update] 入队成功 id=${String(id)}`)
 
   // 持久化 —— App 被杀后重启仍能接管这次下载
   await savePending({
@@ -399,15 +414,29 @@ async function downloadOnce(
 
   // 轮询进度。切后台时轮询暂停，但下载继续（DownloadManager 在系统进程里）
   let status = await ApkUpdater.status({ id })
+  let round = 0
   while (
     status.status === 'pending' ||
     status.status === 'running' ||
     status.status === 'paused'
   ) {
+    // 每轮都打全字段：卡住时能直接看出 DownloadManager 报的是什么
+    console.log(
+      `[update] 轮询#${String(++round)} status=${status.status}` +
+        ` bytes=${String(status.bytesDownloaded)}/${String(status.totalBytes)}` +
+        ` progress=${String(status.progress)}`,
+    )
     onProgress?.(status.progress)
     await sleep(POLL_INTERVAL_MS)
     status = await ApkUpdater.status({ id })
   }
+
+  console.log(
+    `[update] 轮询结束 status=${status.status}` +
+      ` bytes=${String(status.bytesDownloaded)}/${String(status.totalBytes)}` +
+      ` expected=${String(expectedSize)}` +
+      ` reason=${String(status.reason ?? '')}`,
+  )
 
   if (status.status !== 'successful') {
     await ApkUpdater.cleanup({ id })
@@ -443,21 +472,27 @@ export async function downloadWithFallback(
   onProgress?: (pct: number) => void,
 ): Promise<void> {
   const urls = candidateUrls(apk.url)
+  console.log(
+    `[update] 开始下载，候选源 ${String(urls.length)} 个，期望大小 ${String(apk.size)} 字节`,
+  )
   let lastErr: unknown = null
 
   for (let i = 0; i < urls.length; i++) {
     try {
       await downloadOnce(urls[i], apk.size, versionCode, versionName, onProgress)
-      if (i > 0) {
-        console.log(`[update] 通过备用源下载成功（第 ${i + 1}/${urls.length} 个）`)
-      }
+      console.log(`[update] 下载成功（第 ${String(i + 1)}/${String(urls.length)} 个源）`)
       return
     } catch (e) {
       lastErr = e
-      console.warn(`[update] 源 ${i + 1}/${urls.length} 失败，换下一个`, e)
+      // ⚠️ 必须用 errText 拼成字符串 —— 直接传对象会变成 [object Object]
+      console.warn(
+        `[update] 源 ${String(i + 1)}/${String(urls.length)} 失败: ${errText(e)}`,
+      )
       // downloadOnce 内部已 cleanup，半包不会残留到下一次尝试
     }
   }
+
+  console.warn(`[update] 全部源均失败，最后一个错误: ${errText(lastErr)}`)
 
   throw lastErr instanceof UpdateError
     ? lastErr
