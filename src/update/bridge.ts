@@ -66,7 +66,7 @@ function pushDownloadMessage(): string {
     from: 'system',
     ts: Date.now(),
     read: false,
-    kind: { type: 'download', state: { status: 'downloading', percent: 0 } },
+    kind: { type: 'download', state: { status: 'downloading' } },
   })
   return id
 }
@@ -204,9 +204,9 @@ export async function startDownload(): Promise<void> {
   const downloadId = pushDownloadMessage()
 
   try {
-    await downloadUpdate(result.info, (percent) => {
-      setDownloadState(downloadId, { status: 'downloading', percent })
-    })
+    // 不订阅进度 —— 见 DownloadMessageState 的说明：代理转发常拿不到
+    // Content-Length，进度算出来是 -1，显示出来反而误导
+    await downloadUpdate(result.info)
     console.log('[update] 下载完成')
     setDownloadState(downloadId, { status: 'downloaded' })
   } catch (e) {

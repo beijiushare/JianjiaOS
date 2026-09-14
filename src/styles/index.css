@@ -788,20 +788,6 @@
   font-size: 0.8125rem;
 }
 
-.download__progress {
-  height: 0.25rem;
-  margin-top: 0.5rem;
-  border-radius: 999px;
-  background: var(--color-borders);
-  overflow: hidden;
-}
-
-.download__bar {
-  height: 100%;
-  background: var(--color-primary);
-  transition: width var(--select-transition);
-}
-
 .download__actions {
   display: flex;
   justify-content: flex-end;

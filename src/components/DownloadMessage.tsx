@@ -24,14 +24,7 @@ export function DownloadMessage({
     case 'downloading':
       return (
         <>
-          <p className="download__text">正在下载中… {state.percent}%</p>
-
-          <div className="download__progress">
-            <div
-              className="download__bar"
-              style={{ width: `${String(state.percent)}%` }}
-            />
-          </div>
+          <p className="download__text">正在下载中…</p>
 
           <div className="download__actions">
             <button type="button" className="btn btn--plain" onClick={onCancel}>

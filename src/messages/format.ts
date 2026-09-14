@@ -34,7 +34,7 @@ export function previewOf(message: Message | undefined): string {
     case 'download':
       switch (message.kind.state.status) {
         case 'downloading':
-          return `正在下载… ${String(message.kind.state.percent)}%`
+          return '正在下载中…'
         case 'downloaded':
           return '下载完成，可以安装了'
         case 'failed':

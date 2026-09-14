@@ -35,7 +35,12 @@ export interface UpdateCard {
  *    本状态只描述「这一条下载消息」当前处于哪个阶段。
  */
 export type DownloadMessageState =
-  | { status: 'downloading'; percent: number }
+  /**
+   * 下载中。**故意不带进度百分比** —— DownloadManager 的 totalBytes 依赖
+   * 服务端返回 Content-Length，而走代理转发时常常拿不到，算出来是 -1，
+   * 显示成「-1%」还不如不显示。
+   */
+  | { status: 'downloading' }
   | { status: 'downloaded' }
   | { status: 'failed'; reason: string }
 
