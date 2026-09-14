@@ -50,6 +50,21 @@ class ApkUpdaterPlugin : Plugin() {
         context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
     /**
+     * 读取 JS 侧传来的下载任务 id。
+     *
+     * ⚠️ 不能只用 `getLong("id")`。
+     *
+     * JavaScript 只有 double 一种数字类型，`191559` 经 JSON 传到原生侧被解析成
+     * Double，而 `getLong()` 不从 Double 取值 —— 返回 null，方法直接 reject
+     * 「缺少 id」。上游调用方看到的却是「所有下载源都失败了」，完全指不到这里，
+     * 排查成本极高（本项目为此查了很久）。
+     *
+     * 因此必须回退到 getDouble。
+     */
+    private fun PluginCall.downloadId(): Long? =
+        getLong("id") ?: getDouble("id")?.toLong()
+
+    /**
      * APK 的确定性落盘路径。
      *
      * 因为用 setDestinationInExternalFilesDir 指定了固定文件名，
@@ -111,9 +126,7 @@ class ApkUpdaterPlugin : Plugin() {
      */
     @PluginMethod
     fun status(call: PluginCall) {
-        // 注: 若你的 Capacitor 版本没有 PluginCall.getLong，
-        //     改成 call.getDouble("id")?.toLong()
-        val id = call.getLong("id")
+        val id = call.downloadId()
         if (id == null) {
             call.reject("缺少 id")
             return
@@ -170,7 +183,7 @@ class ApkUpdaterPlugin : Plugin() {
     /** 取消下载并清掉残留文件（用户点「取消」时调） */
     @PluginMethod
     fun cancel(call: PluginCall) {
-        val id = call.getLong("id")
+        val id = call.downloadId()
         if (id != null) {
             try {
                 dm().remove(id)
@@ -290,7 +303,7 @@ class ApkUpdaterPlugin : Plugin() {
     /** 清掉下载记录与残留文件（安装成功或用户放弃时调） */
     @PluginMethod
     fun cleanup(call: PluginCall) {
-        val id = call.getLong("id")
+        val id = call.downloadId()
         if (id != null) {
             try {
                 dm().remove(id)
