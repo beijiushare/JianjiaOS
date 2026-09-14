@@ -18,6 +18,17 @@ import { useEffect, useRef } from 'react'
 
 import './Orb.css'
 
+declare global {
+  interface Window {
+    /** 【本地修改 · 临时调试】真机排查入口，与 uDebugV0 一同删除。 */
+    __orb?: {
+      gl: unknown
+      program: Program
+      canvas: HTMLCanvasElement
+    }
+  }
+}
+
 interface OrbProps {
   /** 基础色相（度） */
   hue?: number
@@ -75,6 +86,14 @@ export default function Orb({
     uniform float hoverIntensity;
     uniform vec3 backgroundColor;
     varying vec2 vUv;
+
+    // 【本地修改 · 临时调试】真机排查 v0 归零用。
+    // uDebugV0 > 0.5 时输出三个中间量：R = v0，G = n0（噪声，应满屏花纹），B = v2（球体遮罩）。
+    // 排查完应连同 Program 里的 uDebugV0 与 window.__orb 一起删除。
+    uniform float uDebugV0;
+    float dbgV0;
+    float dbgN0;
+    float dbgV2;
 
     vec3 rgb2yiq(vec3 c) {
       float y = dot(c, vec3(0.299, 0.587, 0.114));
@@ -172,9 +191,16 @@ export default function Orb({
       float d0 = distance(uv, (r0 * invLen) * uv);
       float v0 = light1(1.0, 10.0, d0);
 
-      v0 *= smoothstep(r0 * 1.05, r0, len);
+      // 【本地修改】原写法 smoothstep(r0 * 1.05, r0, len) 的 edge0 > edge1，
+      // 属 GLSL 规范中的未定义行为。桌面驱动按 (x-e0)/(e1-e0) 的负分母算出下降沿，
+      // 但真机疑似整段返回 0 —— 那样 v0 恒为 0，浅色路径退化成纯背景色
+      // （深色路径有 color3 兜底，所以看不出症状）。改成等价的有定义写法，桌面渲染不变。
+      v0 *= 1.0 - smoothstep(r0, r0 * 1.05, len);
       float innerFade = smoothstep(r0 * 0.8, r0 * 0.95, len);
       v0 *= mix(innerFade, 1.0, bgLuminance * 0.7);
+      // 【本地修改 · 临时调试】v0 此后不再变化，即浅色路径实际取用的值
+      dbgV0 = v0;
+      dbgN0 = n0;
       float cl = cos(ang + iTime * 2.0) * 0.5 + 0.5;
 
       float a = iTime * -1.0;
@@ -183,7 +209,9 @@ export default function Orb({
       float v1 = light2(1.5, 5.0, d);
       v1 *= light1(1.0, 50.0, d0);
 
-      float v2 = smoothstep(1.0, mix(innerRadius, 1.0, n0 * 0.5), len);
+      // 【本地修改】同上，原写法 edge0 = 1.0 > edge1 亦属未定义行为，改为等价写法。
+      float v2 = 1.0 - smoothstep(mix(innerRadius, 1.0, n0 * 0.5), 1.0, len);
+      dbgV2 = v2;
       float v3 = smoothstep(innerRadius, mix(innerRadius, 1.0, 0.5), len);
 
       vec3 colBase = mix(color1, color2, cl);
@@ -194,7 +222,15 @@ export default function Orb({
       darkCol = clamp(darkCol, 0.0, 1.0);
 
       vec3 lightCol = (colBase + v1) * mix(1.0, v2 * v3, fadeAmount);
-      lightCol = mix(backgroundColor, lightCol, v0);
+
+      // 【本地修改】给 v0 加下限。
+      // 浅色路径的颜色完全由 v0 决定（深色路径有 color3 兜底，v0 归零仍有形状），
+      // v0→0 时这里等于 backgroundColor，在纯白主页上就是整屏空白 —— 真机实测正是如此。
+      // 加下限后浅色不再依赖 v0 的绝对值，任何把 v0 压低的原因都兜得住。
+      // 0.25 对桌面现状的平均色差约 2.6/255，肉眼不可见；若真机上球体偏平可上调
+      // （0.35 ~ 0.45），代价是浅色球心更实。
+      float v0Light = max(v0, 0.25);
+      lightCol = mix(backgroundColor, lightCol, v0Light);
 
       // 【本地修改】乘上球体遮罩 v2，让球体外部的颜色归零。
       // 上游漏了这一步：球外 v0≈0，lightCol 因此等于 backgroundColor，
@@ -230,6 +266,14 @@ export default function Orb({
     void main() {
       vec2 fragCoord = vUv * iResolution.xy;
       vec4 col = mainImage(fragCoord);
+
+      // 【本地修改 · 临时调试】控制台里 __orb.program.uniforms.uDebugV0.value = 1
+      // 即把中间量画成 RGB：R = v0，G = n0，B = v2。排查完删除。
+      if (uDebugV0 > 0.5) {
+        gl_FragColor = vec4(dbgV0, dbgN0, dbgV2, 1.0);
+        return;
+      }
+
       gl_FragColor = vec4(col.rgb * col.a, col.a);
     }
   `
@@ -250,8 +294,20 @@ export default function Orb({
      * 再削弱一次就彻底融进白底）；深色主题对比余量大，扛得住，所以看不出问题。
      *
      * 若将来更新 Orb 上游版本，需重新套用此改动。
+     *
+     * 【本地修改 · 临时调试】preserveDrawingBuffer 由 false 改为 true。
+     *
+     * 它是判断「球体到底画出了什么」的唯一手段：默认情况下帧缓冲在合成后即被丢弃，
+     * toDataURL() / readPixels() 拿到的都是空的，只能靠猜。
+     * 打开后可在 chrome://inspect 控制台直接读画布内容。
+     *
+     * 代价：驱动需要保留一份帧缓冲拷贝，移动端有实际开销。排查完应改回 false。
      */
-    const renderer = new Renderer({ alpha: true, premultipliedAlpha: true })
+    const renderer = new Renderer({
+      alpha: true,
+      premultipliedAlpha: true,
+      preserveDrawingBuffer: true,
+    })
     const gl = renderer.gl
     const canvas = gl.canvas as HTMLCanvasElement
 
@@ -276,16 +332,33 @@ export default function Orb({
         rot: { value: 0 },
         hoverIntensity: { value: hoverIntensity },
         backgroundColor: { value: hexToVec3(backgroundColor) },
+        // 【本地修改 · 临时调试】默认 0，控制台置 1 输出中间量灰度图，排查完删除
+        uDebugV0: { value: 0 },
       },
     })
 
     const mesh = new Mesh(gl, { geometry, program })
+
+    /**
+     * 【本地修改 · 临时调试】把 WebGL 上下文与 program 暴露到全局，供真机排查。
+     *
+     * chrome://inspect 控制台里可用：
+     *   __orb.program.uniforms.uDebugV0.value = 1   // 切到中间量可视化
+     *   __orb.canvas.toDataURL()                    // 需 preserveDrawingBuffer 为 true
+     *
+     * 排查完应连同 uDebugV0、preserveDrawingBuffer 一起删除。
+     */
+    window.__orb = { gl, program, canvas }
 
     function resize(): void {
       if (!container) return
       const dpr = window.devicePixelRatio || 1
       const width = container.clientWidth
       const height = container.clientHeight
+      // 【本地修改】尺寸为 0 时直接返回。
+      // setSize(0, 0) 会让 iResolution 变成 (0, 0, NaN)，随之 uv 全为 NaN，
+      // 整个着色器静默无输出 —— 表面上就是「什么都没画」，且控制台没有任何报错。
+      if (width === 0 || height === 0) return
       renderer.setSize(width * dpr, height * dpr)
       canvas.style.width = width + 'px'
       canvas.style.height = height + 'px'
@@ -353,6 +426,7 @@ export default function Orb({
       window.removeEventListener('resize', resize)
       container.removeEventListener('mousemove', handleMouseMove)
       container.removeEventListener('mouseleave', handleMouseLeave)
+      delete window.__orb
       if (canvas.parentNode === container) container.removeChild(canvas)
       gl.getExtension('WEBGL_lose_context')?.loseContext()
     }
