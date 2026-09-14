@@ -459,7 +459,7 @@
 */
 .screen--chat {
   position: relative;
-  background: var(--color-background);
+  background: var(--color-chat-background);
 }
 
 .screen--chat::before {
@@ -467,13 +467,24 @@
   position: absolute;
   inset: 0;
   z-index: 0;
+
+  /* 图案 = 纯色 + 柔光混合，而非直接叠一层半透明灰。
+     telegram-tt 的 _patternBackground 用同一套做法，注释写明：
+     「柔光下的强黑图案在任何背景色上都能明显变暗；淡色调几乎看不见，故不使用」。
+
+     ⚠️ 前提是底色不能是纯白/纯黑 —— soft-light 在两端恒等于原色。
+        所以 .screen--chat 用的是 --color-chat-background 而非 --color-background。 */
   background-color: var(--color-chat-pattern);
+  mix-blend-mode: soft-light;
+  opacity: var(--chat-pattern-intensity);
+
   -webkit-mask-image: var(--chat-bg);
   mask-image: var(--chat-bg);
   -webkit-mask-repeat: repeat;
   mask-repeat: repeat;
-  -webkit-mask-size: 15rem auto;
-  mask-size: 15rem auto;
+  /* 图案尺寸取自 telegram-tt 的 mask-size（26.875rem） */
+  -webkit-mask-size: 26.875rem auto;
+  mask-size: 26.875rem auto;
   pointer-events: none;
 }
 
@@ -611,7 +622,8 @@
   aspect-ratio: 3 / 4;
   overflow: hidden;
   border-radius: var(--border-radius-default);
-  background-color: var(--color-background);
+  /* 与聊天页同底色，否则缩略图里的图案同样看不见（soft-light 在纯白上失效） */
+  background-color: var(--color-chat-background);
 }
 
 .chat-bg-grid__preview::before {
@@ -619,12 +631,14 @@
   position: absolute;
   inset: 0;
   background-color: var(--color-chat-pattern);
+  mix-blend-mode: soft-light;
+  opacity: var(--chat-pattern-intensity);
   -webkit-mask-image: var(--chat-bg);
   mask-image: var(--chat-bg);
   -webkit-mask-repeat: repeat;
   mask-repeat: repeat;
-  -webkit-mask-size: 15rem auto;
-  mask-size: 15rem auto;
+  -webkit-mask-size: 26.875rem auto;
+  mask-size: 26.875rem auto;
 }
 
 /* 选中态用主色描边。不用背景色 —— 那样会盖住图案本身 */
