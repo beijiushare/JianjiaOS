@@ -503,7 +503,7 @@
 */
 @media (prefers-color-scheme: dark) {
   .screen--chat {
-    background: var(--color-background);
+    background: var(--chat-bg-base);
   }
 
   .screen--chat::before {
@@ -668,7 +668,7 @@
 /* 深色下与聊天页同步切换成 masked-pattern 模式，否则预览与实际不符 */
 @media (prefers-color-scheme: dark) {
   .chat-bg-grid__preview {
-    background: var(--color-background);
+    background: var(--chat-bg-base);
   }
 
   .chat-bg-grid__preview::before {

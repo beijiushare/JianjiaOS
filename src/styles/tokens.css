@@ -228,8 +228,7 @@
     --color-active:                  #8774E1;
 
     /* 深色壁纸渐变。取自 telegram-tt 的 DEFAULT_DARK_WALLPAPER.colors。
-       ⚠️ 深色下渐变不铺满背景：它由图案当遮罩，只出现在图案线条里，
-          底色仍是 --color-background（见 index.css 的 masked-pattern 说明）。 */
+       ⚠️ 深色下渐变不铺满背景：它由图案当遮罩，只出现在图案线条里。 */
     --chat-bg-gradient:              linear-gradient(
                                       160deg,
                                       #4f5bd5 0%,
@@ -237,6 +236,13 @@
                                       #dd6cb9 70%,
                                       #fec496 100%
                                     );
+
+    /* 深色聊天区底色（masked 模式打底用）。
+       ⚠️ 故意不复用 --color-background：后者是全局变量，底栏 / 消息气泡 /
+          分组容器都依赖它，改它会牵动整个应用。
+       此处用的是 Telegram Android 深色主题的经典背景色，比我们的 #111B29 亮一档，
+       原版 telegram-tt 用纯黑，但那个在手机上看偏死板。 */
+    --chat-bg-base:                  #17212B;
 
     --color-borders:                 #303030;
     --color-borders-input:           #5B5B5A;
