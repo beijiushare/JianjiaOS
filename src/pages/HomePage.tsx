@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import { APP_REGISTRY, type AppInfo } from '@/apps/registry'
 import { BottomBar } from '@/components/BottomBar'
+import { GrokBot } from '@/components/grok-bot/GrokBot'
 import { ListItem } from '@/components/ListItem'
 import { SearchInput } from '@/components/SearchInput'
 import { selectUnreadCount, useMessagesStore } from '@/messages/store'
@@ -33,6 +34,8 @@ export function HomePage() {
     <div className="screen screen--home">
       <div className="home-body">
         <div className="home-content">
+          <GrokBot />
+
           <SearchInput
             value={query}
             onChange={setQuery}

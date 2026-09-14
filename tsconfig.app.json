@@ -8,6 +8,11 @@
     "allowArbitraryExtensions": true,
     "skipLibCheck": true,
 
+    /* src/components/grok-bot/vendor/ 下是原样引入的上游 .js（IIFE），
+       不开 allowJs 这些副作用 import 会报 TS2307 找不到模块。
+       配套的全局类型在 grok-bot/grok-character.d.ts。 */
+    "allowJs": true,
+
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,

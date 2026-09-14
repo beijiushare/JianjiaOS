@@ -255,6 +255,40 @@
   text-align: center;
 }
 
+/*
+  主页机器人（Grok Bot，搜索框上方）。
+  引擎渲染进内联 SVG，尺寸完全由这里决定 —— 没给 sizePx，svg 不带行内宽高。
+
+  ⚠️ color-scheme: light dark 是必需的，不是装饰。引擎的墨色取 CSS 的
+     light-dark(#000, #fff)，而 light-dark() 只有在元素有 used color scheme
+     时才求值 —— 不声明 color-scheme 会直接失效。
+
+  ⚠️ 眼睛是「挖空」画法：眼睛形状填充的是背景色（引擎侧写作 var(--bg)，
+     默认回退到 --sand-bg-base）。这里必须给成与当前背景一致的值，
+     否则眼睛会显出一块异色。复用 --color-background 即可 ——
+     深色下它是 #263547，正好是主页渐变顶端的颜色。
+*/
+.grok-bot {
+  align-self: center;
+  width: 6.5rem;
+  height: 6.5rem;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.grok-bot svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* 特效会画到 viewBox 之外 */
+  overflow: visible;
+  color-scheme: light dark;
+  --sand-bg-base: var(--color-background);
+}
+
 /* ==========================================================================
    搜索框
    ========================================================================== */

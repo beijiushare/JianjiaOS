@@ -1,0 +1,5 @@
+{
+  "ignorePatterns": [
+    "src/components/grok-bot/vendor/**"
+  ]
+}
