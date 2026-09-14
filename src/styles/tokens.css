@@ -69,11 +69,20 @@
   --color-active:                   #00C73E;
   /* ── 聊天背景（图案 + 底色）────────────────────────── */
 
-  /* 聊天区底色。⚠️ 不能用纯白 —— 图案用 mix-blend-mode: soft-light 呈现，
-     而 soft-light 在纯白/纯黑上恒等于原色（公式含 base*(1-base)，两端为 0），
-     纯白底上的图案会完全不可见。
-     取值来自 telegram-tt 的 DEFAULT_BACKGROUND_COLOR（SettingsGeneralBackgroundColor.tsx）。 */
-  --color-chat-background:          #E6EBEE;
+  /* 聊天区背景：四色渐变。
+     ⚠️ 必须是渐变，不能用纯色 —— 图案用 mix-blend-mode: soft-light 呈现，
+        而 soft-light 在纯色上只有约 5% 的对比（公式化简为 base²，
+        再乘 opacity 0.5 的权重），叠在渐变上则处处都有变化，图案才看得清。
+        纯白/纯黑更极端：soft-light 在两端恒等于原色，图案完全不可见。
+
+     取值来自 telegram-tt 的 DEFAULT_LIGHT_WALLPAPER.colors（util/wallpaper.ts）。 */
+  --chat-bg-gradient:               linear-gradient(
+                                      160deg,
+                                      #bdcd8c 0%,
+                                      #8eba89 35%,
+                                      #83b28f 70%,
+                                      #c5d3b0 100%
+                                    );
 
   /* 图案颜色。浅色用黑（柔光压暗），深色用白（柔光提亮）——
      soft-light 在暗底上叠加黑色同样趋近无效，必须反过来用白。 */
@@ -218,8 +227,14 @@
     /* 深色下 active 变紫（与 --color-primary 同色系） */
     --color-active:                  #8774E1;
 
-    /* 深色下聊天底色用主背景色，图案改用白色（柔光提亮） */
-    --color-chat-background:         #111B29;
+    /* 深色壁纸。取自 telegram-tt 的 DEFAULT_DARK_WALLPAPER.colors */
+    --chat-bg-gradient:              linear-gradient(
+                                      160deg,
+                                      #4f5bd5 0%,
+                                      #962fbf 35%,
+                                      #dd6cb9 70%,
+                                      #fec496 100%
+                                    );
     --color-chat-pattern:            #fff;
 
     --color-borders:                 #303030;

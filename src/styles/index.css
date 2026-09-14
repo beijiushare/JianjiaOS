@@ -459,7 +459,7 @@
 */
 .screen--chat {
   position: relative;
-  background: var(--color-chat-background);
+  background: var(--chat-bg-gradient);
 }
 
 .screen--chat::before {
@@ -472,8 +472,8 @@
      telegram-tt 的 _patternBackground 用同一套做法，注释写明：
      「柔光下的强黑图案在任何背景色上都能明显变暗；淡色调几乎看不见，故不使用」。
 
-     ⚠️ 前提是底色不能是纯白/纯黑 —— soft-light 在两端恒等于原色。
-        所以 .screen--chat 用的是 --color-chat-background 而非 --color-background。 */
+     ⚠️ 前提是背景必须是渐变而非纯色 —— soft-light 在纯色上只有约 5% 的对比，
+        在纯白/纯黑上更是恒等于原色。所以 .screen--chat 用的是 --chat-bg-gradient。 */
   background-color: var(--color-chat-pattern);
   mix-blend-mode: soft-light;
   opacity: var(--chat-pattern-intensity);
@@ -622,8 +622,8 @@
   aspect-ratio: 3 / 4;
   overflow: hidden;
   border-radius: var(--border-radius-default);
-  /* 与聊天页同底色，否则缩略图里的图案同样看不见（soft-light 在纯白上失效） */
-  background-color: var(--color-chat-background);
+  /* 与聊天页同背景，否则缩略图里的图案同样看不见（soft-light 在纯色上对比极弱） */
+  background: var(--chat-bg-gradient);
 }
 
 .chat-bg-grid__preview::before {
