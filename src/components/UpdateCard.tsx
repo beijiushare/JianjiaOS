@@ -41,7 +41,13 @@ export function UpdateCard({
         <p className="update-card__current">当前版本 {currentVersion}</p>
       )}
 
-      {notes !== '' && <Markdown text={notes} />}
+      {/*
+        ⚠️ 必须用 typeof 判断，不能写 notes !== ''。
+        notes 是后续版本才加进数据结构的字段，旧版本持久化的消息里根本没有它，
+        取出来是 undefined —— 而 undefined !== '' 成立，会把 undefined 传进
+        Markdown，在 text.split() 处抛 TypeError 并使整棵树白屏。
+      */}
+      {typeof notes === 'string' && notes !== '' && <Markdown text={notes} />}
 
       {state.status === 'downloading' && (
         <div className="update-card__progress">

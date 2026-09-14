@@ -30,12 +30,40 @@ export async function hydrateMessages(): Promise<void> {
 
     const data = JSON.parse(value) as Partial<Persisted>
     useMessagesStore.setState({
-      messages: data.messages ?? [],
+      messages: (data.messages ?? []).map(migrateMessage),
       notifiedVersions: data.notifiedVersions ?? [],
     })
   } catch (e) {
     // 数据损坏时宁可丢弃也不能让应用起不来
     console.warn('[messages] 恢复失败，将从空状态开始', e)
+  }
+}
+
+/**
+ * 把旧版本存下来的消息补齐到当前结构。
+ *
+ * 持久化的数据是「跨版本存活」的，而结构会随开发演进 —— 新增字段后，
+ * 旧数据里就没有它，读出来是 undefined。渲染层若不防御就会崩，
+ * 且表现为整页白屏、原因难查（本项目已踩过一次）。
+ *
+ * 约定：**每次给消息结构加字段，都要在这里补一次默认值**。
+ * 若将来改动大到无法逐字段兼容，就换 KEY 的版本号（messages.v2）直接丢弃旧数据。
+ */
+function migrateMessage(message: Message): Message {
+  if (message.kind.type !== 'update-card') return message
+
+  return {
+    ...message,
+    kind: {
+      type: 'update-card',
+      card: {
+        ...message.kind.card,
+        notes:
+          typeof message.kind.card.notes === 'string'
+            ? message.kind.card.notes
+            : '',
+      },
+    },
   }
 }
 

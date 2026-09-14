@@ -12,8 +12,11 @@ import type { ReactNode } from 'react'
  * 不支持的语法（表格、代码块、链接等）会按纯文本原样显示 —— 内容不会丢，
  * 只是没有样式。若将来真要这些，再换成 marked 之类的库。
  */
-export function Markdown({ text }: { text: string }) {
-  return <div className="md">{parse(text)}</div>
+export function Markdown({ text }: { text?: string }) {
+  // 兜底：text 可能来自持久化的旧数据（缺字段时是 undefined）。
+  // 不加这层的话，parse 里 text.split() 会抛 TypeError 并让整棵树白屏 ——
+  // 这个坑本项目已经踩过一次。
+  return <div className="md">{parse(text ?? '')}</div>
 }
 
 function parse(text: string): ReactNode[] {
