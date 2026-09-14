@@ -119,7 +119,7 @@
   /* 抽屉（全屏毛玻璃面板）底色。与搜索框分开 —— 两者的面积、
      内容密度、可读性要求都不同，调节时不该互相牵动。
      比搜索框更透：抽屉后面是主屏，透出的内容本身就有信息量。 */
-  --color-drawer-background:        #FFFFFF44;
+  --color-drawer-background:        #FFFFFF33;
   --color-hover-overlay:            #00000006;
   --color-background-menu-separator:#0000001a;
 
@@ -270,7 +270,7 @@
     --color-toast-background:        #000000CC;
     /* 深色值改用新主背景的色系（原 #212121 已与 #263547 的底色不搭） */
     --color-background-compact-menu: #2635478C;
-    --color-drawer-background:       #2635476B;
+    --color-drawer-background:       #2635474D;
     --color-hover-overlay:           #ffffff06;
     --color-background-menu-separator:#ffffff1a;
 
