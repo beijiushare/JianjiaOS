@@ -31,16 +31,21 @@
   层使用 absolute 相对 .app-root（其自身为 fixed，且无 overflow 祖先）。
   不使用 fixed —— fixed 元素若存在 overflow 祖先，Android WebView 真机不渲染。
 */
+/*
+  层的定位基类。
+
+  ⚠️ 这里只负责「在哪」，不负责「长什么样」—— 任何视觉属性（背景、圆角、溢出）
+     都下放到 .layer--push / .layer--drawer 各自定义。
+
+     曾经在图省事把「不设背景」写在这里，理由是替抽屉让路，
+     结果 push 页被连累成透明（透出下层主屏）。两个不相干的页面不该互相绑架。
+*/
 .layer {
   position: absolute;
   inset: 0;
   display: flex;
   flex-direction: column;
   will-change: transform;
-
-  /* 不设背景 —— 由内层决定：
-     push 页是 .screen（不透明），抽屉是 .drawer（半透明毛玻璃）。
-     此处若设背景会盖住抽屉的透明度。 */
 }
 
 /*
@@ -95,8 +100,9 @@
   to   { opacity: 0; }
 }
 
-/* push 页：横向转场。默认自右滑入（表示「前进」） */
+/* push 页：不透明，横向转场。默认自右滑入（表示「前进」） */
 .layer--push {
+  background: var(--app-bg-gradient);
   animation: layer-in-right var(--slide-duration) var(--slide-easing) both;
 }
 .layer--push.is-exiting {
@@ -132,7 +138,12 @@
   to   { transform: translateX(-100%); }
 }
 
-/* 抽屉页：纵向转场（转场方向与时长均与 push 页不同，见 tokens.css） */
+/*
+  抽屉页：纵向转场（方向与时长均与 push 页不同，见 tokens.css）。
+
+  故意不设背景 —— 背景由内部的 .drawer 提供半透明毛玻璃，
+  这一层若有背景就会盖掉磨砂效果。与 push 页毫无共享。
+*/
 .layer--drawer {
   border-top-left-radius: var(--border-radius-modal);
   border-top-right-radius: var(--border-radius-modal);
