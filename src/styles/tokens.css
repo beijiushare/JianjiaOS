@@ -108,12 +108,12 @@
   --color-toast-background:         #202020CC;
   /* 毛玻璃浮层底（搜索框、抽屉）。
      ⚠️ 透明度已偏离 telegram-tt 原值（原 #FFFFFFBB / 深 #212121DD），
-        当前不透明度：浅 47% / 深 60%。与 backdrop-filter 配合使用，
+        当前不透明度：浅 33% / 深 55%。与 backdrop-filter 配合使用，
         单独调透明度而不带模糊会退化为普通半透明色块。
-     两处共用，改动会同时生效。
+     两处共用（抽屉 + 搜索框），改动会同时生效。
      ⚠️ 不宜再低：搜索框内的 placeholder 文字压在此底色上，
-        不透明度低于约 40% 时，背后内容会明显干扰文字可读性。 */
-  --color-background-compact-menu:  #FFFFFF77;
+        不透明度低于约 30% 时，背后内容会明显干扰文字可读性。 */
+  --color-background-compact-menu:  #FFFFFF55;
   --color-hover-overlay:            #00000006;
   --color-background-menu-separator:#0000001a;
 
@@ -262,7 +262,8 @@
 
     /* ── 浮层 ────────────────────────────────────────── */
     --color-toast-background:        #000000CC;
-    --color-background-compact-menu: #21212199;
+    /* 深色值改用新主背景的色系（原 #212121 已与 #263547 的底色不搭） */
+    --color-background-compact-menu: #2635478C;
     --color-hover-overlay:           #ffffff06;
     --color-background-menu-separator:#ffffff1a;
 
