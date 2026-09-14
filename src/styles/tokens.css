@@ -20,6 +20,10 @@
   /* ── 背景 ──────────────────────────────────────────── */
   --color-background:               #FFFFFF;
   --color-background-secondary:     #F4F4F5;
+
+  /* 应用最底层背景（浅色下为纯白，等价于没有渐变）。
+     见深色块里的说明。 */
+  --app-bg-gradient:                #FFFFFF;
   --color-background-sidebar:       #E4E4E5;
   --color-background-own:           #EEFFDE;   /* 我方消息气泡 */
   --color-background-own-selected:  #d0ffac;
@@ -203,8 +207,17 @@
     /* ⚠️ 深色主背景偏离 telegram-tt 原值(#212121)，用偏蓝的深灰。
        它是全局底：底栏、对方气泡、分组容器、输入框全用它，改一处整体变亮/变暗。
        副背景色保持「比主背景暗一档」的相对关系，避免并排时色相打架。 */
-    --color-background:              #1E2C3A;
-    --color-background-secondary:    #151F2B;
+    --color-background:              #263547;
+    --color-background-secondary:    #1B2836;
+
+    /* 应用最底层背景。只有页面「透出」这一层时才可见 ——
+       各 .screen 已改为透明背景，故页面整体会呈现这个渐变。
+       浅色下是纯白，等价于没有渐变。 */
+    --app-bg-gradient:               linear-gradient(
+                                      180deg,
+                                      #263547 0%,
+                                      #1B2E45 100%
+                                    );
     --color-background-sidebar:      #0F0F0F;
     --color-background-own:          #766AC8;
     --color-background-own-selected: #6549d4;

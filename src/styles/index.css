@@ -17,7 +17,8 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: var(--color-background);
+  /* 渐变铺在最底层，各 .screen 透明后透出它 */
+  background: var(--app-bg-gradient);
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
 }
@@ -155,12 +156,18 @@
    页面外壳
    ========================================================================== */
 
+/*
+  页面容器。背景透明 —— 让 .app-root 的渐变透出来。
+  （此前是 background: var(--color-background)，纯色会盖住渐变。）
+
+  需要自己背景的页面单独覆盖：如 .screen--chat（聊天壁纸）。
+*/
 .screen {
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  background: var(--color-background);
+  background: transparent;
 }
 
 
