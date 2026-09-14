@@ -229,7 +229,20 @@ export default function Orb({
     const container = ctnDom.current
     if (!container) return
 
-    const renderer = new Renderer({ alpha: true, premultipliedAlpha: false })
+    /**
+     * 【本地修改】premultipliedAlpha 由 false 改为 true。
+     *
+     * 上游写的是 false，但它的 shader 输出的是**预乘**颜色：
+     *     gl_FragColor = vec4(col.rgb * col.a, col.a);
+     * 两者不匹配时浏览器会按非预乘公式再合成一次，等于 alpha 被乘了两遍，
+     * 半透明区域的颜色被双重削弱。
+     *
+     * 症状：浅色主题下整个球看不见（浅色路径本身就把颜色往背景白里混过一遍，
+     * 再削弱一次就彻底融进白底）；深色主题对比余量大，扛得住，所以看不出问题。
+     *
+     * 若将来更新 Orb 上游版本，需重新套用此改动。
+     */
+    const renderer = new Renderer({ alpha: true, premultipliedAlpha: true })
     const gl = renderer.gl
     const canvas = gl.canvas as HTMLCanvasElement
 
