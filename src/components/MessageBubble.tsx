@@ -11,7 +11,6 @@ interface MessageBubbleProps {
   /** 本机当前版本名，供更新卡片显示 */
   currentVersion?: string
   onUpdate?: () => void
-  onDismiss?: () => void
   onCancelDownload?: () => void
   onInstall?: () => void
   onDelete?: () => void
@@ -29,7 +28,6 @@ export function MessageBubble({
   message,
   currentVersion,
   onUpdate,
-  onDismiss,
   onCancelDownload,
   onInstall,
   onDelete,
@@ -91,7 +89,6 @@ export function MessageBubble({
             card={message.kind.card}
             currentVersion={currentVersion}
             onUpdate={onUpdate}
-            onDismiss={onDismiss}
           />
         )
 

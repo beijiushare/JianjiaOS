@@ -1,7 +1,7 @@
 import { Preferences } from '@capacitor/preferences'
 
 import { useMessagesStore } from './store'
-import type { Message, UpdateCardState } from './types'
+import type { Message } from './types'
 
 /**
  * 消息持久化。规格见设计文档 §5.1。
@@ -52,24 +52,18 @@ export async function hydrateMessages(): Promise<void> {
 function migrateMessage(message: Message): Message {
   if (message.kind.type !== 'update-card') return message
 
-  // 旧数据里卡片可能停在 downloading / downloaded / installing / failed ——
-  // 这些状态已迁到独立的下载消息，卡片本身不该保留它们。
-  // 除 cancelled（用户明确忽略过）外，一律回到 idle。
-  const raw = message.kind.card.state as { status?: string } | undefined
-  const state: UpdateCardState =
-    raw?.status === 'cancelled' ? { status: 'cancelled' } : { status: 'idle' }
+  // 旧数据的卡片上带着 state（idle/cancelled/downloading/…），
+  // 该字段已整体废除 —— 下载过程改由独立消息表达，忽略功能也去掉了。
+  // 这里把它丢掉，只保留 versionName / notes。
+  const { versionName, notes } = message.kind.card
 
   return {
     ...message,
     kind: {
       type: 'update-card',
       card: {
-        ...message.kind.card,
-        notes:
-          typeof message.kind.card.notes === 'string'
-            ? message.kind.card.notes
-            : '',
-        state,
+        versionName,
+        notes: typeof notes === 'string' ? notes : '',
       },
     },
   }

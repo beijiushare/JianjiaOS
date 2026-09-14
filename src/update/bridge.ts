@@ -15,7 +15,7 @@
  */
 
 import { useMessagesStore } from '@/messages/store'
-import type { DownloadMessageState, UpdateCardState } from '@/messages/types'
+import type { DownloadMessageState } from '@/messages/types'
 
 import {
   type ReleaseInfo,
@@ -39,10 +39,6 @@ function errText(e: unknown): string {
 
 function reasonOf(e: unknown, fallback: string): string {
   return e instanceof UpdateError ? e.message : fallback
-}
-
-function setCard(messageId: string, state: UpdateCardState): void {
-  useMessagesStore.getState().setCardState(messageId, state)
 }
 
 function setDownloadState(messageId: string, state: DownloadMessageState): void {
@@ -93,11 +89,7 @@ function notifyUpdate(info: ReleaseInfo): boolean {
     read: false,
     kind: {
       type: 'update-card',
-      card: {
-        versionName: info.versionName,
-        notes: info.notes,
-        state: { status: 'idle' },
-      },
+      card: { versionName: info.versionName, notes: info.notes },
     },
   })
   store.markNotified(info.versionName)
@@ -240,11 +232,6 @@ export async function abortDownload(downloadId: string): Promise<void> {
   pushText('已取消本次更新')
 }
 
-/** 用户点更新卡片上的「忽略」：只标记卡片，不碰下载 */
-export function dismissUpdate(cardMessageId: string): void {
-  setCard(cardMessageId, { status: 'cancelled' })
-}
-
 /** 用户点下载消息上的「安装」：拉起系统安装器 */
 export async function installDownloaded(downloadId: string): Promise<void> {
   try {
@@ -283,7 +270,6 @@ export function injectDevFixture(): void {
           '- 消息列表的系统消息改用设置图标',
           '- **重要**：升级后首次启动会重建缓存',
         ].join('\n'),
-        state: { status: 'idle' },
       },
     },
   })

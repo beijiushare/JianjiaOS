@@ -7,17 +7,15 @@ import type { ComponentType } from 'react'
 export type ChatId = 'system'
 
 /**
- * 更新卡片的状态。
+ * 更新卡片**没有状态**。
  *
- * 只有两种 —— 卡片是「某版本发布过」的历史记录，不再随下载流程变形：
- *   idle       可更新（显示「取消 / 更新」按钮）
- *   cancelled  已忽略本次更新（显示「重新下载」）
+ * 卡片表达的是「某版本发布过」这一个事实，是历史记录：
+ *   · 下载 / 安装这些过程状态 → 各自发一条新消息（见 DownloadMessageState）
+ *   · 「忽略本次更新」也不做 —— notifiedVersions 已按版本名去重，
+ *     同一版本只会发一次卡片，重启也不会重发，没有要忽略的东西
  *
- * ⚠️ 下载中 / 已下载 / 安装中 / 失败这些**过程状态已迁出**，
- *    改为各自发一条新消息（见 DownloadMessageState）。
- *    设计文档 §5.2 描述的状态机是旧设计，已作废。
+ * 设计文档 §5.2 描述的「卡片状态机」是旧设计，已作废。
  */
-export type UpdateCardState = { status: 'idle' } | { status: 'cancelled' }
 
 export interface UpdateCard {
   /** 目标版本名，如 0.2.0 */
@@ -27,14 +25,6 @@ export interface UpdateCard {
    * 来源是 GitHub Release 的 body —— 发布时在 workflow 的 notes 输入框里填的内容。
    */
   notes: string
-  /**
-   * 卡片自身的状态。
-   *
-   * ⚠️ 只保留 idle / cancelled 两种。
-   *    下载、安装这些过程状态已改为「另发新消息」，卡片不再跟随变形 ——
-   *    它是「某版本发布过」的历史记录，不该被后续操作改写。
-   */
-  state: UpdateCardState
 }
 
 /**

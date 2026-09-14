@@ -9,7 +9,6 @@ import { useSettingsStore } from '@/settings/store'
 import { getAppVersion } from '@/settings/version'
 import {
   abortDownload,
-  dismissUpdate,
   installDownloaded,
   startDownload,
 } from '@/update/bridge'
@@ -62,7 +61,6 @@ export function ChatPage() {
             message={m}
             currentVersion={currentVersion}
             onUpdate={() => void startDownload()}
-            onDismiss={() => dismissUpdate(m.id)}
             onCancelDownload={() => void abortDownload(m.id)}
             onInstall={() => void installDownloaded(m.id)}
             onDelete={() => removeMessage(m.id)}
