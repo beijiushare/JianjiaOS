@@ -5,7 +5,6 @@ node_modules/
 dist/
 *.local
 
-# 本机专用说明，不进版本库（*.local 不匹配 .md，需单独排除）
 *-local.md
 
 android/app/build/
