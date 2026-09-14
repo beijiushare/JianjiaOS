@@ -270,7 +270,9 @@
     --color-toast-background:        #000000CC;
     /* 深色值改用新主背景的色系（原 #212121 已与 #263547 的底色不搭） */
     --color-background-compact-menu: #2635478C;
-    --color-drawer-background:       #26354733;
+    /* 刻意不用主背景同色（#263547）—— 叠了等于没叠，看不出「有一层浮在上面」。
+       取更亮一档的 #3A4F66，透明度维持 20%。 */
+    --color-drawer-background:       #3A4F6633;
     --color-hover-overlay:           #ffffff06;
     --color-background-menu-separator:#ffffff1a;
 
