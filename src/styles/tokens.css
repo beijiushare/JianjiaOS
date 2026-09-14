@@ -227,7 +227,9 @@
     /* 深色下 active 变紫（与 --color-primary 同色系） */
     --color-active:                  #8774E1;
 
-    /* 深色壁纸。取自 telegram-tt 的 DEFAULT_DARK_WALLPAPER.colors */
+    /* 深色壁纸渐变。取自 telegram-tt 的 DEFAULT_DARK_WALLPAPER.colors。
+       ⚠️ 深色下渐变不铺满背景：它由图案当遮罩，只出现在图案线条里，
+          底色仍是 --color-background（见 index.css 的 masked-pattern 说明）。 */
     --chat-bg-gradient:              linear-gradient(
                                       160deg,
                                       #4f5bd5 0%,
@@ -235,7 +237,6 @@
                                       #dd6cb9 70%,
                                       #fec496 100%
                                     );
-    --color-chat-pattern:            #fff;
 
     --color-borders:                 #303030;
     --color-borders-input:           #5B5B5A;
