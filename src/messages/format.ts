@@ -23,10 +23,22 @@ export function formatClock(ts: number): string {
 /** 会话列表的摘要文字 */
 export function previewOf(message: Message | undefined): string {
   if (!message) return ''
+
   switch (message.kind.type) {
     case 'text':
       return message.kind.text
+
     case 'update-card':
       return `发现新版本 ${message.kind.card.versionName}`
+
+    case 'download':
+      switch (message.kind.state.status) {
+        case 'downloading':
+          return `正在下载… ${String(message.kind.state.percent)}%`
+        case 'downloaded':
+          return '下载完成，可以安装了'
+        case 'failed':
+          return '下载失败'
+      }
   }
 }

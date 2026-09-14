@@ -9,6 +9,7 @@ import { useSettingsStore } from '@/settings/store'
 import { getAppVersion } from '@/settings/version'
 import {
   abortDownload,
+  dismissUpdate,
   installDownloaded,
   startDownload,
 } from '@/update/bridge'
@@ -26,6 +27,7 @@ export function ChatPage() {
   const chat = useMessagesStore((s) => s.chats[0])
   const messages = useMessagesStore((s) => s.messages)
   const backgroundId = useSettingsStore((s) => s.chatBackgroundId)
+  const removeMessage = useMessagesStore((s) => s.removeMessage)
 
   // 更新卡片要显示「当前版本」，取自原生层的 App.getInfo()
   const [currentVersion, setCurrentVersion] = useState('')
@@ -59,9 +61,11 @@ export function ChatPage() {
             key={m.id}
             message={m}
             currentVersion={currentVersion}
-            onUpdate={() => void startDownload(m.id)}
-            onCancel={() => void abortDownload(m.id)}
+            onUpdate={() => void startDownload()}
+            onDismiss={() => dismissUpdate(m.id)}
+            onCancelDownload={() => void abortDownload(m.id)}
             onInstall={() => void installDownloaded(m.id)}
+            onDelete={() => removeMessage(m.id)}
           />
         ))
       )}

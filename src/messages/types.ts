@@ -7,18 +7,17 @@ import type { ComponentType } from 'react'
 export type ChatId = 'system'
 
 /**
- * 更新卡片的状态机（设计文档 §5.2）。
+ * 更新卡片的状态。
  *
- * idle → downloading → downloaded → installing
- *   └→ cancelled / failed
+ * 只有两种 —— 卡片是「某版本发布过」的历史记录，不再随下载流程变形：
+ *   idle       可更新（显示「取消 / 更新」按钮）
+ *   cancelled  已忽略本次更新（显示「重新下载」）
+ *
+ * ⚠️ 下载中 / 已下载 / 安装中 / 失败这些**过程状态已迁出**，
+ *    改为各自发一条新消息（见 DownloadMessageState）。
+ *    设计文档 §5.2 描述的状态机是旧设计，已作废。
  */
-export type UpdateCardState =
-  | { status: 'idle' }
-  | { status: 'downloading'; percent: number }
-  | { status: 'downloaded' }
-  | { status: 'installing' }
-  | { status: 'cancelled' }
-  | { status: 'failed'; reason: string }
+export type UpdateCardState = { status: 'idle' } | { status: 'cancelled' }
 
 export interface UpdateCard {
   /** 目标版本名，如 0.2.0 */
@@ -28,12 +27,32 @@ export interface UpdateCard {
    * 来源是 GitHub Release 的 body —— 发布时在 workflow 的 notes 输入框里填的内容。
    */
   notes: string
+  /**
+   * 卡片自身的状态。
+   *
+   * ⚠️ 只保留 idle / cancelled 两种。
+   *    下载、安装这些过程状态已改为「另发新消息」，卡片不再跟随变形 ——
+   *    它是「某版本发布过」的历史记录，不该被后续操作改写。
+   */
   state: UpdateCardState
 }
+
+/**
+ * 下载进度消息的状态。
+ *
+ * ⚠️ 与 UpdateCard.state 的区别：那是「一张卡片随流程变形」的旧设计，
+ *    现在改为「每件事发一条新消息」，卡片本身不再变更。
+ *    本状态只描述「这一条下载消息」当前处于哪个阶段。
+ */
+export type DownloadMessageState =
+  | { status: 'downloading'; percent: number }
+  | { status: 'downloaded' }
+  | { status: 'failed'; reason: string }
 
 export type MessageKind =
   | { type: 'text'; text: string }
   | { type: 'update-card'; card: UpdateCard }
+  | { type: 'download'; state: DownloadMessageState }
 
 export interface Message {
   id: string

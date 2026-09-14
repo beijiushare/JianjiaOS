@@ -2,7 +2,13 @@ import { create } from 'zustand'
 
 import SettingsIcon from '@/assets/icons/settings-3-line.svg?react'
 
-import type { Chat, ChatId, Message, UpdateCardState } from './types'
+import type {
+  Chat,
+  ChatId,
+  DownloadMessageState,
+  Message,
+  UpdateCardState,
+} from './types'
 
 /**
  * 「系统消息」会话常驻：即使一条消息都没有，它也显示在会话列表里。
@@ -25,8 +31,12 @@ interface MessagesState {
 
   /** 追加一条消息 */
   appendMessage: (message: Message) => void
+  /** 删除一条消息（用户长按删除） */
+  removeMessage: (messageId: string) => void
   /** 更新消息携带的更新卡片。仅对 update-card 类型的消息生效 */
   setCardState: (messageId: string, state: UpdateCardState) => void
+  /** 更新下载消息的状态。仅对 download 类型的消息生效 */
+  setDownloadState: (messageId: string, state: DownloadMessageState) => void
   /** 记录「已就某版本发过更新消息」 */
   markNotified: (versionName: string) => void
   /** 把某会话的消息全部标记为已读 */
@@ -41,11 +51,23 @@ export const useMessagesStore = create<MessagesState>((set) => ({
   appendMessage: (message) =>
     set((s) => ({ messages: [...s.messages, message] })),
 
+  removeMessage: (messageId) =>
+    set((s) => ({ messages: s.messages.filter((m) => m.id !== messageId) })),
+
   setCardState: (messageId, state) =>
     set((s) => ({
       messages: s.messages.map((m) =>
         m.id === messageId && m.kind.type === 'update-card'
           ? { ...m, kind: { type: 'update-card', card: { ...m.kind.card, state } } }
+          : m,
+      ),
+    })),
+
+  setDownloadState: (messageId, state) =>
+    set((s) => ({
+      messages: s.messages.map((m) =>
+        m.id === messageId && m.kind.type === 'download'
+          ? { ...m, kind: { type: 'download', state } }
           : m,
       ),
     })),

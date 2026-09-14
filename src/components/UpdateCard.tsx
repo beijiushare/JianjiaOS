@@ -7,29 +7,22 @@ interface UpdateCardProps {
   /** 本机当前版本名，显示在卡片第一行 */
   currentVersion?: string
   onUpdate?: () => void
-  onCancel?: () => void
-  onInstall?: () => void
+  onDismiss?: () => void
 }
 
 /**
  * 更新卡片，嵌在消息气泡内。
  *
- * 内容自上而下：
- *   标题      发现新版本 {新版本名}
- *   当前版本  本机正在跑的版本
- *   更新说明  发布时填的 Markdown 原文
- *   状态与按钮
+ * ⚠️ 这张卡片**全程不变形** —— 它是「某版本发布过」的历史记录。
+ *    下载中 / 已下载 / 失败这些过程状态各自发一条新消息（见 DownloadMessage）。
  *
- * 状态机见设计文档 §5.2：
- *   idle → downloading → downloaded → installing
- *     └→ cancelled / failed
+ * 内容自上而下：标题 → 当前版本 → 更新说明（Markdown）→ 按钮
  */
 export function UpdateCard({
   card,
   currentVersion,
   onUpdate,
-  onCancel,
-  onInstall,
+  onDismiss,
 }: UpdateCardProps) {
   const { state, versionName, notes } = card
 
@@ -41,89 +34,28 @@ export function UpdateCard({
         <p className="update-card__current">当前版本 {currentVersion}</p>
       )}
 
-      {/*
-        ⚠️ 必须用 typeof 判断，不能写 notes !== ''。
-        notes 是后续版本才加进数据结构的字段，旧版本持久化的消息里根本没有它，
-        取出来是 undefined —— 而 undefined !== '' 成立，会把 undefined 传进
-        Markdown，在 text.split() 处抛 TypeError 并使整棵树白屏。
-      */}
       {typeof notes === 'string' && notes !== '' && <Markdown text={notes} />}
 
-      {state.status === 'downloading' && (
-        <div className="update-card__progress">
-          <div
-            className="update-card__bar"
-            style={{ width: `${String(state.percent)}%` }}
-          />
-        </div>
-      )}
-
-      <p className="update-card__status">{statusText(card)}</p>
-
-      <div className="update-card__actions">{renderActions()}</div>
-    </div>
-  )
-
-  function renderActions() {
-    switch (state.status) {
-      case 'idle':
-        return (
+      <div className="update-card__actions">
+        {state.status === 'idle' ? (
           <>
-            <button type="button" className="btn btn--plain" onClick={onCancel}>
-              取消
+            <button type="button" className="btn btn--plain" onClick={onDismiss}>
+              忽略
             </button>
-            <button type="button" className="btn btn--primary" onClick={onUpdate}>
+            <button
+              type="button"
+              className="btn btn--primary"
+              onClick={onUpdate}
+            >
               更新
             </button>
           </>
-        )
-      case 'downloading':
-        return (
-          <button type="button" className="btn btn--plain" onClick={onCancel}>
-            取消
-          </button>
-        )
-      case 'downloaded':
-        return (
-          <button
-            type="button"
-            className="btn btn--primary"
-            onClick={onInstall}
-          >
-            安装
-          </button>
-        )
-      case 'installing':
-        return null
-      case 'cancelled':
-        return (
+        ) : (
           <button type="button" className="btn btn--primary" onClick={onUpdate}>
             重新下载
           </button>
-        )
-      case 'failed':
-        return (
-          <button type="button" className="btn btn--primary" onClick={onUpdate}>
-            重试
-          </button>
-        )
-    }
-  }
-}
-
-function statusText(card: UpdateCardData): string {
-  switch (card.state.status) {
-    case 'idle':
-      return '可以更新到最新版本'
-    case 'downloading':
-      return `正在下载… ${String(card.state.percent)}%`
-    case 'downloaded':
-      return '下载完成，可以安装了'
-    case 'installing':
-      return '正在打开安装器…'
-    case 'cancelled':
-      return '已忽略本次更新'
-    case 'failed':
-      return `下载失败：${card.state.reason}`
-  }
+        )}
+      </div>
+    </div>
+  )
 }

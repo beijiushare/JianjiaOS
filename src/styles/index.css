@@ -766,13 +766,29 @@
   margin-top: 0.125rem;
 }
 
-.update-card__status {
-  margin-top: 0.5rem;
-  color: var(--color-text-secondary);
+.update-card__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+/* ==========================================================================
+   下载消息
+   ========================================================================== */
+
+.download__text {
+  color: var(--color-text);
+  font-size: 1rem;
+}
+
+.download__reason {
+  margin-top: 0.25rem;
+  color: var(--color-error);
   font-size: 0.8125rem;
 }
 
-.update-card__progress {
+.download__progress {
   height: 0.25rem;
   margin-top: 0.5rem;
   border-radius: 999px;
@@ -780,17 +796,34 @@
   overflow: hidden;
 }
 
-.update-card__bar {
+.download__bar {
   height: 100%;
   background: var(--color-primary);
   transition: width var(--select-transition);
 }
 
-.update-card__actions {
+.download__actions {
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
   margin-top: 0.75rem;
+}
+
+/*
+  长按消息后出现在气泡右侧的删除按钮。
+  做成紧邻气泡的浮出按钮而非全屏菜单 —— 目前只有「删除」一个动作，
+  上一整套 Telegram 式操作菜单是过度设计。
+*/
+.bubble__delete {
+  align-self: center;
+  margin-left: 0.5rem;
+  padding: 0.375rem 0.875rem;
+  border: none;
+  border-radius: var(--border-radius-button-tiny);
+  background: var(--color-toast-background);
+  color: #fff;
+  font-size: 0.8125rem;
+  cursor: pointer;
 }
 
 /* 通用按钮 */
