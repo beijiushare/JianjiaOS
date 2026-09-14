@@ -220,39 +220,14 @@
    主屏 · 应用搜索页
    ========================================================================== */
 
-/*
-  position: relative 是 Orb 背景层的定位基准。
-  isolation: isolate 用于隔离层叠 —— 背景层与内容层都带 z-index，
-  若不隔离，它们会参与 .app-root 那一层的排序，其中 z-index: 1 的内容层
-  将盖住导航层（.layer 的 z-index 为 auto，即 0），导致进入子页面后
-  主屏内容仍浮在最上面。
-*/
 .home-body {
-  position: relative;
-  isolation: isolate;
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-/*
-  Orb 背景层：铺满，位于内容层之下。
-
-  transform: scale() 用于整体缩小 Orb —— 它比改着色器里的 innerRadius 更省事，
-  且不改动组件源码。缩放后四周露出的是父级背景色（透明 → .screen 的白/黑）。
-*/
-.home-orb {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  transform: scale(0.85);
-}
-
-/* 内容层：必须显式定位才压得住 .home-orb —— 定位元素默认在静态元素之上 */
 .home-content {
-  position: relative;
-  z-index: 1;
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
