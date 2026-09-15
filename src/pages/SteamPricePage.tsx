@@ -8,7 +8,7 @@ import { GameCard } from '@/components/steam/GameCard'
 
 import { checkAndNotify } from '../steam-price/bridge'
 import { useSteamPriceStore } from '../steam-price/store'
-import { fetchSteamPrice, fetchSteamDetail, fetchSteamScreenshots } from '../steam-price/api'
+import { fetchSteamPrice, fetchSteamDetail } from '../steam-price/api'
 
 export function SteamPricePage() {
   const games = useSteamPriceStore((s) => s.games)
@@ -34,16 +34,15 @@ export function SteamPricePage() {
       Promise.all([
         fetchSteamPrice(game.appId),
         fetchSteamDetail(game.appId),
-        fetchSteamScreenshots(game.appId),
       ])
-        .then(([priceData, detailData, ssData]) => {
+        .then(([priceData, detailData]) => {
           if (cancelled) return
           if (detailData.success && detailData.data) {
             updateGame(game.appId, { name: detailData.data.name })
           }
-          if (ssData.success && ssData.data?.screenshots?.length) {
-            updateGame(game.appId, { image: ssData.data.screenshots[0].path_full })
-          }
+          updateGame(game.appId, {
+            image: `https://shared.st.dl.eccdnx.com/store_item_assets/steam/apps/${game.appId}/header.jpg`,
+          })
           if (priceData.success && priceData.data?.price_overview) {
             const p = priceData.data.price_overview
             const entry = {
