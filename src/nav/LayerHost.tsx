@@ -5,6 +5,7 @@ import { ChatBackgroundPage } from '@/pages/ChatBackgroundPage'
 import { ChatPage } from '@/pages/ChatPage'
 import { MessagesPage } from '@/pages/MessagesPage'
 import { SettingsPage } from '@/pages/SettingsPage'
+import { SteamPricePage } from '@/pages/SteamPricePage'
 
 import type { DrawerId, NavLayer, PageId } from './types'
 
@@ -13,6 +14,7 @@ const PAGES: Record<PageId, ComponentType> = {
   chat: ChatPage,
   settings: SettingsPage,
   chatBackground: ChatBackgroundPage,
+  steamPrice: SteamPricePage,
 }
 
 const DRAWERS: Record<DrawerId, ComponentType> = {

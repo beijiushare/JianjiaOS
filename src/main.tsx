@@ -5,6 +5,10 @@ import { createRoot } from 'react-dom/client'
 import { App } from './App'
 import { hydrateMessages, persistMessages } from './messages/persist'
 import { hydrateSettings, persistSettings } from './settings/store'
+import {
+  hydrateSteamPrice,
+  persistSteamPrice,
+} from './steam-price/store'
 import './styles/index.css'
 import {
   autoCheckOnStartup,
@@ -26,10 +30,15 @@ if (!rootEl) throw new Error('缺少 #root 容器')
  *   ④ 冷启动任务（检查更新 / 接管未完成下载）—— 放到渲染之后，
  *      不跟首屏抢资源
  */
-void Promise.all([hydrateMessages(), hydrateSettings()])
+void Promise.all([
+  hydrateMessages(),
+  hydrateSettings(),
+  hydrateSteamPrice(),
+])
   .then(() => {
     persistMessages()
     persistSettings()
+    persistSteamPrice()
 
     if (import.meta.env.DEV && !Capacitor.isNativePlatform()) {
       // 预览环境注入模拟更新消息，便于查看卡片与气泡的 UI。

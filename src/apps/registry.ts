@@ -1,6 +1,7 @@
 import type { ComponentType } from 'react'
 
 import SettingsIcon from '@/assets/icons/settings-3-line.svg?react'
+import SteamIcon from '@/assets/icons/steam.svg?react'
 import type { DrawerId, PageId } from '@/nav/types'
 
 /** 应用的入口 —— 点击后要做什么 */
@@ -29,5 +30,11 @@ export const APP_REGISTRY: AppInfo[] = [
     name: '设置',
     icon: SettingsIcon,
     entry: { kind: 'push', page: 'settings' },
+  },
+  {
+    id: 'steamPrice',
+    name: 'Steam 价格追踪',
+    icon: SteamIcon,
+    entry: { kind: 'push', page: 'steamPrice' },
   },
 ]

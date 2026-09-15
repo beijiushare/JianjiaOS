@@ -19,4 +19,14 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  server: {
+    proxy: {
+      // Steam API 无 CORS 头，PC 浏览器预览走代理；Android 原生不受限
+      '/steam-api': {
+        target: 'https://store.steampowered.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/steam-api/, ''),
+      },
+    },
+  },
 })

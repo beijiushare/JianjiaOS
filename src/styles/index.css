@@ -1226,3 +1226,214 @@
   font-size: 0.875rem;
   font-weight: var(--font-weight-normal);
 }
+
+/* ==========================================================================
+   Steam 价格追踪
+   ========================================================================== */
+
+.screen-body--steam {
+  background: var(--color-background-secondary);
+  position: relative;
+}
+
+/* 右上角加号按钮 */
+.steam-add-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.steam-add-btn:active {
+  background: var(--color-hover-overlay);
+}
+
+.steam-add-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* 游戏列表 */
+.steam-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.steam-empty {
+  margin: 3rem 0;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+/* 游戏卡片 */
+.steam-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--border-radius-default);
+  background: var(--color-background);
+}
+
+.steam-card__img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 460 / 215;
+  object-fit: cover;
+}
+
+.steam-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.625rem 0.75rem;
+}
+
+.steam-card__name {
+  color: var(--color-text);
+  font-size: 0.9375rem;
+  font-weight: var(--font-weight-medium);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.steam-card__prices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.steam-price__row {
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+}
+
+.steam-price__row > span {
+  color: var(--color-text);
+}
+
+.steam-price--green {
+  color: var(--color-green) !important;
+}
+
+.steam-card__loading {
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+}
+
+/* 删除按钮 */
+.steam-card__delete {
+  position: absolute;
+  top: 0.375rem;
+  right: 0.375rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-toast-background);
+  color: #fff;
+  cursor: pointer;
+}
+
+.steam-card__delete > svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* 弹窗遮罩 */
+.steam-dialog-mask {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.steam-dialog {
+  width: min(85%, 20rem);
+  padding: 1.25rem;
+  border-radius: var(--border-radius-modal);
+  background: var(--color-background);
+}
+
+.steam-dialog__title {
+  margin-bottom: 1rem;
+  color: var(--color-text);
+  font-size: 1.125rem;
+  font-weight: var(--font-weight-semibold);
+  text-align: center;
+}
+
+.steam-dialog__input {
+  display: block;
+  width: 100%;
+  height: 2.75rem;
+  padding: 0 0.75rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid var(--color-borders-input);
+  border-radius: var(--border-radius-default-small);
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+}
+
+.steam-dialog__input:focus {
+  border-color: var(--color-primary);
+}
+
+.steam-dialog__input::placeholder {
+  color: var(--color-placeholders);
+}
+
+.steam-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.steam-dialog__btn {
+  min-height: 2rem;
+  padding: 0 1rem;
+  border: none;
+  border-radius: var(--border-radius-button-tiny);
+  font-family: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.steam-dialog__btn:active {
+  opacity: 0.8;
+}
+
+.steam-dialog__btn--cancel {
+  background: transparent;
+  color: var(--color-text-secondary);
+}
+
+.steam-dialog__btn--confirm {
+  background: var(--color-primary);
+  color: #fff;
+}
