@@ -36,21 +36,23 @@ export function SettingsPage() {
    */
   const onCheck = async (): Promise<void> => {
     setChecking(true)
-    const result = await manualCheckForUpdate()
-    setChecking(false)
+    try {
+      const result = await manualCheckForUpdate()
 
-    switch (result.kind) {
-      case 'update':
-        // 更新卡片是发到消息页的，直接把用户带过去，而不是只弹个提示
-        showToast('发现新版本')
-        push('messages', 'left')
-        break
-      case 'up-to-date':
-        showToast('已是最新版本')
-        break
-      case 'failed':
-        showToast(result.reason)
-        break
+      switch (result.kind) {
+        case 'update':
+          showToast('发现新版本')
+          push('messages', 'left')
+          break
+        case 'up-to-date':
+          showToast('已是最新版本')
+          break
+        case 'failed':
+          showToast(result.reason)
+          break
+      }
+    } finally {
+      setChecking(false)
     }
   }
 

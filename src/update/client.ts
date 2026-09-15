@@ -23,6 +23,8 @@ import { Browser } from '@capacitor/browser'
 import { registerPlugin } from '@capacitor/core'
 import { Preferences } from '@capacitor/preferences'
 
+import { errText } from '@/utils'
+
 /* ==========================================================================
  * 配置
  * ========================================================================== */
@@ -375,19 +377,6 @@ async function loadPending(): Promise<PendingDownload | null> {
   } catch {
     return null
   }
-}
-
-/**
- * 把未知类型的异常转成可读字符串。
- *
- * ⚠️ 日志必须拼成**单个字符串**再输出。
- *    Capacitor 会把 console 的参数序列化后转发到 logcat，传对象进去只会得到
- *    `[object Object]`、传 undefined 得到 `undefined` —— 真正的错误信息全丢。
- *    本项目为此白抓过两次日志，务必遵守。
- */
-function errText(e: unknown): string {
-  if (e instanceof Error) return `${e.name}: ${e.message}`
-  return String(e)
 }
 
 /** 单次下载 + 轮询到完成，不换源 */

@@ -6,12 +6,9 @@
  */
 
 import { useMessagesStore } from '@/messages/store'
+import { nextMessageId } from '@/utils'
 
 import { useSteamPriceStore } from './store'
-
-let messageSeq = 0
-const nextMessageId = (): string =>
-  `msg-steam-${String(Date.now())}-${String(++messageSeq)}`
 
 interface PriceResult {
   appId: string
@@ -52,7 +49,7 @@ export function checkAndNotify(prices: Record<string, PriceResult>): void {
   const text = `有${qualified.length}款游戏达到目标价格\n${lines.join('\n')}`
 
   useMessagesStore.getState().appendMessage({
-    id: nextMessageId(),
+    id: nextMessageId('msg-steam'),
     chatId: 'system',
     from: 'system',
     ts: Date.now(),

@@ -37,11 +37,6 @@ body {
   -webkit-user-select: text;
 }
 
-/** 数字等宽，避免进度类数值刷新时抖动 */
-.tabular {
-  font-variant-numeric: tabular-nums;
-}
-
 button {
   font: inherit;
   color: inherit;

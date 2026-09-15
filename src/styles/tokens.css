@@ -180,6 +180,7 @@
                Menlo, "Ubuntu Mono", Consolas, monospace;
   --font-weight-normal:             400;
   --font-weight-medium:             500;
+  /* telegram-tt 的 semibold = 500（与 medium 相同），照抄 */
   --font-weight-semibold:           500;
 
   /* ── 版式 ──────────────────────────────────────────── */

@@ -8,14 +8,11 @@
  * 更新卡片是「某版本发布过」的历史记录，下载、安装这些过程状态各自成条 ——
  * 这样消息列表读起来就是一条完整的时间线。唯一的例外是「正在下载中」那条，
  * 它的百分比需要原地刷新（它本身就是当前进度的载体，不是历史）。
- *
- * ⚠️ 所有日志必须拼成**单个字符串**。Capacitor 转发 console 到 logcat 时会把
- *    参数序列化，传对象只会得到 `[object Object]`，真实错误信息全丢。
- *    本项目为此白抓过两次日志。
  */
 
 import { useMessagesStore } from '@/messages/store'
 import type { DownloadMessageState } from '@/messages/types'
+import { errText, nextMessageId } from '@/utils'
 
 import {
   type ReleaseInfo,
@@ -25,16 +22,6 @@ import {
   installUpdate,
   resumePendingDownload,
 } from './client'
-
-/** 消息 id 自增序列。不用随机数 —— id 要可读、可复现，便于排查 */
-let messageSeq = 0
-const nextMessageId = (): string =>
-  `msg-${String(Date.now())}-${String(++messageSeq)}`
-
-function errText(e: unknown): string {
-  if (e instanceof Error) return `${e.name}: ${e.message}`
-  return String(e)
-}
 
 function reasonOf(e: unknown, fallback: string): string {
   return e instanceof UpdateError ? e.message : fallback
