@@ -1,0 +1,243 @@
+/* ==========================================================================
+   应用骨架
+   ========================================================================== */
+
+/*
+  使用 fixed + inset 而非 height: 100vh —— 100vh 在 Android WebView 上
+  会因系统栏收缩而计算出错误高度。
+
+  安全区在此统一处理，内部页面与层无需重复计算 env(safe-area-inset-*)。
+*/
+.app-root {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* 渐变铺在最底层，各 .screen 透明后透出它 */
+  background: var(--app-bg-gradient);
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ==========================================================================
+   导航层
+   ========================================================================== */
+
+/*
+  层使用 absolute 相对 .app-root（其自身为 fixed，且无 overflow 祖先）。
+  不使用 fixed —— fixed 元素若存在 overflow 祖先，Android WebView 真机不渲染。
+*/
+/*
+  层的定位基类。
+
+  ⚠️ 这里只负责「在哪」，不负责「长什么样」—— 任何视觉属性（背景、圆角、溢出）
+     都下放到 .layer--push / .layer--drawer 各自定义。
+
+     曾经在图省事把「不设背景」写在这里，理由是替抽屉让路，
+     结果 push 页被连累成透明（透出下层主屏）。两个不相干的页面不该互相绑架。
+*/
+.layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+}
+
+/*
+  转场遮罩：压暗并模糊其背后的全部内容。
+
+  由 LayerHost 在每个层之前插入，DOM 顺序保证它位于对应层之下、更下层之上，
+  因此新层滑入时，露出的下层恰好呈现「模糊 + 变暗」。
+
+  ⚠️ 必须是独立的静止元素。不可做在层的伪元素或背景上 ——
+     层本体带 translate 动画，附着的遮罩会跟着滑走，导致该遮的区域没被遮住。
+
+  使用 backdrop-filter 而非给下层加 filter: blur()：
+    · 不创建 containing block，不会让后代的 position: fixed 失效
+    · 无需区分「主屏」与「下层页面」，任意层数自动成立
+
+  性能：全屏 backdrop-filter 开销显著，且随半径增长。当前转场结束后 scrim 仍
+  常驻于不透明层之下 —— 若真机掉帧，优先降低下方半径，其次可为 scrim 增加一个
+  在动画结束时置 visibility: hidden 的关键帧。
+*/
+.scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+
+  /* 时长与缓动按层的 kind 覆写（见 .scrim--drawer），
+     故此处分开声明 animation-* 而非使用简写 */
+  animation-name: scrim-in;
+  animation-duration: var(--slide-duration);
+  animation-timing-function: var(--slide-easing);
+  animation-fill-mode: both;
+}
+
+.scrim.is-exiting {
+  animation-name: scrim-out;
+}
+
+/* 遮罩的节奏须与其所属层一致，否则会出现「层已停住、遮罩还在淡」的错位 */
+.scrim--drawer {
+  animation-duration: var(--drawer-duration);
+  animation-timing-function: var(--drawer-easing);
+}
+
+@keyframes scrim-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes scrim-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* push 页：不透明，横向转场。默认自右滑入（表示「前进」） */
+.layer--push {
+  background: var(--app-bg-gradient);
+  animation: layer-in-right var(--slide-duration) var(--slide-easing) both;
+}
+.layer--push.is-exiting {
+  animation: layer-out-right var(--slide-duration) var(--slide-easing) both;
+}
+
+/*
+  自左滑入（反向入口，如底栏最左侧的消息按钮）。
+  只覆盖 animation-name —— 时长与缓动沿用上面两条，改一处即可全局生效。
+*/
+.layer--push.layer--from-left {
+  animation-name: layer-in-left;
+}
+.layer--push.layer--from-left.is-exiting {
+  animation-name: layer-out-left;
+}
+
+@keyframes layer-in-right {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+@keyframes layer-out-right {
+  from { transform: translateX(0); }
+  to   { transform: translateX(100%); }
+}
+
+@keyframes layer-in-left {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+@keyframes layer-out-left {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
+}
+
+/*
+  抽屉页：纵向转场（方向与时长均与 push 页不同，见 tokens.css）。
+
+  故意不设背景 —— 背景由内部的 .drawer 提供半透明毛玻璃，
+  这一层若有背景就会盖掉磨砂效果。与 push 页毫无共享。
+*/
+.layer--drawer {
+  border-top-left-radius: var(--border-radius-modal);
+  border-top-right-radius: var(--border-radius-modal);
+  overflow: hidden;
+  animation: layer-in-drawer var(--drawer-duration) var(--drawer-easing) both;
+}
+.layer--drawer.is-exiting {
+  animation: layer-out-drawer var(--drawer-duration) var(--drawer-easing) both;
+}
+
+@keyframes layer-in-drawer {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+@keyframes layer-out-drawer {
+  from { transform: translateY(0); }
+  to   { transform: translateY(100%); }
+}
+
+/* ==========================================================================
+   页面外壳
+   ========================================================================== */
+
+/*
+  页面容器。背景透明 —— 让 .app-root 的渐变透出来。
+  （此前是 background: var(--color-background)，纯色会盖住渐变。）
+
+  需要自己背景的页面单独覆盖：如 .screen--chat（聊天壁纸）。
+*/
+.screen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+}
+
+
+.screen-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: var(--column-header-height);
+  padding: 0 1rem 0 0.5rem;
+}
+
+.screen-title {
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+/* 聊天页顶部栏：更矮 + 标题更小，取值自 telegram-tt 的 --middle-header-height */
+.screen-header--chat {
+  height: var(--middle-header-height);
+}
+
+.screen-header--chat .screen-title {
+  font-size: 1.125rem;
+  font-weight: var(--font-weight-medium);
+}
+
+.screen-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+/* 内容区下方的固定元素（当前是聊天输入条）。透明，让背景图案透出 */
+.screen-footer {
+  flex: 0 0 auto;
+  padding: 0 0.5rem 0.5rem;
+}
+
+/* ==========================================================================
+   通用按钮
+   ========================================================================== */
+
+.btn {
+  min-height: 2rem;
+  padding: 0 0.75rem;
+  border: none;
+  border-radius: var(--border-radius-button-tiny);
+  font-family: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.btn:active {
+  opacity: 0.8;
+}
+
+.btn--primary {
+  background: var(--color-primary);
+  color: #fff;
+}

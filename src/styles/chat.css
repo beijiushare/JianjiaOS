@@ -1,0 +1,340 @@
+/* ==========================================================================
+   聊天详情
+   ========================================================================== */
+
+/*
+  聊天背景图案。
+
+  图案文件是单色线条 SVG（内部硬编码 stroke:#000000），无法从外部 CSS 改色，
+  因此当作 mask 使用：mask 决定形状，颜色由 background-color 给。
+  —— 深浅两套主题各用一个色，不必维护两份 SVG。
+
+  挂在 .screen 而非滚动的 .screen-body 上，这样图案不随消息滚动。
+
+  ⚠️ 调整图案疏密改 mask-size 即可；SVG 的 viewBox 是 1125×2436（竖长条），
+     宽度定死后高度按比例自动推。
+*/
+.screen--chat {
+  position: relative;
+  background: var(--chat-bg-gradient);
+}
+
+.screen--chat::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+
+  /* 【浅色】图案 = 纯色 + 柔光混合，而非直接叠一层半透明灰。
+     telegram-tt 的 _patternBackground 用同一套做法，注释写明：
+     「柔光下的强黑图案在任何背景色上都能明显变暗；淡色调几乎看不见，故不使用」。
+
+     ⚠️ 前提是背景必须是渐变而非纯色 —— soft-light 在纯色上只有约 5% 的对比，
+        在纯白/纯黑上更是恒等于原色。所以 .screen--chat 用的是 --chat-bg-gradient。 */
+  background-color: var(--color-chat-pattern);
+  mix-blend-mode: soft-light;
+  opacity: var(--chat-pattern-intensity);
+
+  -webkit-mask-image: var(--chat-bg);
+  mask-image: var(--chat-bg);
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+  /* 图案尺寸取自 telegram-tt 的 mask-size（26.875rem） */
+  -webkit-mask-size: 26.875rem auto;
+  mask-size: 26.875rem auto;
+  pointer-events: none;
+}
+
+/*
+  【深色】换成 telegram-tt 的 masked-pattern 模式。
+
+  深色壁纸的 patternIntensity 是【负数】（DEFAULT_DARK_WALLPAPER.intensity
+  = -50），getIsMaskedPattern() 据此切到 withMaskedPattern：
+      「图案反过来当遮罩，让涂鸦在深色底上露出渐变」
+
+  所以深色不是「渐变铺满 + 图案压暗」，而是反过来：
+  深色打底，图案线条里透出渐变。结果是深色背景上浮着一层彩色涂鸦。
+
+  实现上的差异只有两处：::before 的 background 由纯色换成渐变、
+  mix-blend-mode 由 soft-light 回到 normal。mask 依旧是图案，不变。
+*/
+@media (prefers-color-scheme: dark) {
+  .screen--chat {
+    background: var(--color-background);
+  }
+
+  .screen--chat::before {
+    background: var(--chat-bg-gradient);
+    mix-blend-mode: normal;
+  }
+}
+
+/* 内容层压在图案之上 */
+.screen--chat > * {
+  position: relative;
+  z-index: 1;
+}
+
+/*
+  聊天内容区。
+
+  底色用主背景色（telegram-tt 无独立的聊天背景变量，聊天区即 --color-background）；
+  背景图案由 .screen--chat::before 提供，故此处透明。
+
+  气泡间距 0.375rem 取自 telegram-tt 的 .Message { margin-bottom }。
+*/
+.screen-body--chat {
+  gap: 0.375rem;
+  background: transparent;
+}
+
+.chat-empty {
+  margin: auto;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.bubble-row {
+  display: flex;
+  justify-content: flex-start; /* 当前消息全部来自系统，故靠左 */
+}
+
+/*
+  气泡。padding 取 telegram-tt 的 .has-solid-background 原值：
+  上 5px、左右 8px、下 6px —— 底部略大于顶部，为时间戳留视觉余量。
+*/
+.bubble {
+  max-width: 85%; /* 原版是 29rem，窄屏改百分比更实用 */
+  padding: 0.3125rem 0.5rem 0.375rem;
+  /* 底部左角收窄，形成气泡的指向感 */
+  border-radius: var(--border-radius-messages);
+  border-bottom-left-radius: var(--border-radius-messages-small);
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+.bubble__text {
+  font-size: 1rem;
+  /* 行高取 telegram-tt 的气泡值（小于正文的 1.5），气泡更紧凑 */
+  line-height: 1.3125;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.bubble__time {
+  display: block;
+  margin-top: 0.125rem;
+  color: var(--color-text-meta);
+  font-size: 0.75rem;
+  text-align: right;
+}
+
+/*
+  输入框。圆角用 --composer-pill-radius(1.5rem = 24px)，
+  不是 --border-radius-messages(15px) —— messaging.md 记的 15px 与源码不符。
+  高度 3rem 与源码的 --composer-height 一致。
+*/
+.composer__field {
+  width: 100%;
+  height: 3rem;
+  padding: 0 0.875rem; /* 左右 14px，源码的 .form-control padding-inline */
+  border: none;
+  border-radius: var(--composer-pill-radius);
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+
+  /* 靠阴影让它从聊天背景上「浮」起来 —— 底色与聊天区同为主背景色，
+     没有阴影就分不出边界。telegram-tt 的 .composer-wrapper 用的就是这个值。 */
+  box-shadow: var(--shadow-footer);
+}
+
+.composer__field::placeholder {
+  color: var(--color-placeholders);
+}
+
+/*
+  禁用态：文字居中，且压掉浏览器对 disabled 输入框的默认淡化。
+
+  disabled 属性本身已保证不可聚焦、点击不弹键盘，
+  这里只处理视觉 —— 输入框仍在原位，作为「此处本应有输入」的占位提示。
+*/
+.composer__field:disabled {
+  text-align: center;
+  opacity: 1;
+}
+
+/* ==========================================================================
+   聊天背景选择
+   ========================================================================== */
+
+.chat-bg-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.chat-bg-grid__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/*
+  缩略图与聊天页共用同一套 mask 方案（见 .screen--chat::before），
+  因此配色跟随深浅主题 —— 预览即真实效果，不是另画一张示意图。
+*/
+.chat-bg-grid__preview {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: var(--border-radius-default);
+  /* 与聊天页同背景，否则缩略图里的图案同样看不见（soft-light 在纯色上对比极弱） */
+  background: var(--chat-bg-gradient);
+}
+
+.chat-bg-grid__preview::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-chat-pattern);
+  mix-blend-mode: soft-light;
+  opacity: var(--chat-pattern-intensity);
+  -webkit-mask-image: var(--chat-bg);
+  mask-image: var(--chat-bg);
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+  -webkit-mask-size: 26.875rem auto;
+  mask-size: 26.875rem auto;
+}
+
+/* 深色下与聊天页同步切换成 masked-pattern 模式，否则预览与实际不符 */
+@media (prefers-color-scheme: dark) {
+  .chat-bg-grid__preview {
+    background: var(--color-background);
+  }
+
+  .chat-bg-grid__preview::before {
+    background: var(--chat-bg-gradient);
+    mix-blend-mode: normal;
+  }
+}
+
+/* 选中态用主色描边。不用背景色 —— 那样会盖住图案本身 */
+.chat-bg-grid__item.is-selected .chat-bg-grid__preview {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.chat-bg-grid__name {
+  color: var(--color-text);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+/* ==========================================================================
+   更新卡片
+   ========================================================================== */
+
+/*
+  卡片嵌在白色气泡内，用副背景色 + 小圆角与气泡本体分层。
+  取值依 my_telegram_taste 的 content-display：小卡圆角用
+  --border-radius-messages-small，底色用 background-secondary。
+*/
+.update-card {
+  min-width: 12rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: var(--border-radius-messages-small);
+  background: var(--color-background-secondary);
+}
+
+.update-card__title {
+  color: var(--color-text);
+  font-size: 1rem;
+  font-weight: var(--font-weight-medium);
+}
+
+.update-card__current {
+  margin-top: 0.125rem;
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+}
+
+/* 更新说明（Markdown）。字号比卡片标题小一档，避免抢过标题 */
+.md {
+  margin-top: 0.375rem;
+  color: var(--color-text);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.md__h {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+}
+
+.md__ul {
+  margin: 0.25rem 0;
+  padding-left: 1.125rem;
+  list-style: disc;
+}
+
+.md__li + .md__li,
+.md__p + .md__p {
+  margin-top: 0.125rem;
+}
+
+.update-card__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+/* ==========================================================================
+   下载消息
+   ========================================================================== */
+
+.download__text {
+  color: var(--color-text);
+  font-size: 1rem;
+}
+
+.download__reason {
+  margin-top: 0.25rem;
+  color: var(--color-error);
+  font-size: 0.8125rem;
+}
+
+.download__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+/*
+  长按消息后出现在气泡右侧的删除按钮。
+  做成紧邻气泡的浮出按钮而非全屏菜单 —— 目前只有「删除」一个动作，
+  上一整套 Telegram 式操作菜单是过度设计。
+*/
+.bubble__delete {
+  align-self: center;
+  margin-left: 0.5rem;
+  padding: 0.375rem 0.875rem;
+  border: none;
+  border-radius: var(--border-radius-button-tiny);
+  background: var(--color-toast-background);
+  color: #fff;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}

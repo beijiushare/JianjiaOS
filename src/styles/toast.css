@@ -1,0 +1,34 @@
+/* ==========================================================================
+   Toast
+   ========================================================================== */
+
+/*
+  本体为 fixed，必须挂在 #layer-root（body 的直接子节点）下，
+  祖先链中不可存在 overflow / transform 容器，否则真机不渲染。
+*/
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 15%;
+  z-index: 10000;
+  max-width: 80vw;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-toast);
+  background: var(--color-toast-background);
+  color: #fff;
+  font-size: 0.875rem;
+  white-space: nowrap;
+
+  /* ⚠️ 必须显式声明，不能只写在 keyframes 里。
+     animation-fill-mode 默认为 none，动画播完后元素会丢弃 keyframes 中的
+     transform，回落到此处声明的值。若省略，translateX(-50%) 会在动画结束时
+     消失，元素仅剩 left: 50%，视觉上从居中跳到偏右。 */
+  transform: translateX(-50%);
+
+  animation: toast-in var(--select-transition);
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translate(-50%, 0.5rem); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}

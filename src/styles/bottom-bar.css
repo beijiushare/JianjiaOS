@@ -1,0 +1,116 @@
+/* ==========================================================================
+   底部导航栏
+   ========================================================================== */
+
+/*
+  ⚠️ 不要给 .bottom-bar 设 z-index。
+     .screen--home 未创建层叠上下文，其子元素的 z-index 会直接参与 .app-root
+     那一层的排序；而 .layer 的 z-index 是 auto（即 0），结果是 bar 盖在所有
+     子页面之上 —— 进入设置页后底栏仍然可见。
+     bar 与子页面的遮挡关系由「.layer 是定位元素、.screen 是静态元素」天然决定。
+
+  ⚠️ 顶边不使用 border-top。凸起会盖住它的中间段，使顶边断成两截。
+     改用 filter: drop-shadow —— 它按渲染后的 alpha 区域投射，会沿着
+     「直线 + 凸起」的连续轮廓走，两端自然衔接。
+     偏移 -1.5px、模糊 0 = 一条约 1.5px 的描边（偏移量即线宽）。
+
+  ⚠️ 用 --color-divider-strong，不用 --color-borders / --color-dividers。
+     Telegram 那两个值在 1px 细线上对比不足（浅色差约 13%，深色仅约 6%），
+     线条几乎不可见。divider-strong 是为此单独取的，两套主题各约 25–30% 亮度差。
+
+  ⚠️ filter 会创建 containing block，使后代的 position: fixed 失效。
+     bar 内不使用 fixed，当前安全。
+*/
+.bottom-bar {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: var(--bottom-bar-height);
+  background: var(--color-background);
+  filter: drop-shadow(0 -1.5px 0 var(--color-divider-strong));
+}
+
+/*
+  中间凸起：圆形，顶端高出 bar 顶边 1rem。
+
+  尺寸关系：圆直径 5rem，bottom: -0.5rem（圆底边沉入 bar 下方 0.5rem），
+  故圆顶端距 bar 底边 5 - 0.5 = 4.5rem，而 bar 高 3.5rem —— 凸出 1rem。
+  调整凸出高度只改 bottom 即可，不必动圆直径（直径决定弧度）。
+
+  clip-path 保留圆的上部 30%（1.5rem），略多于凸出所需的 1rem：
+  多出的部分落在 bar 内部，与 bar 同色不可见，但能确保衔接处不留空隙。
+  不裁剪的话，圆埋在 bar 内的下半部分虽不可见，其轮廓仍会经父级的
+  drop-shadow 投出阴影，在 bar 内部留下一条多余的弧线。
+
+  沉入 bar 下方的那 0.5rem 会被 .screen 的 overflow: hidden 裁掉。
+*/
+.bottom-bar__notch {
+  position: absolute;
+  left: 50%;
+  bottom: -0.5rem;
+  width: 5rem;
+  height: 5rem;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: var(--color-background);
+  clip-path: polygon(0 0, 100% 0, 100% 30%, 0 30%);
+}
+
+/*
+  ⚠️ 按钮必须是定位元素。
+     凸起是 position: absolute（定位元素），而定位元素恒在静态元素之上 ——
+     若按钮保持 static，凸起会盖住指纹按钮，与 DOM 顺序无关
+     （DOM 顺序只在层叠层级相同时才起作用）。
+     两者都定位后 z-index 均为 auto，此时才由 DOM 顺序决定：凸起在前，按钮在后。
+*/
+.bottom-bar__btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-icon-secondary);
+  cursor: pointer;
+}
+
+.bottom-bar__btn:active {
+  background: var(--color-hover-overlay);
+}
+
+/* 指纹：主色 + 更大的图标，作为 bar 的视觉重心落在凸起之内 */
+.bottom-bar__btn--primary {
+  color: var(--color-primary);
+}
+
+/*
+  按钮 2.75rem（44px）是触摸目标的下限，不再缩小；
+  压缩与按钮边缘的间距靠放大图标完成。
+*/
+.bottom-bar__icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+/*
+  ⚠️ 按钮必须 ≥ 图标尺寸。图标只是画在按钮上的图形，按钮才是可点击区域；
+     图标超出按钮的部分点不动。此处留 2px 边。
+
+  用 translateY 而非 margin 上移：transform 不参与布局，不会影响两侧按钮的对齐。
+*/
+.bottom-bar__btn--primary {
+  width: 3.25rem;
+  height: 3.25rem;
+  transform: translateY(-0.5rem);
+}
+
+.bottom-bar__btn--primary .bottom-bar__icon {
+  width: 3rem;
+  height: 3rem;
+}

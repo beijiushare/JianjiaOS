@@ -1,0 +1,257 @@
+/* ==========================================================================
+   主屏 · 应用搜索页
+   ========================================================================== */
+
+.home-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.home-content {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+/* 未读提示：可点击跳转消息列表，外观为次要色小字，不做成按钮 */
+.home-unread {
+  align-self: center;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+/* 搜索无结果 */
+.home-empty {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+/*
+  主页机器人（Grok Bot，搜索框上方）。
+  引擎渲染进内联 SVG，尺寸完全由这里决定 —— 没给 sizePx，svg 不带行内宽高。
+
+  ⚠️ color-scheme: light dark 是必需的，不是装饰。引擎的墨色取 CSS 的
+     light-dark(#000, #fff)，而 light-dark() 只有在元素有 used color scheme
+     时才求值 —— 不声明 color-scheme 会直接失效。
+
+  ⚠️ 眼睛是「挖空」画法：眼睛形状填充的是背景色（引擎侧写作 var(--bg)，
+     默认回退到 --sand-bg-base）。这里必须给成与当前背景一致的值，
+     否则眼睛会显出一块异色。复用 --color-background 即可 ——
+     深色下它是 #263547，正好是主页渐变顶端的颜色。
+*/
+.grok-bot {
+  align-self: center;
+  width: 6.5rem;
+  height: 6.5rem;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.grok-bot svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* 特效会画到 viewBox 之外 */
+  overflow: visible;
+  color-scheme: light dark;
+  --sand-bg-base: var(--color-background);
+}
+
+/* ==========================================================================
+   搜索框
+   ========================================================================== */
+
+/*
+  深灰边框 + 毛玻璃底。
+  半透明底（background-compact-menu）配合 backdrop-filter 才构成毛玻璃；
+  若底色不透明，backdrop-filter 看不出任何效果。
+
+  ⚠️ backdrop-filter 与 filter 同样会创建 containing block，
+     使后代的 position: fixed 失效。搜索框内不使用 fixed，当前安全。
+*/
+.search-input {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.5rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 1.375rem;
+  background: var(--color-background-compact-menu);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+.search-input__icon {
+  flex: 0 0 auto;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--color-icon-secondary);
+}
+
+.search-input__field {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  background: none;
+  color: var(--color-text);
+  font-size: 1rem;
+  outline: none;
+}
+
+.search-input__field::placeholder {
+  color: var(--color-placeholders);
+}
+
+.search-input__clear {
+  flex: 0 0 auto;
+  display: inline-flex;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   会话列表（消息页）
+   ========================================================================== */
+
+.screen-body--flush {
+  padding: 0;
+}
+
+/* 会话列表容器，内边距取 telegram-tt 的 .chat-list 原值 */
+.chat-list {
+  padding: 0.5rem;
+}
+
+.chat-list__row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* 头像与文字间距 8px */
+  width: 100%;
+  min-height: 4.5rem; /* 72px，同 telegram-tt 的 CHAT_HEIGHT_PX */
+  padding: 0.5625rem; /* 9px，会话行 padding 原值 */
+  border: none;
+  background: transparent;
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
+}
+
+/*
+  行间分割线：排除首行。
+  左缩进 4.5rem = padding 0.5625 + 头像 3.375 + gap 0.5 ≈ 4.44，
+  与 telegram-tt 的 .ListItem::after 取值一致。
+*/
+.chat-list__row + .chat-list__row::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 4.5rem;
+  right: 0;
+  height: 1px;
+  background: var(--color-dividers);
+}
+
+.chat-list__row:active {
+  background: var(--color-chat-hover);
+}
+
+.chat-list__main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.chat-list__title {
+  color: var(--color-text);
+  font-size: 1rem;
+  font-weight: var(--font-weight-medium); /* telegram-tt 的 semibold = 500 */
+}
+
+.chat-list__preview {
+  overflow: hidden;
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.25rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat-list__meta {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+/* 时间戳用 text-meta 而非 text-secondary —— telegram-tt 对二者有区分 */
+.chat-list__time {
+  color: var(--color-text-meta);
+  font-size: 0.75rem;
+}
+
+/*
+  圆形头像。
+  直径取 telegram-tt 的 large = 3.375rem(54px)；
+  初字字号 = max(直径/2 − 4px, 0.5rem) = 23px，字重 bold。
+*/
+.avatar {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.375rem;
+  height: 3.375rem;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 1.4375rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
+/* 图标型头像：图标比初字小一圈，四周留白才不显拥挤 */
+.avatar__icon {
+  width: 1.875rem;
+  height: 1.875rem;
+}
+
+/*
+  未读角标。
+  ⚠️ 底色是 --color-active（浅色绿 #00C73E / 深色紫 #8774E1），不是主色 ——
+     Telegram 的未读数是绿色，与蓝色主色刻意区分。
+*/
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.375rem;
+  height: 1.375rem;
+  padding: 0 0.4375rem;
+  border-radius: 0.75rem;
+  background: var(--color-active);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+}

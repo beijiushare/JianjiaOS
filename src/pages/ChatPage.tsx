@@ -1,6 +1,5 @@
 import { type CSSProperties, useEffect, useState } from 'react'
 
-import { Composer } from '@/components/Composer'
 import { MessageBubble } from '@/components/MessageBubble'
 import { ScreenShell } from '@/components/ScreenShell'
 import { selectChatMessages, useMessagesStore } from '@/messages/store'
@@ -58,10 +57,14 @@ export function ChatPage() {
       headerClassName="screen-header--chat"
       bodyClassName="screen-body--chat"
       footer={
-        <Composer
-          disabled={!chat.canReply}
-          placeholder={chat.canReply ? '输入消息' : '暂不支持输入'}
-        />
+        <div className="composer">
+          <input
+            className="composer__field"
+            type="text"
+            disabled={!chat.canReply}
+            placeholder={chat.canReply ? '输入消息' : '暂不支持输入'}
+          />
+        </div>
       }
     >
       {list.length === 0 ? (

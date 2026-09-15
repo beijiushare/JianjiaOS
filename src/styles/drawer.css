@@ -1,0 +1,121 @@
+/* ==========================================================================
+   抽屉
+   ========================================================================== */
+
+/*
+  半透明毛玻璃。底色用抽屉专用变量，与搜索框分开 ——
+  抽屉是全屏面板，透出的内容本身有信息量，可以更透；
+  搜索框受 placeholder 可读性约束，需要更实。
+
+  ⚠️ 与 .layer--drawer 的圆角配合：圆角裁剪由该层的 overflow: hidden 完成。
+*/
+.drawer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background: var(--color-drawer-background);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.drawer-handle {
+  flex: 0 0 auto;
+  width: 2.25rem;
+  height: 0.25rem;
+  margin: 0.5rem auto 0;
+  border-radius: 999px;
+  background: var(--color-dividers);
+}
+
+.drawer-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+/* ==========================================================================
+   图标按钮
+   ========================================================================== */
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.icon-btn:active {
+  background: var(--color-hover-overlay);
+}
+
+.icon-btn__icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* ==========================================================================
+   应用网格
+   ========================================================================== */
+
+/* 4 列 */
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.app-grid__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.25rem;
+  border: none;
+  border-radius: var(--border-radius-default);
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.app-grid__item:active {
+  background: var(--color-item-active);
+}
+
+/*
+  图标圆底：圆形 + 图标居中。图标恒为黑（深浅色只换圆底颜色，
+  见 tokens.css 的 --color-app-icon-*）。
+  svg 不铺满 —— 圆内要留白才像应用图标。
+*/
+.app-grid__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: var(--color-app-icon-background);
+  color: var(--color-app-icon-foreground);
+}
+
+.app-grid__icon > svg {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.app-grid__name {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--color-text);
+  font-size: 0.75rem;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
