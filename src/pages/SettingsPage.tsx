@@ -69,7 +69,7 @@ export function SettingsPage() {
       </section>
 
       <section className="list-group">
-        <h2 className="list-group__title">关于</h2>
+        <h2 className="list-group__title">更新</h2>
 
         <div className="list-group__body">
           <ListItem icon={<InfoIcon />} title="版本" value={version} />
@@ -83,7 +83,13 @@ export function SettingsPage() {
               checking ? undefined : () => void onCheck()
             }
           />
+        </div>
+      </section>
 
+      <section className="list-group">
+        <h2 className="list-group__title">关于</h2>
+
+        <div className="list-group__body">
           <ListItem
             icon={<UserIcon />}
             title="关于作者"
