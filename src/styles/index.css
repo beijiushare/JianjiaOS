@@ -1115,22 +1115,10 @@
   background: var(--color-dividers);
 }
 
-.drawer-search {
-  flex: 0 0 auto;
-  padding: 0.5rem 1rem 1rem;
-}
-
 .drawer-body {
   flex: 1 1 auto;
   overflow-y: auto;
-  padding: 0 1rem 1rem;
-}
-
-.drawer-empty {
-  padding: 2rem 1rem;
-  color: var(--color-text-secondary);
-  font-size: 0.875rem;
-  text-align: center;
+  padding: 1rem;
 }
 
 /* 应用网格：4 列 */
@@ -1157,16 +1145,25 @@
   background: var(--color-item-active);
 }
 
+/*
+  图标圆底：圆形 + 图标居中。图标恒为黑（深浅色只换圆底颜色，
+  见 tokens.css 的 --color-app-icon-*）。
+  svg 不铺满 —— 圆内要留白才像应用图标。
+*/
 .app-grid__icon {
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 3rem;
   height: 3rem;
-  color: var(--color-icon-secondary);
+  border-radius: 50%;
+  background: var(--color-app-icon-background);
+  color: var(--color-app-icon-foreground);
 }
 
 .app-grid__icon > svg {
-  width: 100%;
-  height: 100%;
+  width: 1.75rem;
+  height: 1.75rem;
 }
 
 .app-grid__name {
