@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 
-import ChevronIcon from '@/assets/icons/arrow-right-s-line.svg?react'
 import InfoIcon from '@/assets/icons/information-line.svg?react'
 import LinkIcon from '@/assets/icons/links-line.svg?react'
 import PaletteIcon from '@/assets/icons/palette-line.svg?react'
@@ -9,7 +8,6 @@ import UserIcon from '@/assets/icons/user-line.svg?react'
 import { ListItem } from '@/components/ListItem'
 import { ScreenShell } from '@/components/ScreenShell'
 import { showToast } from '@/components/toastStore'
-import { credits } from '@/entries/data'
 import { useNavStore } from '@/nav/store'
 import { findBackground } from '@/settings/backgrounds'
 import { useSettingsStore } from '@/settings/store'
@@ -99,25 +97,13 @@ export function SettingsPage() {
             chevron
             onClick={() => openExternal('https://github.com/beijiushare/JianjiaOS')}
           />
-        </div>
-      </section>
 
-      <section className="list-group">
-        <h2 className="list-group__title">致谢</h2>
-
-        <div className="list-group__body">
-          {credits.map((item) => (
-            <a
-              key={item.url}
-              className="settings-credits__link"
-              href={item.url}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {item.name}
-              <ChevronIcon className="settings-credits__chevron" />
-            </a>
-          ))}
+          <ListItem
+            icon={<InfoIcon />}
+            title="致谢"
+            chevron
+            onClick={() => push('credits')}
+          />
         </div>
       </section>
     </ScreenShell>
