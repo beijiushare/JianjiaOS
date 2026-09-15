@@ -44,12 +44,6 @@ declare global {
     setEyeColor(color: string | null): void
     setFollowPointer(v: boolean): void
     setEmphasis(v: boolean): void
-    /**
-     * 让眼睛盯住某个点。坐标是**视口坐标**（与 getBoundingClientRect 同一空间），
-     * 引擎内部换算成眼睛偏移，并把状态自带的 gaze 权重从 1 降到 0.2。
-     * 传 null 解除。与 setFollowPointer 互斥，后者会把它清掉。
-     */
-    setGazeTarget(pt: { x: number; y: number } | null): void
     /** 转圈，turns 为圈数 */
     spinOnce(turns?: number): void
     bounceOnce(): void
@@ -57,6 +51,15 @@ declare global {
     snapshot(): unknown
     /** 停 rAF、解绑指针、清粒子 */
     destroy(): void
+
+    /* ↓ 以下不是公开 API，是引擎内部字段。没有对应的公开方法才直接读写，
+         用它们的每一处都注明了原因与行号。 */
+
+    /**
+     * 进行中的转圈弹簧。引擎在它落定时置回 null（character.js:600），
+     * 所以轮询这个字段即可判断「转圈结束」。
+     */
+    spinTurn: unknown
   }
 
   interface Window {
