@@ -1,8 +1,8 @@
 # JianjiaOS
 
-个人自用的 Android 应用外壳：Capacitor + React + TypeScript。
+Capacitor + React + TypeScript。
 
-## 开源致谢
+## 致谢
 
 - [blessonism/grok-icon-study](https://github.com/blessonism/grok-icon-study)
 - [Remix-Design/RemixIcon](https://github.com/Remix-Design/RemixIcon)
@@ -15,3 +15,4 @@
 - [microsoft/TypeScript](https://github.com/microsoft/TypeScript)
 - [oxc-project/oxc](https://github.com/oxc-project/oxc)
 - [DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)
+- [Telegram Chat Backgrounds/Patterns Extracted](https://blog.1a23.com/2020/02/13/telegram-chat-backgrounds-patterns-extracted/)

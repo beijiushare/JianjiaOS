@@ -11,11 +11,13 @@ import { useNavStore } from '@/nav/store'
 /**
  * 主屏 · 应用搜索页。
  *
- * 布局：内容层（搜索框 + 未读提示 + 搜索结果） → 底部导航栏。
+ * 布局：内容层（机器人 + 搜索框 + 未读提示 / 搜索结果） → 底部导航栏。
  * 主屏不占栈位，恒为底层；栈空等价于「位于主屏」。规格见设计文档 §4.1。
  */
 export function HomePage() {
   const [query, setQuery] = useState('')
+  /** 搜索框聚焦时让机器人停住轮换、低头看输入框 */
+  const [searchFocused, setSearchFocused] = useState(false)
   // 未读数由 messages 派生，不单独存储
   const unreadCount = useMessagesStore(selectUnreadCount)
   const push = useNavStore((s) => s.push)
@@ -34,12 +36,14 @@ export function HomePage() {
     <div className="screen screen--home">
       <div className="home-body">
         <div className="home-content">
-          <GrokBot />
+          <GrokBot active={searchFocused} />
 
           <SearchInput
             value={query}
             onChange={setQuery}
             placeholder="搜索应用"
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setSearchFocused(false)}
           />
 
           {keyword === '' ? (
