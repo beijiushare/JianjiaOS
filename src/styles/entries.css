@@ -66,3 +66,69 @@
   font-size: 0.875rem;
   line-height: 1.4;
 }
+
+/* ==========================================================================
+   开源与致谢
+   ========================================================================== */
+
+.entries-credits {
+  margin-top: 1.5rem;
+}
+
+.entries-credits__title {
+  margin-bottom: 1rem;
+  color: var(--color-text);
+  font-size: 1.125rem;
+  font-weight: var(--font-weight-semibold);
+}
+
+.entries-credits__group {
+  margin-bottom: 1rem;
+}
+
+.entries-credits__group-title {
+  margin-bottom: 0.5rem;
+  padding-left: 0.25rem;
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-medium);
+}
+
+.entries-credits__list {
+  border-radius: var(--border-radius-default);
+  background: var(--color-background);
+  overflow: hidden;
+}
+
+.entries-credits__link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.8125rem 1rem;
+  color: var(--color-text);
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.entries-credits__link:active {
+  background: var(--color-item-active);
+}
+
+.entries-credits__link + .entries-credits__link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 1rem;
+  right: 1rem;
+  height: 1px;
+  background: var(--color-borders);
+}
+
+.entries-credits__chevron {
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--color-icon-secondary);
+}
