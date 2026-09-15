@@ -128,7 +128,7 @@
 }
 @keyframes layer-out-right {
   from { transform: translateX(0) scale(1); }
-  to   { transform: translateX(-30%) scale(0.9); }
+  to   { transform: translateX(100%) scale(0.9); }
 }
 
 @keyframes layer-in-left {
@@ -137,7 +137,7 @@
 }
 @keyframes layer-out-left {
   from { transform: translateX(0) scale(1); }
-  to   { transform: translateX(30%) scale(0.9); }
+  to   { transform: translateX(-100%) scale(0.9); }
 }
 
 /*
