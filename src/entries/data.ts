@@ -15,11 +15,6 @@ export interface CreditLink {
   url: string
 }
 
-export interface CreditGroup {
-  title: string
-  items: CreditLink[]
-}
-
 export const entries: Entry[] = [
   {
     name: 'JianjiaOS',
@@ -158,25 +153,15 @@ export const entries: Entry[] = [
   },
 ]
 
-export const creditGroups: CreditGroup[] = [
-  {
-    title: '移动端',
-    items: [
-      { name: 'React', url: 'https://github.com/facebook/react/blob/main/LICENSE' },
-      { name: 'Capacitor', url: 'https://github.com/ionic-team/capacitor/blob/main/LICENSE' },
-      { name: '@capacitor/app', url: 'https://github.com/ionic-team/capacitor-plugins/blob/main/app/LICENSE' },
-      { name: '@capacitor/browser', url: 'https://github.com/ionic-team/capacitor-plugins/blob/main/browser/LICENSE' },
-      { name: '@capacitor/preferences', url: 'https://github.com/ionic-team/capacitor-plugins/blob/main/preferences/LICENSE' },
-      { name: 'Vite', url: 'https://github.com/vitejs/vite/blob/main/LICENSE' },
-      { name: 'TypeScript', url: 'https://github.com/microsoft/TypeScript/blob/main/LICENSE.txt' },
-      { name: 'oxlint', url: 'https://github.com/oxc-project/oxc/blob/main/LICENSE' },
-    ],
-  },
-  {
-    title: '设计参考',
-    items: [
-      { name: 'telegram-tt', url: 'https://github.com/nicepkg/nicegram' },
-      { name: 'RemixIcon', url: 'https://github.com/Remix-Design/RemixIcon/blob/master/License' },
-    ],
-  },
+export const credits: CreditLink[] = [
+  { name: 'React', url: 'https://github.com/facebook/react/blob/main/LICENSE' },
+  { name: 'Capacitor', url: 'https://github.com/ionic-team/capacitor/blob/main/LICENSE' },
+  { name: '@capacitor/app', url: 'https://github.com/ionic-team/capacitor-plugins/blob/main/app/LICENSE' },
+  { name: '@capacitor/browser', url: 'https://github.com/ionic-team/capacitor-plugins/blob/main/browser/LICENSE' },
+  { name: '@capacitor/preferences', url: 'https://github.com/ionic-team/capacitor-plugins/blob/main/preferences/LICENSE' },
+  { name: 'Vite', url: 'https://github.com/vitejs/vite/blob/main/LICENSE' },
+  { name: 'TypeScript', url: 'https://github.com/microsoft/TypeScript/blob/main/LICENSE.txt' },
+  { name: 'oxlint', url: 'https://github.com/oxc-project/oxc/blob/main/LICENSE' },
+  { name: 'telegram-tt', url: 'https://github.com/nicepkg/nicegram' },
+  { name: 'RemixIcon', url: 'https://github.com/Remix-Design/RemixIcon/blob/master/License' },
 ]

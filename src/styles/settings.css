@@ -92,3 +92,30 @@
   height: 1.25rem;
   color: var(--color-icon-secondary);
 }
+
+/* ==========================================================================
+   致谢
+   ========================================================================== */
+
+.settings-credits__link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.8125rem 1rem;
+  color: var(--color-text);
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.settings-credits__link:active {
+  background: var(--color-item-active);
+}
+
+.settings-credits__chevron {
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--color-icon-secondary);
+}

@@ -1,23 +1,27 @@
 import { useEffect, useState } from 'react'
 
+import ChevronIcon from '@/assets/icons/arrow-right-s-line.svg?react'
 import InfoIcon from '@/assets/icons/information-line.svg?react'
+import LinkIcon from '@/assets/icons/links-line.svg?react'
 import PaletteIcon from '@/assets/icons/palette-line.svg?react'
 import RefreshIcon from '@/assets/icons/refresh-line.svg?react'
+import UserIcon from '@/assets/icons/user-line.svg?react'
 import { ListItem } from '@/components/ListItem'
 import { ScreenShell } from '@/components/ScreenShell'
 import { showToast } from '@/components/toastStore'
+import { credits } from '@/entries/data'
 import { useNavStore } from '@/nav/store'
 import { findBackground } from '@/settings/backgrounds'
 import { useSettingsStore } from '@/settings/store'
 import { getAppVersion } from '@/settings/version'
 import { manualCheckForUpdate } from '@/update/bridge'
 
-/**
- * 设置页。
- *
- * 采用 Telegram 的分组列表范式：副背景色页面 + 白底圆角分组容器 +
- * 满宽可点行。规格见设计文档 §4.6。
- */
+import { Browser } from '@capacitor/browser'
+
+function openExternal(url: string): void {
+  void Browser.open({ url })
+}
+
 export function SettingsPage() {
   const [version, setVersion] = useState('…')
   const [checking, setChecking] = useState(false)
@@ -28,12 +32,6 @@ export function SettingsPage() {
     void getAppVersion().then(setVersion)
   }, [])
 
-  /**
-   * 手动检查更新。
-   *
-   * 与冷启动的静默检查相对：手动触发**必须给反馈**（设计文档 §9.2），
-   * 所以三种结果都要有明确回应。
-   */
   const onCheck = async (): Promise<void> => {
     setChecking(true)
     try {
@@ -87,6 +85,39 @@ export function SettingsPage() {
               checking ? undefined : () => void onCheck()
             }
           />
+
+          <ListItem
+            icon={<UserIcon />}
+            title="关于作者"
+            chevron
+            onClick={() => openExternal('https://www.beijiu.top/')}
+          />
+
+          <ListItem
+            icon={<LinkIcon />}
+            title="开源地址"
+            chevron
+            onClick={() => openExternal('https://github.com/beijiushare/JianjiaOS')}
+          />
+        </div>
+      </section>
+
+      <section className="list-group">
+        <h2 className="list-group__title">致谢</h2>
+
+        <div className="list-group__body">
+          {credits.map((item) => (
+            <a
+              key={item.url}
+              className="settings-credits__link"
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {item.name}
+              <ChevronIcon className="settings-credits__chevron" />
+            </a>
+          ))}
         </div>
       </section>
     </ScreenShell>
