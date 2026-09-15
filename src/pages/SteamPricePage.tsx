@@ -90,15 +90,17 @@ export function SteamPricePage() {
       title="Steam 价格追踪"
       headerClassName="screen-header--steam"
       bodyClassName="screen-body--steam"
+      headerRight={
+        <button
+          type="button"
+          className="icon-btn"
+          aria-label="添加游戏"
+          onClick={() => setShowAdd(true)}
+        >
+          <AddIcon className="icon-btn__icon" />
+        </button>
+      }
     >
-      <button
-        type="button"
-        className="steam-add-btn"
-        onClick={() => setShowAdd(true)}
-      >
-        <AddIcon className="steam-add-icon" />
-      </button>
-
       {showAdd && (
         <AddGameDialog
           appIdInput={appIdInput}

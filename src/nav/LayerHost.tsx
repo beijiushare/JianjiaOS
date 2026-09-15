@@ -3,6 +3,7 @@ import { Fragment, type ComponentType } from 'react'
 import { AppDrawer } from '@/overlays/AppDrawer'
 import { ChatBackgroundPage } from '@/pages/ChatBackgroundPage'
 import { ChatPage } from '@/pages/ChatPage'
+import { EntriesPage } from '@/pages/EntriesPage'
 import { MessagesPage } from '@/pages/MessagesPage'
 import { SettingsPage } from '@/pages/SettingsPage'
 import { SteamPricePage } from '@/pages/SteamPricePage'
@@ -15,6 +16,7 @@ const PAGES: Record<PageId, ComponentType> = {
   settings: SettingsPage,
   chatBackground: ChatBackgroundPage,
   steamPrice: SteamPricePage,
+  entries: EntriesPage,
 }
 
 const DRAWERS: Record<DrawerId, ComponentType> = {

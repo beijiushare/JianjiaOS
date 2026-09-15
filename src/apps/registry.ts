@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react'
 
+import BookmarkIcon from '@/assets/icons/bookmark-line.svg?react'
 import SettingsIcon from '@/assets/icons/settings-3-line.svg?react'
 import SteamIcon from '@/assets/icons/steam.svg?react'
 import type { DrawerId, PageId } from '@/nav/types'
@@ -25,6 +26,12 @@ export interface AppInfo {
  * 两处同时生效，不需要改任何 UI 代码。
  */
 export const APP_REGISTRY: AppInfo[] = [
+  {
+    id: 'entries',
+    name: '集锦',
+    icon: BookmarkIcon,
+    entry: { kind: 'push', page: 'entries' },
+  },
   {
     id: 'settings',
     name: '设置',

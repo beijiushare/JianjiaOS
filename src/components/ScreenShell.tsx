@@ -5,16 +5,13 @@ import { handleBack } from '@/nav/useBackHandler'
 
 interface ScreenShellProps {
   title: string
-  /** 追加到最外层 `.screen` 上的修饰类 */
   screenClassName?: string
-  /** 最外层 `.screen` 的行内样式。用于传入 CSS 变量（如聊天背景图 URL） */
   screenStyle?: CSSProperties
-  /** 追加到顶部栏 `.screen-header` 上的修饰类。聊天页用它换成更矮的头部 */
   headerClassName?: string
-  /** 追加到内容区 `.screen-body` 上的修饰类，用于按页面调整背景等 */
   bodyClassName?: string
-  /** 固定在内容区下方的元素，如聊天输入条 */
   footer?: ReactNode
+  /** 放在标题右侧的元素（如操作按钮） */
+  headerRight?: ReactNode
   children: ReactNode
 }
 
@@ -35,6 +32,7 @@ export function ScreenShell({
   headerClassName,
   bodyClassName,
   footer,
+  headerRight,
   children,
 }: ScreenShellProps) {
   return (
@@ -60,6 +58,7 @@ export function ScreenShell({
           <ArrowLeftIcon className="icon-btn__icon" />
         </button>
         <h1 className="screen-title">{title}</h1>
+        {headerRight}
       </header>
 
       <div

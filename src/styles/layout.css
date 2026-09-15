@@ -189,6 +189,8 @@
 }
 
 .screen-title {
+  flex: 1 1 auto;
+  min-width: 0;
   font-size: 1.25rem;
   font-weight: var(--font-weight-semibold);
   color: var(--color-text);

@@ -7,34 +7,6 @@
   position: relative;
 }
 
-/* 右上角加号按钮 */
-.steam-add-btn {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  z-index: 10;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--color-text);
-  cursor: pointer;
-}
-
-.steam-add-btn:active {
-  background: var(--color-hover-overlay);
-}
-
-.steam-add-icon {
-  width: 1.5rem;
-  height: 1.5rem;
-}
-
 /* 游戏列表 */
 .steam-list {
   display: flex;
