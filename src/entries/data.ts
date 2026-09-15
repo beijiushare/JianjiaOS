@@ -162,6 +162,6 @@ export const credits: CreditLink[] = [
   { name: 'Vite', url: 'https://github.com/vitejs/vite/blob/main/LICENSE' },
   { name: 'TypeScript', url: 'https://github.com/microsoft/TypeScript/blob/main/LICENSE.txt' },
   { name: 'oxlint', url: 'https://github.com/oxc-project/oxc/blob/main/LICENSE' },
-  { name: 'telegram-tt', url: 'https://github.com/nicepkg/nicegram' },
+  { name: 'telegram-tt', url: 'https://github.com/Ajaxy/telegram-tt' },
   { name: 'RemixIcon', url: 'https://github.com/Remix-Design/RemixIcon/blob/master/License' },
 ]
