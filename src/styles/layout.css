@@ -100,6 +100,7 @@
 /* push 页：不透明，横向转场。默认自右滑入（表示「前进」） */
 .layer--push {
   background: var(--app-bg-gradient);
+  overflow: hidden;
   animation: layer-in-right var(--slide-duration) var(--slide-easing) both;
 }
 .layer--push.is-exiting {
@@ -117,13 +118,17 @@
   animation-name: layer-out-left;
 }
 
+/*
+  push 页退场时，背后层做视差缩小（新层滑入，旧层缩小 + 左移 + 变暗）。
+  取自 telegram-tt 的 slideLayers 效果：新页全宽滑入，旧页缩至 90%。
+*/
 @keyframes layer-in-right {
   from { transform: translateX(100%); }
   to   { transform: translateX(0); }
 }
 @keyframes layer-out-right {
-  from { transform: translateX(0); }
-  to   { transform: translateX(100%); }
+  from { transform: translateX(0) scale(1); }
+  to   { transform: translateX(-30%) scale(0.9); }
 }
 
 @keyframes layer-in-left {
@@ -131,8 +136,8 @@
   to   { transform: translateX(0); }
 }
 @keyframes layer-out-left {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-100%); }
+  from { transform: translateX(0) scale(1); }
+  to   { transform: translateX(30%) scale(0.9); }
 }
 
 /*
