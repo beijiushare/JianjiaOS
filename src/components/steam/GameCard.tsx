@@ -32,17 +32,16 @@ export function GameCard({ game, price, onDelete }: GameCardProps) {
         </div>
         <div className="steam-card__prices">
           <span className="steam-price__row">
-            原价：<span>{price?.original ?? '—'}</span>
+            {price?.original ?? '—'}
             {price && price.discount > 0 && (
-              <span className="steam-price--green"> -{price.discount}%</span>
+              <span className="steam-price--green">  -{price.discount}%</span>
             )}
           </span>
           <span className="steam-price__row">
-            现价：
             <span className={isCheap ? 'steam-price--green' : ''}>
               {price?.current ?? '—'}
             </span>
-            {' / 目标 '}
+            {'  '}
             <span>{formatPrice(game.targetPrice * 100)}</span>
           </span>
         </div>
