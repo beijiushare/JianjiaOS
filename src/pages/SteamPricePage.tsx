@@ -20,18 +20,15 @@ export function SteamPricePage() {
   const [showAdd, setShowAdd] = useState(false)
   const [appIdInput, setAppIdInput] = useState('')
   const [targetInput, setTargetInput] = useState('')
-  const [loading, setLoading] = useState<Record<string, boolean>>({})
   const [prices, setPrices] = useState<
     Record<string, { currentCents: number; current: string; original: string; discount: number }>
   >({})
 
-  // 查询所有游戏的价格、名字、截图
   useEffect(() => {
     let cancelled = false
     for (const game of games) {
-      if (prices[game.appId] || loading[game.appId]) continue
+      if (prices[game.appId]) continue
 
-      setLoading((prev) => ({ ...prev, [game.appId]: true }))
       Promise.all([
         fetchSteamPrice(game.appId),
         fetchSteamDetail(game.appId),
@@ -59,9 +56,6 @@ export function SteamPricePage() {
           }
         })
         .catch((e) => { console.error('[steam-price]', e) })
-        .finally(() => {
-          if (!cancelled) setLoading((prev) => ({ ...prev, [game.appId]: false }))
-        })
     }
     return () => { cancelled = true }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -124,7 +118,6 @@ export function SteamPricePage() {
             key={game.appId}
             game={game}
             price={prices[game.appId]}
-            loading={loading[game.appId]}
             onDelete={() => removeGame(game.appId)}
           />
         ))}
