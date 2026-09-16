@@ -9,6 +9,7 @@ import { GameCard } from '@/components/steam/GameCard'
 import { checkAndNotify } from '../steam-price/bridge'
 import { useSteamPriceStore } from '../steam-price/store'
 import { fetchSteamPrice, fetchSteamDetail } from '../steam-price/api'
+import type { SteamPriceResponse, SteamAppDetailResponse } from '../steam-price/types'
 
 export function SteamPricePage() {
   const games = useSteamPriceStore((s) => s.games)
@@ -37,11 +38,13 @@ export function SteamPricePage() {
       ])
         .then(([priceData, detailData]) => {
           if (cancelled) return
-          if (detailData.success && detailData.data) {
-            updateGame(game.appId, { name: detailData.data.name })
+          const priceResult = (priceData as unknown as Record<string, SteamPriceResponse>)[game.appId]
+          const detailResult = (detailData as unknown as Record<string, SteamAppDetailResponse>)[game.appId]
+          if (detailResult?.success && detailResult.data) {
+            updateGame(game.appId, { name: detailResult.data.name })
           }
-          if (priceData.success && priceData.data?.price_overview) {
-            const p = priceData.data.price_overview
+          if (priceResult?.success && priceResult.data?.price_overview) {
+            const p = priceResult.data.price_overview
             const entry = {
               currentCents: p.final,
               current: p.final_formatted,
@@ -55,7 +58,7 @@ export function SteamPricePage() {
             checkAndNotify({ [game.appId]: { ...entry, appId: game.appId, name: game.name ?? game.appId } })
           }
         })
-        .catch(() => {})
+        .catch((e) => { console.error('[steam-price]', e) })
         .finally(() => {
           if (!cancelled) setLoading((prev) => ({ ...prev, [game.appId]: false }))
         })
