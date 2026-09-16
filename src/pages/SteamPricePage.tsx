@@ -30,12 +30,6 @@ export function SteamPricePage() {
     for (const game of games) {
       if (prices[game.appId] || loading[game.appId]) continue
 
-      if (!game.image) {
-        updateGame(game.appId, {
-          image: `https://shared.st.dl.eccdnx.com/store_item_assets/steam/apps/${game.appId}/header.jpg`,
-        })
-      }
-
       setLoading((prev) => ({ ...prev, [game.appId]: true }))
       Promise.all([
         fetchSteamPrice(game.appId),
