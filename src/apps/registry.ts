@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react'
 
+import AlarmIcon from '@/assets/icons/alarm-line.svg?react'
 import BookmarkIcon from '@/assets/icons/bookmark-line.svg?react'
 import SettingsIcon from '@/assets/icons/settings-3-line.svg?react'
 import SteamIcon from '@/assets/icons/steam.svg?react'
@@ -43,5 +44,11 @@ export const APP_REGISTRY: AppInfo[] = [
     name: 'Steam Price',
     icon: SteamIcon,
     entry: { kind: 'push', page: 'steamPrice' },
+  },
+  {
+    id: 'world60s',
+    name: '60s知世界',
+    icon: AlarmIcon,
+    entry: { kind: 'push', page: 'world60s' },
   },
 ]

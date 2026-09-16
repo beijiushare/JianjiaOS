@@ -8,6 +8,7 @@ import { EntriesPage } from '@/pages/EntriesPage'
 import { MessagesPage } from '@/pages/MessagesPage'
 import { SettingsPage } from '@/pages/SettingsPage'
 import { SteamPricePage } from '@/pages/SteamPricePage'
+import { World60sPage } from '@/pages/World60sPage'
 
 import type { DrawerId, NavLayer, PageId } from './types'
 
@@ -19,6 +20,7 @@ const PAGES: Record<PageId, ComponentType> = {
   steamPrice: SteamPricePage,
   entries: EntriesPage,
   credits: CreditsPage,
+  world60s: World60sPage,
 }
 
 const DRAWERS: Record<DrawerId, ComponentType> = {
