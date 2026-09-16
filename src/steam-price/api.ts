@@ -1,31 +1,20 @@
 import { Capacitor, CapacitorHttp } from '@capacitor/core'
 
-import type {
-  SteamAppDetailResponse,
-  SteamPriceResponse,
-} from './types'
+import type { SteamAppDetailResponse } from './types'
 
 const WORKER_API = 'https://steam-api.beijiu.top/api/appdetails'
 const IS_NATIVE = Capacitor.isNativePlatform()
 
-async function httpGet<T>(params: Record<string, string>): Promise<T> {
-  if (!IS_NATIVE) {
-    const resp = await fetch(`/steam-api/api/appdetails?${new URLSearchParams(params)}`)
-    return resp.json() as Promise<T>
+export async function fetchSteamDetail(appId: string): Promise<SteamAppDetailResponse> {
+  if (IS_NATIVE) {
+    const resp = await CapacitorHttp.get({
+      url: WORKER_API,
+      params: { appids: appId, cc: 'CN' },
+    })
+    return resp.data as SteamAppDetailResponse
   }
-  const resp = await CapacitorHttp.get({
-    url: WORKER_API,
-    params,
-  })
-  return resp.data as T
-}
-
-export function fetchSteamPrice(appId: string): Promise<SteamPriceResponse> {
-  return httpGet({ appids: appId, cc: 'CN', filters: 'price_overview' })
-}
-
-export function fetchSteamDetail(appId: string): Promise<SteamAppDetailResponse> {
-  return httpGet({ appids: appId, cc: 'CN' })
+  const resp = await fetch(`${WORKER_API}?appids=${appId}&cc=CN`)
+  return resp.json() as Promise<SteamAppDetailResponse>
 }
 
 export function formatPrice(cents: number): string {

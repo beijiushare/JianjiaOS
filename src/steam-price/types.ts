@@ -14,32 +14,12 @@ export interface SteamPriceData {
   final_formatted: string
 }
 
-export interface SteamScreenshot {
-  id: number
-  path_thumbnail: string
-  path_full: string
-}
-
-/** filters=price_overview */
-export interface SteamPriceResponse {
-  success: boolean
-  data?: {
-    price_overview?: SteamPriceData
-  }
-}
-
-/** 无 filters（取名字） */
+/** 无 filters — 同时包含 name、header_image、price_overview */
 export interface SteamAppDetailResponse {
   success: boolean
   data?: {
     name: string
-  }
-}
-
-/** filters=screenshots（取截图） */
-export interface SteamScreenshotsResponse {
-  success: boolean
-  data?: {
-    screenshots: SteamScreenshot[]
+    header_image: string
+    price_overview?: SteamPriceData
   }
 }
