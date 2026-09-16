@@ -6,7 +6,6 @@ import { showToast } from '@/components/toastStore'
 import { AddGameDialog } from '@/components/steam/AddGameDialog'
 import { GameCard } from '@/components/steam/GameCard'
 
-import { checkAndNotify } from '../steam-price/bridge'
 import { useSteamPriceStore } from '../steam-price/store'
 import { fetchSteamPrice, fetchSteamDetail } from '../steam-price/api'
 import type { SteamPriceResponse, SteamAppDetailResponse } from '../steam-price/types'
@@ -19,7 +18,6 @@ export function SteamPricePage() {
 
   const [showAdd, setShowAdd] = useState(false)
   const [appIdInput, setAppIdInput] = useState('')
-  const [targetInput, setTargetInput] = useState('')
   const [prices, setPrices] = useState<
     Record<string, { currentCents: number; current: string; original: string; discount: number }>
   >({})
@@ -52,7 +50,6 @@ export function SteamPricePage() {
               discount: p.discount_percent,
             }
             setPrices((prev) => ({ ...prev, [game.appId]: entry }))
-            checkAndNotify({ [game.appId]: { ...entry, appId: game.appId, name: game.name ?? game.appId } })
           }
         })
         .catch((e) => { console.error('[steam-price]', e) })
@@ -63,21 +60,19 @@ export function SteamPricePage() {
 
   const handleAdd = () => {
     const id = appIdInput.trim()
-    const target = parseFloat(targetInput)
-    if (!id || Number.isNaN(target)) {
-      showToast('请填写完整')
+    if (!id) {
+      showToast('请填写 App ID')
       return
     }
     if (games.some((g) => g.appId === id)) {
       showToast('已存在')
       return
     }
-    addGame(id, target)
+    addGame(id)
     updateGame(id, {
       image: `https://shared.st.dl.eccdnx.com/store_item_assets/steam/apps/${id}/header.jpg`,
     })
     setAppIdInput('')
-    setTargetInput('')
     setShowAdd(false)
   }
 
@@ -100,9 +95,7 @@ export function SteamPricePage() {
       {showAdd && (
         <AddGameDialog
           appIdInput={appIdInput}
-          targetInput={targetInput}
           onAppIdChange={setAppIdInput}
-          onTargetChange={setTargetInput}
           onConfirm={handleAdd}
           onClose={() => setShowAdd(false)}
         />

@@ -1,7 +1,5 @@
 export interface Game {
   appId: string
-  targetPrice: number
-  /** 首次查询后缓存，避免重复请求 */
   name?: string
   image?: string
   addedAt: number

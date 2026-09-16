@@ -2,18 +2,14 @@ import { useEffect, useRef } from 'react'
 
 interface AddGameDialogProps {
   appIdInput: string
-  targetInput: string
   onAppIdChange: (value: string) => void
-  onTargetChange: (value: string) => void
   onConfirm: () => void
   onClose: () => void
 }
 
 export function AddGameDialog({
   appIdInput,
-  targetInput,
   onAppIdChange,
-  onTargetChange,
   onConfirm,
   onClose,
 }: AddGameDialogProps) {
@@ -34,13 +30,6 @@ export function AddGameDialog({
           placeholder="Steam 游戏 ID"
           value={appIdInput}
           onChange={(e) => onAppIdChange(e.target.value)}
-        />
-        <input
-          type="number"
-          className="steam-dialog__input"
-          placeholder="目标价格（元）"
-          value={targetInput}
-          onChange={(e) => onTargetChange(e.target.value)}
         />
         <div className="steam-dialog__actions">
           <button

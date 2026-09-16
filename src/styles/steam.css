@@ -65,8 +65,13 @@
   font-size: 0.8125rem;
 }
 
-.steam-price__row > span {
-  color: var(--color-text);
+.steam-price__label {
+  color: #57606a;
+}
+
+.steam-price__value {
+  color: #111827;
+  font-weight: 500;
 }
 
 .steam-price--green {

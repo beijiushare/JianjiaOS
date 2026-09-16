@@ -1,7 +1,6 @@
 import DeleteIcon from '@/assets/icons/delete-bin-line.svg?react'
 
 import type { Game } from '../../steam-price/types'
-import { formatPrice } from '../../steam-price/api'
 
 interface GameCardProps {
   game: Game
@@ -15,8 +14,6 @@ interface GameCardProps {
 }
 
 export function GameCard({ game, price, onDelete }: GameCardProps) {
-  const isCheap = price ? price.currentCents / 100 <= game.targetPrice : false
-
   return (
     <div className="steam-card">
       {game.image && (
@@ -32,7 +29,14 @@ export function GameCard({ game, price, onDelete }: GameCardProps) {
         </div>
         <div className="steam-card__prices">
           <span className="steam-price__row">
-            原价:{price?.original ?? '—'}  现价:{price?.current ?? '—'}  折扣:{price?.discount ?? 0}%
+            <span className="steam-price__label">原价:</span>
+            <span className="steam-price__value">{price?.original ?? '—'}</span>
+            {'  '}
+            <span className="steam-price__label">现价:</span>
+            <span className="steam-price__value">{price?.current ?? '—'}</span>
+            {'  '}
+            <span className="steam-price__label">折扣:</span>
+            <span className="steam-price__value">{price?.discount ?? 0}%</span>
           </span>
         </div>
       </div>
