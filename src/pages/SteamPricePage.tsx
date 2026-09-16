@@ -30,6 +30,12 @@ export function SteamPricePage() {
     for (const game of games) {
       if (prices[game.appId] || loading[game.appId]) continue
 
+      if (!game.image) {
+        updateGame(game.appId, {
+          image: `https://shared.st.dl.eccdnx.com/store_item_assets/steam/apps/${game.appId}/header.jpg`,
+        })
+      }
+
       setLoading((prev) => ({ ...prev, [game.appId]: true }))
       Promise.all([
         fetchSteamPrice(game.appId),
@@ -40,9 +46,6 @@ export function SteamPricePage() {
           if (detailData.success && detailData.data) {
             updateGame(game.appId, { name: detailData.data.name })
           }
-          updateGame(game.appId, {
-            image: `https://shared.st.dl.eccdnx.com/store_item_assets/steam/apps/${game.appId}/header.jpg`,
-          })
           if (priceData.success && priceData.data?.price_overview) {
             const p = priceData.data.price_overview
             const entry = {
@@ -79,6 +82,9 @@ export function SteamPricePage() {
       return
     }
     addGame(id, target)
+    updateGame(id, {
+      image: `https://shared.st.dl.eccdnx.com/store_item_assets/steam/apps/${id}/header.jpg`,
+    })
     setAppIdInput('')
     setTargetInput('')
     setShowAdd(false)
