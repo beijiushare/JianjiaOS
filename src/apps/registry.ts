@@ -40,7 +40,7 @@ export const APP_REGISTRY: AppInfo[] = [
   },
   {
     id: 'steamPrice',
-    name: 'Steam 价格追踪',
+    name: 'Steam Price',
     icon: SteamIcon,
     entry: { kind: 'push', page: 'steamPrice' },
   },

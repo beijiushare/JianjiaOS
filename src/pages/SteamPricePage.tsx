@@ -72,7 +72,7 @@ export function SteamPricePage() {
 
   return (
     <ScreenShell
-      title="Steam 价格追踪"
+      title="Steam Price"
       headerClassName="screen-header--steam"
       bodyClassName="screen-body--steam"
       headerRight={
