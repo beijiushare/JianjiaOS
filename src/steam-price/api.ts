@@ -5,7 +5,7 @@ import type {
   SteamPriceResponse,
 } from './types'
 
-const WORKER_API = 'https://steam-api.beijiushare.workers.dev/api/appdetails'
+const WORKER_API = 'https://steam-api.beijiu.top/api/appdetails'
 const IS_NATIVE = Capacitor.isNativePlatform()
 
 async function httpGet<T>(params: Record<string, string>): Promise<T> {
