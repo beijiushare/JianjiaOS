@@ -11,11 +11,10 @@ interface GameCardProps {
     original: string
     discount: number
   }
-  loading?: boolean
   onDelete: () => void
 }
 
-export function GameCard({ game, price, loading, onDelete }: GameCardProps) {
+export function GameCard({ game, price, onDelete }: GameCardProps) {
   const isCheap = price ? price.currentCents / 100 <= game.targetPrice : false
 
   return (
@@ -32,23 +31,17 @@ export function GameCard({ game, price, loading, onDelete }: GameCardProps) {
           {game.name ?? game.appId}
         </div>
         <div className="steam-card__prices">
-          {loading && <span className="steam-card__loading">加载中…</span>}
-          {price && (
-            <>
-              <span className="steam-price__row">
-                原始价格：<span>{price.original}</span>
-              </span>
-              <span className="steam-price__row">
-                现在价格：
-                <span className={isCheap ? 'steam-price--green' : ''}>
-                  {price.current}
-                  {price.discount > 0 && ` (-${price.discount}%)`}
-                </span>
-              </span>
-            </>
-          )}
           <span className="steam-price__row">
-            目标价格：<span>{formatPrice(game.targetPrice * 100)}</span>
+            <span>{price?.original ?? '—'}</span>
+            {price && price.discount > 0 && (
+              <span className="steam-price--green"> -{price.discount}%</span>
+            )}
+          </span>
+          <span className="steam-price__row">
+            <span className={isCheap ? 'steam-price--green' : ''}>
+              {price?.current ?? '—'}
+            </span>
+            <span> → {formatPrice(game.targetPrice * 100)}</span>
           </span>
         </div>
       </div>
