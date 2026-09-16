@@ -42,9 +42,8 @@ export function GameCard({ game, price, onDelete }: GameCardProps) {
             <span className={isCheap ? 'steam-price--green' : ''}>
               {price?.current ?? '—'}
             </span>
-          </span>
-          <span className="steam-price__row">
-            目标：<span>{formatPrice(game.targetPrice * 100)}</span>
+            {' / 目标 '}
+            <span>{formatPrice(game.targetPrice * 100)}</span>
           </span>
         </div>
       </div>
