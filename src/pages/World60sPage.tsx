@@ -235,7 +235,7 @@ function DouyinCard() {
   )
 }
 
-function QuarkCard() {
+function ToutiaoCard() {
   const { data, loading, error } = useCard(fetchToutiaoHot)
   if (loading) return <div className="w60-card w60-card--loading">加载中…</div>
   if (error || !data) return <div className="w60-card w60-card--error">暂无数据</div>
@@ -256,6 +256,27 @@ function QuarkCard() {
                   : item.hot_value}
               </span>
             )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+function QuarkCard() {
+  const { data, loading, error } = useCard(fetchQuarkHot)
+  if (loading) return <div className="w60-card w60-card--loading">加载中…</div>
+  if (error || !data) return <div className="w60-card w60-card--error">暂无数据</div>
+  return (
+    <div className="w60-card">
+      <div className="w60-card__header">
+        <span className="w60-card__title">夸克热点</span>
+      </div>
+      <ul className="w60-card__list">
+        {data.slice(0, 10).map((item, i) => (
+          <li key={i} className="w60-card__hot">
+            <span className="w60-card__rank">{i + 1}</span>
+            <span className="w60-card__hot-title">{item.title}</span>
           </li>
         ))}
       </ul>
