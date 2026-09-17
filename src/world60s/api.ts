@@ -154,6 +154,26 @@ export interface ZhihuItem {
 export const fetchZhihuHot = () =>
   fetchJson<ZhihuItem[]>('/v2/zhihu?encoding=json')
 
+/** bili: 有 title, link, 没有 hot_value */
+export interface BiliItem {
+  title: string
+  link: string
+}
+
+export const fetchBiliHot = () =>
+  fetchJson<BiliItem[]>('/v2/bili?encoding=json')
+
+/** douyin: 有 title, hot_value, cover, link */
+export interface DouyinItem {
+  title: string
+  hot_value: number
+  cover: string
+  link: string
+}
+
+export const fetchDouyinHot = () =>
+  fetchJson<DouyinItem[]>('/v2/douyin?encoding=json')
+
 /** baidu/hot: 有 rank, score, score_desc, cover, 没有 hot_value/link */
 export interface BaiduHotItem {
   rank: number

@@ -79,12 +79,6 @@ function Day60sCard() {
       {data.image && (
         <img className="w60-card__image" src={data.image} alt="每日图片" />
       )}
-      <ul className="w60-card__list">
-        {data.news.map((item, i) => (
-          <li key={i} className="w60-card__item">{item}</li>
-        ))}
-      </ul>
-      {data.tip && <div className="w60-card__tip">{data.tip}</div>}
     </div>
   )
 }
