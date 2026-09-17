@@ -1,5 +1,6 @@
 import { useCard } from '../hooks/useCard'
 import { CardShell } from './CardShell'
+import { ZoomableImage } from './ZoomableImage'
 import { fetchDay60s, fetchTodayInHistory, fetchItNews, fetchEpicFree, fetchAiNews } from '../api'
 import { Browser } from '@capacitor/browser'
 
@@ -12,7 +13,7 @@ export function Day60sCard() {
   if (loading || error || !data?.image) return null
   return (
     <div className="w60-card">
-      <img className="w60-card__image" src={data.image} alt="每天60秒读懂世界" />
+      <ZoomableImage src={data.image} alt="每天60秒读懂世界" />
     </div>
   )
 }
