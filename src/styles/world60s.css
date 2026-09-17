@@ -128,15 +128,6 @@
   font-size: 0.8125rem;
 }
 
-.w60-card__tip {
-  padding: 0.75rem 1rem;
-  color: var(--color-text-secondary);
-  font-size: 0.8125rem;
-  text-align: center;
-  font-style: italic;
-  border-top: 1px solid var(--color-borders);
-}
-
 /* ── Epic Games ────────────────────────────────────────────────── */
 
 .w60-epic-list {
@@ -352,19 +343,3 @@
   color: var(--color-text-secondary);
 }
 
-/* ── 百度百科 ──────────────────────────────────────────────────── */
-
-.w60-card__baike-title {
-  font-weight: var(--font-weight-medium);
-  display: block;
-}
-
-.w60-card__baike-desc {
-  display: block;
-  font-size: 0.8125rem;
-  color: var(--color-text-secondary);
-  margin-top: 0.25rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
