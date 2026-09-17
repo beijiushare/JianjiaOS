@@ -108,19 +108,26 @@ export interface EpicGame {
 export const fetchEpicFree = () =>
   fetchJson<EpicGame[]>('/v2/epic?encoding=json')
 
+/** ai-news 返回 { date, news: [...] } 不是数组 */
+export interface AiNewsData {
+  date: string
+  news: AiNewsItem[]
+}
+
 export interface AiNewsItem {
   title: string
-  description: string
+  detail: string
   link: string
-  created: string
-  created_at: number
+  source: string
+  date: string
 }
 
 export const fetchAiNews = () =>
-  fetchJson<AiNewsItem[]>('/v2/ai-news?encoding=json')
+  fetchJson<AiNewsData>('/v2/ai-news?encoding=json')
 
 // ── 热门 Tab ──────────────────────────────────────────────────────
 
+/** toutiao / weibo / zhihu 结构统一 */
 export interface HotItem {
   title: string
   hot_value: number
@@ -128,26 +135,11 @@ export interface HotItem {
   cover?: string
 }
 
-export const fetchBiliHot = () =>
-  fetchJson<HotItem[]>('/v2/bili?encoding=json')
-
 export const fetchToutiaoHot = () =>
   fetchJson<HotItem[]>('/v2/toutiao?encoding=json')
 
-export const fetchQuarkHot = () =>
-  fetchJson<HotItem[]>('/v2/quark?encoding=json')
-
-export const fetchBaiduHot = () =>
-  fetchJson<HotItem[]>('/v2/baidu/hot?encoding=json')
-
-export const fetchTiebaHot = () =>
-  fetchJson<HotItem[]>('/v2/baidu/tieba?encoding=json')
-
 export const fetchWeiboHot = () =>
   fetchJson<HotItem[]>('/v2/weibo?encoding=json')
-
-export const fetchRednoteHot = () =>
-  fetchJson<HotItem[]>('/v2/rednote?encoding=json')
 
 export interface ZhihuItem {
   title: string
@@ -162,48 +154,152 @@ export interface ZhihuItem {
 export const fetchZhihuHot = () =>
   fetchJson<ZhihuItem[]>('/v2/zhihu?encoding=json')
 
+/** baidu/hot: 有 rank, score, score_desc, cover, 没有 hot_value/link */
+export interface BaiduHotItem {
+  rank: number
+  title: string
+  desc: string
+  score: string
+  score_desc: string
+  cover: string
+  type: string
+  type_desc: string
+}
+
+export const fetchBaiduHot = () =>
+  fetchJson<BaiduHotItem[]>('/v2/baidu/hot?encoding=json')
+
+/** baidu/tieba: 有 rank, score, score_desc, avatar, 没有 hot_value/link */
+export interface TiebaItem {
+  rank: number
+  title: string
+  desc: string
+  abstract: string
+  score: number
+  score_desc: string
+  avatar: string
+}
+
+export const fetchTiebaHot = () =>
+  fetchJson<TiebaItem[]>('/v2/baidu/tieba?encoding=json')
+
+/** quark: 有 id, title, summary, content, 没有 hot_value/link */
+export interface QuarkItem {
+  id: string
+  title: string
+  summary: string
+  content: string
+}
+
+export const fetchQuarkHot = () =>
+  fetchJson<QuarkItem[]>('/v2/quark?encoding=json')
+
+/** rednote: score 是字符串如 "947.5w" */
+export interface RednoteItem {
+  rank: number
+  title: string
+  score: string
+  word_type: string
+  work_type_icon: string
+  link: string
+}
+
+export const fetchRednoteHot = () =>
+  fetchJson<RednoteItem[]>('/v2/rednote?encoding=json')
+
 // ── 实用 Tab ──────────────────────────────────────────────────────
 
+/** gold-price: 返回 { date, metals: [...] } */
 export interface GoldPriceData {
-  price: string
-  change: string
-  time: string
+  date: string
+  metals: GoldMetal[]
+}
+
+export interface GoldMetal {
+  name: string
+  sell_price: string
+  today_price: string
+  high_price: string
+  low_price: string
+  unit: string
+  updated: string
+  updated_at: number
 }
 
 export const fetchGoldPrice = () =>
   fetchJson<GoldPriceData>('/v2/gold-price?encoding=json')
 
+/** fuel-price: 返回 { region, trend, items: [...] } */
 export interface FuelPriceData {
-  data: Record<string, Record<string, string>>
-  time: string
+  region: string
+  trend: {
+    next_adjustment_date: string
+    direction: string
+    change_liter_desc: string
+    description: string
+  }
+  items: FuelItem[]
+  link: string
+}
+
+export interface FuelItem {
+  name: string
+  price: number
+  price_desc: string
 }
 
 export const fetchFuelPrice = () =>
   fetchJson<FuelPriceData>('/v2/fuel-price?encoding=json')
 
+/** exchange-rate: 返回 { base_code, updated, rates: [{currency, rate}] } */
 export interface ExchangeRateData {
-  data: Record<string, string>
-  time: string
+  base_code: string
+  updated: string
+  updated_at: number
+  rates: ExchangeRate[]
+}
+
+export interface ExchangeRate {
+  currency: string
+  rate: number
 }
 
 export const fetchExchangeRate = () =>
   fetchJson<ExchangeRateData>('/v2/exchange-rate?encoding=json')
 
+/** maoyan: 返回 { list: [...] } */
+export interface MaoyanData {
+  list: MaoyanMovie[]
+}
+
 export interface MaoyanMovie {
-  title: string
-  score: string
-  cover: string
-  link: string
+  rank: number
+  maoyan_id: number
+  movie_name: string
+  release_year: string
+  box_office: number
+  box_office_desc: string
 }
 
 export const fetchMaoyanMovies = () =>
-  fetchJson<MaoyanMovie[]>('/v2/maoyan/all/movie?encoding=json')
+  fetchJson<MaoyanData>('/v2/maoyan/all/movie?encoding=json')
 
+/** douban: 有 url 没有 link, 有 cover, rating */
 export interface DoubanItem {
+  rank: number
   title: string
-  score: string
+  id: string
+  rating: number
+  rating_count: number
+  good_rate: number
+  trend: string
+  rank_change: number
+  card_subtitle: string
+  description: string
   cover: string
-  link: string
+  cover_proxy: string
+  url: string
+  tags: string[]
 }
 
 export const fetchDoubanMovie = () =>
@@ -214,12 +310,3 @@ export const fetchDoubanTv = () =>
 
 export const fetchDoubanShow = () =>
   fetchJson<DoubanItem[]>('/v2/douban/weekly/show_global?encoding=json')
-
-export interface BaikeItem {
-  title: string
-  description: string
-  link: string
-}
-
-export const fetchBaike = () =>
-  fetchJson<BaikeItem[]>('/v2/baike?encoding=json')

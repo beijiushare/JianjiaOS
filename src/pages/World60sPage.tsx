@@ -23,8 +23,6 @@ import {
   fetchDoubanMovie,
   fetchDoubanTv,
   fetchDoubanShow,
-  fetchBaike,
-  type HotItem,
   type DoubanItem,
 } from '../world60s/api'
 
@@ -182,9 +180,10 @@ function AiNewsCard() {
     <div className="w60-card">
       <div className="w60-card__header">
         <span className="w60-card__title">AI资讯快报</span>
+        <span className="w60-card__meta">{data.date}</span>
       </div>
       <ul className="w60-card__list">
-        {data.slice(0, 6).map((item, i) => (
+        {data.news.slice(0, 6).map((item, i) => (
           <li key={i} className="w60-card__item" onClick={() => openUrl(item.link)}>
             <span>{item.title}</span>
           </li>
@@ -196,14 +195,42 @@ function AiNewsCard() {
 
 // ── 热门 Cards ────────────────────────────────────────────────────
 
-function HotListCard({ title, fetcher }: { title: string; fetcher: () => Promise<HotItem[] | null> }) {
-  const { data, loading, error } = useCard(fetcher)
+function ToutiaoCard() {
+  const { data, loading, error } = useCard(fetchToutiaoHot)
   if (loading) return <div className="w60-card w60-card--loading">加载中…</div>
   if (error || !data) return <div className="w60-card w60-card--error">暂无数据</div>
   return (
     <div className="w60-card">
       <div className="w60-card__header">
-        <span className="w60-card__title">{title}</span>
+        <span className="w60-card__title">头条热搜榜</span>
+      </div>
+      <ul className="w60-card__list">
+        {data.slice(0, 10).map((item, i) => (
+          <li key={i} className="w60-card__hot" onClick={() => openUrl(item.link)}>
+            <span className="w60-card__rank">{i + 1}</span>
+            <span className="w60-card__hot-title">{item.title}</span>
+            {item.hot_value > 0 && (
+              <span className="w60-card__hot-value">
+                {item.hot_value >= 10000
+                  ? `${(item.hot_value / 10000).toFixed(1)}万`
+                  : item.hot_value}
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+function WeiboCard() {
+  const { data, loading, error } = useCard(fetchWeiboHot)
+  if (loading) return <div className="w60-card w60-card--loading">加载中…</div>
+  if (error || !data) return <div className="w60-card w60-card--error">暂无数据</div>
+  return (
+    <div className="w60-card">
+      <div className="w60-card__header">
+        <span className="w60-card__title">微博热搜</span>
       </div>
       <ul className="w60-card__list">
         {data.slice(0, 10).map((item, i) => (
@@ -246,21 +273,111 @@ function ZhihuCard() {
   )
 }
 
+function BaiduHotCard() {
+  const { data, loading, error } = useCard(fetchBaiduHot)
+  if (loading) return <div className="w60-card w60-card--loading">加载中…</div>
+  if (error || !data) return <div className="w60-card w60-card--error">暂无数据</div>
+  return (
+    <div className="w60-card">
+      <div className="w60-card__header">
+        <span className="w60-card__title">百度实时热搜</span>
+      </div>
+      <ul className="w60-card__list">
+        {data.slice(0, 10).map((item, i) => (
+          <li key={i} className="w60-card__hot">
+            <span className="w60-card__rank">{item.rank}</span>
+            <span className="w60-card__hot-title">{item.title}</span>
+            <span className="w60-card__hot-value">{item.score_desc}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+function TiebaCard() {
+  const { data, loading, error } = useCard(fetchTiebaHot)
+  if (loading) return <div className="w60-card w60-card--loading">加载中…</div>
+  if (error || !data) return <div className="w60-card w60-card--error">暂无数据</div>
+  return (
+    <div className="w60-card">
+      <div className="w60-card__header">
+        <span className="w60-card__title">百度贴吧话题榜</span>
+      </div>
+      <ul className="w60-card__list">
+        {data.slice(0, 10).map((item, i) => (
+          <li key={i} className="w60-card__hot">
+            <span className="w60-card__rank">{item.rank}</span>
+            <span className="w60-card__hot-title">{item.title}</span>
+            <span className="w60-card__hot-value">{item.score_desc}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+function QuarkCard() {
+  const { data, loading, error } = useCard(fetchQuarkHot)
+  if (loading) return <div className="w60-card w60-card--loading">加载中…</div>
+  if (error || !data) return <div className="w60-card w60-card--error">暂无数据</div>
+  return (
+    <div className="w60-card">
+      <div className="w60-card__header">
+        <span className="w60-card__title">夸克热点</span>
+      </div>
+      <ul className="w60-card__list">
+        {data.slice(0, 10).map((item, i) => (
+          <li key={i} className="w60-card__hot">
+            <span className="w60-card__rank">{i + 1}</span>
+            <span className="w60-card__hot-title">{item.title}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+function RednoteCard() {
+  const { data, loading, error } = useCard(fetchRednoteHot)
+  if (loading) return <div className="w60-card w60-card--loading">加载中…</div>
+  if (error || !data) return <div className="w60-card w60-card--error">暂无数据</div>
+  return (
+    <div className="w60-card">
+      <div className="w60-card__header">
+        <span className="w60-card__title">小红书热点</span>
+      </div>
+      <ul className="w60-card__list">
+        {data.slice(0, 10).map((item, i) => (
+          <li key={i} className="w60-card__hot" onClick={() => openUrl(item.link)}>
+            <span className="w60-card__rank">{item.rank}</span>
+            <span className="w60-card__hot-title">{item.title}</span>
+            <span className="w60-card__hot-value">{item.score}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 // ── 实用 Cards ────────────────────────────────────────────────────
 
 function GoldCard() {
   const { data, loading, error } = useCard(fetchGoldPrice)
   if (loading) return <div className="w60-card w60-card--loading">加载中…</div>
   if (error || !data) return <div className="w60-card w60-card--error">暂无数据</div>
+  const gold = data.metals[0]
   return (
     <div className="w60-card">
       <div className="w60-card__header">
         <span className="w60-card__title">黄金价格</span>
-        <span className="w60-card__meta">{data.time}</span>
+        <span className="w60-card__meta">{gold.updated}</span>
       </div>
       <div className="w60-card__detail">
-        <div className="w60-card__price-big">{data.price}</div>
-        <div className="w60-card__change">{data.change}</div>
+        <div className="w60-card__price-big">{gold.sell_price} {gold.unit}</div>
+        <div className="w60-card__change">
+          今日 {gold.today_price} · 最高 {gold.high_price} · 最低 {gold.low_price}
+        </div>
       </div>
     </div>
   )
@@ -273,16 +390,20 @@ function FuelCard() {
   return (
     <div className="w60-card">
       <div className="w60-card__header">
-        <span className="w60-card__title">汽油价格</span>
-        <span className="w60-card__meta">{data.time}</span>
+        <span className="w60-card__title">汽油价格 · {data.region}</span>
       </div>
       <div className="w60-card__detail">
-        {Object.entries(data.data).map(([grade, prices]) => (
-          <div key={grade} className="w60-card__fuel-row">
-            <span className="w60-card__fuel-grade">{grade}</span>
-            <span className="w60-card__fuel-price">{Object.values(prices)[0] || '-'}</span>
+        {data.items.map((item) => (
+          <div key={item.name} className="w60-card__fuel-row">
+            <span className="w60-card__fuel-grade">{item.name}</span>
+            <span className="w60-card__fuel-price">{item.price_desc}</span>
           </div>
         ))}
+        {data.trend && (
+          <div className="w60-card__fuel-trend">
+            {data.trend.description}
+          </div>
+        )}
       </div>
     </div>
   )
@@ -292,21 +413,23 @@ function ExchangeCard() {
   const { data, loading, error } = useCard(fetchExchangeRate)
   if (loading) return <div className="w60-card w60-card--loading">加载中…</div>
   if (error || !data) return <div className="w60-card w60-card--error">暂无数据</div>
-  const currencies = ['美元', '欧元', '日元', '英镑', '港币', '韩元']
-  const displayed = Object.entries(data.data).filter(([k]) =>
-    currencies.some((c) => k.includes(c))
-  ).slice(0, 6)
+  const currencies = ['USD', 'EUR', 'JPY', 'GBP', 'HKD', 'KRW']
+  const displayed = data.rates.filter((r) => currencies.includes(r.currency)).slice(0, 6)
+  const names: Record<string, string> = {
+    USD: '美元', EUR: '欧元', JPY: '日元',
+    GBP: '英镑', HKD: '港币', KRW: '韩元',
+  }
   return (
     <div className="w60-card">
       <div className="w60-card__header">
         <span className="w60-card__title">当日货币汇率</span>
-        <span className="w60-card__meta">{data.time}</span>
+        <span className="w60-card__meta">{data.updated}</span>
       </div>
       <div className="w60-card__detail">
-        {displayed.map(([currency, rate]) => (
-          <div key={currency} className="w60-card__exchange-row">
-            <span className="w60-card__exchange-name">{currency}</span>
-            <span className="w60-card__exchange-rate">{rate}</span>
+        {displayed.map((item) => (
+          <div key={item.currency} className="w60-card__exchange-row">
+            <span className="w60-card__exchange-name">{names[item.currency] || item.currency}</span>
+            <span className="w60-card__exchange-rate">{item.rate}</span>
           </div>
         ))}
       </div>
@@ -323,15 +446,15 @@ function MaoyanCard() {
       <div className="w60-card__header">
         <span className="w60-card__title">猫眼全球票房总榜</span>
       </div>
-      <div className="w60-card__movie-grid">
-        {data.slice(0, 6).map((movie, i) => (
-          <div key={i} className="w60-card__movie" onClick={() => openUrl(movie.link)}>
-            <img className="w60-card__movie-cover" src={movie.cover} alt={movie.title} />
-            <div className="w60-card__movie-title">{movie.title}</div>
-            <div className="w60-card__movie-score">{movie.score}</div>
-          </div>
+      <ul className="w60-card__list">
+        {data.list.slice(0, 10).map((item) => (
+          <li key={item.maoyan_id} className="w60-card__hot">
+            <span className="w60-card__rank">{item.rank}</span>
+            <span className="w60-card__hot-title">{item.movie_name}</span>
+            <span className="w60-card__hot-value">{item.box_office_desc}</span>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   )
 }
@@ -346,35 +469,14 @@ function DoubanCard({ title, fetcher }: { title: string; fetcher: () => Promise<
         <span className="w60-card__title">{title}</span>
       </div>
       <div className="w60-card__movie-grid">
-        {data.slice(0, 6).map((item, i) => (
-          <div key={i} className="w60-card__movie" onClick={() => openUrl(item.link)}>
-            <img className="w60-card__movie-cover" src={item.cover} alt={item.title} />
+        {data.slice(0, 6).map((item) => (
+          <div key={item.id} className="w60-card__movie" onClick={() => openUrl(item.url)}>
+            <img className="w60-card__movie-cover" src={item.cover_proxy || item.cover} alt={item.title} />
             <div className="w60-card__movie-title">{item.title}</div>
-            <div className="w60-card__movie-score">{item.score}</div>
+            <div className="w60-card__movie-score">{item.rating}</div>
           </div>
         ))}
       </div>
-    </div>
-  )
-}
-
-function BaikeCard() {
-  const { data, loading, error } = useCard(fetchBaike)
-  if (loading) return <div className="w60-card w60-card--loading">加载中…</div>
-  if (error || !data) return <div className="w60-card w60-card--error">暂无数据</div>
-  return (
-    <div className="w60-card">
-      <div className="w60-card__header">
-        <span className="w60-card__title">百度百科词条</span>
-      </div>
-      <ul className="w60-card__list">
-        {data.slice(0, 5).map((item, i) => (
-          <li key={i} className="w60-card__item" onClick={() => openUrl(item.link)}>
-            <span className="w60-card__baike-title">{item.title}</span>
-            <span className="w60-card__baike-desc">{item.description}</span>
-          </li>
-        ))}
-      </ul>
     </div>
   )
 }
@@ -396,13 +498,13 @@ function NewsTab() {
 function TrendingTab() {
   return (
     <div className="w60-tab-content">
-      <HotListCard title="头条热搜榜" fetcher={fetchToutiaoHot} />
-      <HotListCard title="微博热搜" fetcher={fetchWeiboHot} />
+      <ToutiaoCard />
+      <WeiboCard />
       <ZhihuCard />
-      <HotListCard title="百度实时热搜" fetcher={fetchBaiduHot} />
-      <HotListCard title="百度贴吧话题榜" fetcher={fetchTiebaHot} />
-      <HotListCard title="夸克热点" fetcher={fetchQuarkHot} />
-      <HotListCard title="小红书热点" fetcher={fetchRednoteHot} />
+      <BaiduHotCard />
+      <TiebaCard />
+      <QuarkCard />
+      <RednoteCard />
     </div>
   )
 }
@@ -417,7 +519,6 @@ function UtilityTab() {
       <DoubanCard title="豆瓣口碑电影榜" fetcher={fetchDoubanMovie} />
       <DoubanCard title="豆瓣口碑剧集榜" fetcher={fetchDoubanTv} />
       <DoubanCard title="豆瓣口碑综艺榜" fetcher={fetchDoubanShow} />
-      <BaikeCard />
     </div>
   )
 }
