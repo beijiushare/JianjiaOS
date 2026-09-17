@@ -9,6 +9,8 @@ import {
   fetchItNews,
   fetchEpicFree,
   fetchAiNews,
+  fetchBiliHot,
+  fetchDouyinHot,
   fetchToutiaoHot,
   fetchQuarkHot,
   fetchBaiduHot,
@@ -189,7 +191,56 @@ function AiNewsCard() {
 
 // ── 热门 Cards ────────────────────────────────────────────────────
 
-function ToutiaoCard() {
+function BiliCard() {
+  const { data, loading, error } = useCard(fetchBiliHot)
+  if (loading) return <div className="w60-card w60-card--loading">加载中…</div>
+  if (error || !data) return <div className="w60-card w60-card--error">暂无数据</div>
+  return (
+    <div className="w60-card">
+      <div className="w60-card__header">
+        <span className="w60-card__title">哔哩哔哩热搜</span>
+      </div>
+      <ul className="w60-card__list">
+        {data.slice(0, 10).map((item, i) => (
+          <li key={i} className="w60-card__hot" onClick={() => openUrl(item.link)}>
+            <span className="w60-card__rank">{i + 1}</span>
+            <span className="w60-card__hot-title">{item.title}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+function DouyinCard() {
+  const { data, loading, error } = useCard(fetchDouyinHot)
+  if (loading) return <div className="w60-card w60-card--loading">加载中…</div>
+  if (error || !data) return <div className="w60-card w60-card--error">暂无数据</div>
+  return (
+    <div className="w60-card">
+      <div className="w60-card__header">
+        <span className="w60-card__title">抖音热搜</span>
+      </div>
+      <ul className="w60-card__list">
+        {data.slice(0, 10).map((item, i) => (
+          <li key={i} className="w60-card__hot" onClick={() => openUrl(item.link)}>
+            <span className="w60-card__rank">{i + 1}</span>
+            <span className="w60-card__hot-title">{item.title}</span>
+            {item.hot_value > 0 && (
+              <span className="w60-card__hot-value">
+                {item.hot_value >= 10000
+                  ? `${(item.hot_value / 10000).toFixed(1)}万`
+                  : item.hot_value}
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+function QuarkCard() {
   const { data, loading, error } = useCard(fetchToutiaoHot)
   if (loading) return <div className="w60-card w60-card--loading">加载中…</div>
   if (error || !data) return <div className="w60-card w60-card--error">暂无数据</div>
@@ -492,13 +543,15 @@ function NewsTab() {
 function TrendingTab() {
   return (
     <div className="w60-tab-content">
+      <BiliCard />
+      <DouyinCard />
+      <QuarkCard />
       <ToutiaoCard />
-      <WeiboCard />
-      <ZhihuCard />
       <BaiduHotCard />
       <TiebaCard />
-      <QuarkCard />
+      <WeiboCard />
       <RednoteCard />
+      <ZhihuCard />
     </div>
   )
 }
