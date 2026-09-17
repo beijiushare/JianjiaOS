@@ -136,12 +136,12 @@ function EpicCard() {
       <div className="w60-card__header">
         <span className="w60-card__title">Epic每周免费游戏</span>
       </div>
-      <div className="w60-epic-grid">
+      <div className="w60-epic-list">
         {freeNow.map((game) => (
           <div key={game.id} className="w60-epic-item" onClick={() => openUrl(game.link)}>
-            <img className="w60-epic-cover" src={game.cover} alt={game.title} />
             <div className="w60-epic-info">
               <div className="w60-epic-name">{game.title}</div>
+              <div className="w60-epic-desc">{game.description}</div>
               <div className="w60-epic-price">
                 <span className="w60-epic-free">免费</span>
                 <span className="w60-epic-original">{game.original_price_desc}</span>
@@ -151,9 +151,9 @@ function EpicCard() {
         ))}
         {freeSoon.map((game) => (
           <div key={game.id} className="w60-epic-item w60-epic-item--soon" onClick={() => openUrl(game.link)}>
-            <img className="w60-epic-cover" src={game.cover} alt={game.title} />
             <div className="w60-epic-info">
               <div className="w60-epic-name">{game.title}</div>
+              <div className="w60-epic-desc">{game.description}</div>
               <div className="w60-epic-price">
                 <span className="w60-epic-soon">即将免费</span>
                 <span className="w60-epic-original">{game.original_price_desc}</span>
