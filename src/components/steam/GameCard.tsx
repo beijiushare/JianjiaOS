@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import DeleteIcon from '@/assets/icons/delete-bin-line.svg?react'
 
 import type { Game } from '../../steam-price/types'
@@ -14,6 +15,16 @@ interface GameCardProps {
 }
 
 export function GameCard({ game, price, onDelete }: GameCardProps) {
+  const [confirmDelete, setConfirmDelete] = useState(false)
+
+  const handleDelete = () => {
+    if (confirmDelete) {
+      onDelete()
+    } else {
+      setConfirmDelete(true)
+    }
+  }
+
   return (
     <div className="steam-card">
       {game.image && (
@@ -42,10 +53,11 @@ export function GameCard({ game, price, onDelete }: GameCardProps) {
       </div>
       <button
         type="button"
-        className="steam-card__delete"
-        onClick={onDelete}
+        className={`steam-card__delete ${confirmDelete ? 'steam-card__delete--confirm' : ''}`}
+        onClick={handleDelete}
+        onMouseLeave={() => setConfirmDelete(false)}
       >
-        <DeleteIcon />
+        {confirmDelete ? '确认删除' : <DeleteIcon />}
       </button>
     </div>
   )

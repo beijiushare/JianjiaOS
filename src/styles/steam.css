@@ -106,6 +106,16 @@
   height: 1rem;
 }
 
+.steam-card__delete--confirm {
+  width: auto;
+  padding: 0 0.75rem;
+  border-radius: var(--border-radius-default-tiny);
+  background: var(--color-error);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+}
+
 /* 弹窗遮罩 */
 .steam-dialog-mask {
   position: absolute;
