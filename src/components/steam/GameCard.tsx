@@ -15,15 +15,7 @@ interface GameCardProps {
 }
 
 export function GameCard({ game, price, onDelete }: GameCardProps) {
-  const [confirmDelete, setConfirmDelete] = useState(false)
-
-  const handleDelete = () => {
-    if (confirmDelete) {
-      onDelete()
-    } else {
-      setConfirmDelete(true)
-    }
-  }
+  const [showConfirm, setShowConfirm] = useState(false)
 
   return (
     <div className="steam-card">
@@ -53,12 +45,24 @@ export function GameCard({ game, price, onDelete }: GameCardProps) {
       </div>
       <button
         type="button"
-        className={`steam-card__delete ${confirmDelete ? 'steam-card__delete--confirm' : ''}`}
-        onClick={handleDelete}
-        onMouseLeave={() => setConfirmDelete(false)}
+        className="steam-card__delete"
+        onClick={() => setShowConfirm(true)}
       >
-        {confirmDelete ? '确认删除' : <DeleteIcon />}
+        <DeleteIcon />
       </button>
+
+      {showConfirm && (
+        <div className="steam-confirm-mask" onClick={() => setShowConfirm(false)}>
+          <div className="steam-confirm-dialog" onClick={(e) => e.stopPropagation()}>
+            <div className="steam-confirm-title">确认删除</div>
+            <div className="steam-confirm-desc">确定要移除「{game.name ?? game.appId}」吗？</div>
+            <div className="steam-confirm-actions">
+              <button type="button" className="steam-confirm-btn steam-confirm-btn--cancel" onClick={() => setShowConfirm(false)}>取消</button>
+              <button type="button" className="steam-confirm-btn steam-confirm-btn--danger" onClick={onDelete}>删除</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
