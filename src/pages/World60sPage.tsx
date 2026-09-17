@@ -72,15 +72,10 @@ function Day60sCard() {
   const { data, loading, error } = useCard(fetchDay60s)
   if (loading) return <div className="w60-card w60-card--loading">加载中…</div>
   if (error || !data) return <div className="w60-card w60-card--error">加载失败</div>
+  if (!data.image) return null
   return (
     <div className="w60-card">
-      <div className="w60-card__header">
-        <span className="w60-card__title">每天60秒读懂世界</span>
-        <span className="w60-card__meta">{data.date} {data.day_of_week}</span>
-      </div>
-      {data.image && (
-        <img className="w60-card__image" src={data.image} alt="每日图片" />
-      )}
+      <img className="w60-card__image" src={data.image} alt="每天60秒读懂世界" />
     </div>
   )
 }
