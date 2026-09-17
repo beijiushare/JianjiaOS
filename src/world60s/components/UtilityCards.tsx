@@ -18,28 +18,26 @@ function openUrl(url: string): void {
 
 export function GoldCard() {
   const { data, loading, error } = useCard(fetchGoldPrice)
-  if (loading || error || !data) return <CardShell loading={loading} error={error}>{null}</CardShell>
-  const gold = data.metals[0]
   return (
-    <div className="w60-card">
+    <CardShell title="黄金价格" loading={loading} error={error || !data}>
       <div className="w60-card__header">
         <span className="w60-card__title">黄金价格</span>
-        <span className="w60-card__meta">{gold.updated}</span>
+        <span className="w60-card__meta">{data?.metals[0]?.updated}</span>
       </div>
       <div className="w60-card__detail">
-        <div className="w60-card__price-big">{gold.sell_price} {gold.unit}</div>
+        <div className="w60-card__price-big">{data?.metals[0]?.sell_price} {data?.metals[0]?.unit}</div>
         <div className="w60-card__change">
-          今日 {gold.today_price} · 最高 {gold.high_price} · 最低 {gold.low_price}
+          今日 {data?.metals[0]?.today_price} · 最高 {data?.metals[0]?.high_price} · 最低 {data?.metals[0]?.low_price}
         </div>
       </div>
-    </div>
+    </CardShell>
   )
 }
 
 export function FuelCard() {
   const { data, loading, error } = useCard(fetchFuelPrice)
   return (
-    <CardShell loading={loading} error={error || !data}>
+    <CardShell title="汽油价格" loading={loading} error={error || !data}>
       <div className="w60-card__header">
         <span className="w60-card__title">汽油价格 · {data?.region}</span>
       </div>
@@ -60,35 +58,35 @@ export function FuelCard() {
 
 export function ExchangeCard() {
   const { data, loading, error } = useCard(fetchExchangeRate)
-  if (loading || error || !data) return <CardShell loading={loading} error={error}>{null}</CardShell>
-  const currencies = ['USD', 'EUR', 'JPY', 'GBP', 'HKD', 'KRW']
-  const names: Record<string, string> = {
-    USD: '美元', EUR: '欧元', JPY: '日元',
-    GBP: '英镑', HKD: '港币', KRW: '韩元',
-  }
-  const displayed = data.rates.filter((r) => currencies.includes(r.currency)).slice(0, 6)
   return (
-    <div className="w60-card">
+    <CardShell title="当日货币汇率" loading={loading} error={error || !data}>
       <div className="w60-card__header">
         <span className="w60-card__title">当日货币汇率</span>
-        <span className="w60-card__meta">{data.updated}</span>
+        <span className="w60-card__meta">{data?.updated}</span>
       </div>
       <div className="w60-card__detail">
-        {displayed.map((item) => (
-          <div key={item.currency} className="w60-card__exchange-row">
-            <span className="w60-card__exchange-name">{names[item.currency] || item.currency}</span>
-            <span className="w60-card__exchange-rate">{item.rate}</span>
-          </div>
-        ))}
+        {(() => {
+          const currencies = ['USD', 'EUR', 'JPY', 'GBP', 'HKD', 'KRW']
+          const names: Record<string, string> = {
+            USD: '美元', EUR: '欧元', JPY: '日元',
+            GBP: '英镑', HKD: '港币', KRW: '韩元',
+          }
+          return data?.rates.filter((r) => currencies.includes(r.currency)).slice(0, 6).map((item) => (
+            <div key={item.currency} className="w60-card__exchange-row">
+              <span className="w60-card__exchange-name">{names[item.currency] || item.currency}</span>
+              <span className="w60-card__exchange-rate">{item.rate}</span>
+            </div>
+          ))
+        })()}
       </div>
-    </div>
+    </CardShell>
   )
 }
 
 export function MaoyanCard() {
   const { data, loading, error } = useCard(fetchMaoyanMovies)
   return (
-    <CardShell loading={loading} error={error || !data}>
+    <CardShell title="猫眼全球票房总榜" loading={loading} error={error || !data}>
       <div className="w60-card__header">
         <span className="w60-card__title">猫眼全球票房总榜</span>
       </div>
@@ -108,7 +106,7 @@ export function MaoyanCard() {
 function DoubanCard({ title, fetcher }: { title: string; fetcher: () => Promise<DoubanItem[] | null> }) {
   const { data, loading, error } = useCard(fetcher)
   return (
-    <CardShell loading={loading} error={error || !data}>
+    <CardShell title={title} loading={loading} error={error || !data}>
       <div className="w60-card__header">
         <span className="w60-card__title">{title}</span>
       </div>

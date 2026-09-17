@@ -20,7 +20,7 @@ export function Day60sCard() {
 export function HistoryCard() {
   const { data, loading, error } = useCard(fetchTodayInHistory)
   return (
-    <CardShell loading={loading} error={error || !data}>
+    <CardShell title="历史上的今天" loading={loading} error={error || !data}>
       <div className="w60-card__header">
         <span className="w60-card__title">历史上的今天</span>
         <span className="w60-card__meta">{data?.month}月{data?.day}日</span>
@@ -40,7 +40,7 @@ export function HistoryCard() {
 export function ItNewsCard() {
   const { data, loading, error } = useCard(fetchItNews)
   return (
-    <CardShell loading={loading} error={error || !data}>
+    <CardShell title="实时IT资讯" loading={loading} error={error || !data}>
       <div className="w60-card__header">
         <span className="w60-card__title">实时IT资讯</span>
       </div>
@@ -57,16 +57,13 @@ export function ItNewsCard() {
 
 export function EpicCard() {
   const { data, loading, error } = useCard(fetchEpicFree)
-  if (loading || error || !data) return <CardShell loading={loading} error={true}>{null}</CardShell>
-  const freeNow = data.filter((g) => g.is_free_now)
-  const freeSoon = data.filter((g) => !g.is_free_now)
   return (
-    <div className="w60-card">
+    <CardShell title="Epic每周免费游戏" loading={loading} error={error || !data}>
       <div className="w60-card__header">
         <span className="w60-card__title">Epic每周免费游戏</span>
       </div>
       <div className="w60-epic-list">
-        {freeNow.map((game) => (
+        {data?.filter((g) => g.is_free_now).map((game) => (
           <div key={game.id} className="w60-epic-item" onClick={() => openUrl(game.link)}>
             <div className="w60-epic-info">
               <div className="w60-epic-name">{game.title}</div>
@@ -78,7 +75,7 @@ export function EpicCard() {
             </div>
           </div>
         ))}
-        {freeSoon.map((game) => (
+        {data?.filter((g) => !g.is_free_now).map((game) => (
           <div key={game.id} className="w60-epic-item w60-epic-item--soon" onClick={() => openUrl(game.link)}>
             <div className="w60-epic-info">
               <div className="w60-epic-name">{game.title}</div>
@@ -91,14 +88,14 @@ export function EpicCard() {
           </div>
         ))}
       </div>
-    </div>
+    </CardShell>
   )
 }
 
 export function AiNewsCard() {
   const { data, loading, error } = useCard(fetchAiNews)
   return (
-    <CardShell loading={loading} error={error || !data}>
+    <CardShell title="AI资讯快报" loading={loading} error={error || !data}>
       <div className="w60-card__header">
         <span className="w60-card__title">AI资讯快报</span>
         <span className="w60-card__meta">{data?.date}</span>

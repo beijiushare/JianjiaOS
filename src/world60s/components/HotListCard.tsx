@@ -49,7 +49,7 @@ export function HotListCard({
   }
 
   return (
-    <CardShell loading={loading} error={error}>
+    <CardShell title={title} loading={loading} error={error}>
       <div className="w60-card__header">
         <span className="w60-card__title">{title}</span>
       </div>
