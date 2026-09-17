@@ -1,74 +1,368 @@
 /* ==========================================================================
    60s 知世界
+
+   Telegram 风格卡片设计
    ========================================================================== */
 
-.world60s {
-  padding: 1rem;
+/* ── Tabs ──────────────────────────────────────────────────────── */
+
+.w60-tabs {
+  display: flex;
+  gap: 0;
+  padding: 0 1rem;
+  border-bottom: 1px solid var(--color-borders);
+  background: var(--color-background);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
-.world60s__status {
-  padding: 3rem 0;
+.w60-tab {
+  flex: 1;
+  padding: 0.75rem 0;
+  border: none;
+  background: none;
   color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.w60-tab--active {
+  color: var(--color-primary);
+}
+
+.w60-tab--active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2rem;
+  height: 2px;
+  background: var(--color-primary);
+  border-radius: 1px;
+}
+
+/* ── Tab Content ───────────────────────────────────────────────── */
+
+.w60-tab-content {
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ── Card Base ─────────────────────────────────────────────────── */
+
+.w60-card {
+  background: var(--color-background);
+  border-radius: var(--border-radius-default);
+  overflow: hidden;
+}
+
+.w60-card--loading,
+.w60-card--error {
+  padding: 2rem 1rem;
   text-align: center;
+  color: var(--color-text-secondary);
   font-size: 0.875rem;
 }
 
-.world60s__header {
+.w60-card__header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  color: var(--color-text-secondary);
-  font-size: 0.8125rem;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-borders);
 }
 
-.world60s__date {
-  color: var(--color-text);
+.w60-card__title {
+  font-size: 0.9375rem;
   font-weight: var(--font-weight-medium);
+  color: var(--color-text);
 }
 
-.world60s__cover {
+.w60-card__meta {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
+
+/* ── 60s 每日资讯 ──────────────────────────────────────────────── */
+
+.w60-card__image {
   display: block;
   width: 100%;
-  border-radius: var(--border-radius-default);
-  margin-bottom: 1rem;
+  object-fit: cover;
 }
 
-.world60s__list {
+.w60-card__list {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.world60s__item {
-  position: relative;
-  padding: 0.625rem 0 0.625rem 1.25rem;
+.w60-card__item {
+  padding: 0.625rem 1rem;
   color: var(--color-text);
-  font-size: 0.9375rem;
-  line-height: 1.6;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  border-bottom: 1px solid var(--color-borders);
+  cursor: pointer;
 }
 
-.world60s__item::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0.9375rem;
-  width: 0.375rem;
-  height: 0.375rem;
-  border-radius: 50%;
-  background: var(--color-primary);
+.w60-card__item:last-child {
+  border-bottom: none;
 }
 
-.world60s__item + .world60s__item {
-  border-top: 1px solid var(--color-borders);
+.w60-card__item:active {
+  background: var(--color-item-active);
 }
 
-.world60s__tip {
-  margin-top: 1rem;
-  padding: 0.75rem;
-  border-radius: var(--border-radius-default);
-  background: var(--color-background-secondary);
+.w60-card__year {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-medium);
+  margin-right: 0.5rem;
+  font-size: 0.8125rem;
+}
+
+.w60-card__tip {
+  padding: 0.75rem 1rem;
   color: var(--color-text-secondary);
   font-size: 0.8125rem;
   text-align: center;
+  font-style: italic;
+  border-top: 1px solid var(--color-borders);
+}
+
+/* ── Epic Games ────────────────────────────────────────────────── */
+
+.w60-epic-grid {
+  display: flex;
+  flex-direction: column;
+}
+
+.w60-epic-item {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  border-bottom: 1px solid var(--color-borders);
+}
+
+.w60-epic-item:last-child {
+  border-bottom: none;
+}
+
+.w60-epic-item:active {
+  background: var(--color-item-active);
+}
+
+.w60-epic-item--soon {
+  opacity: 0.7;
+}
+
+.w60-epic-cover {
+  width: 5rem;
+  height: 3.75rem;
+  object-fit: cover;
+  border-radius: var(--border-radius-default-tiny);
+  flex-shrink: 0;
+}
+
+.w60-epic-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.w60-epic-name {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.w60-epic-price {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.w60-epic-free {
+  color: var(--color-success);
+  font-size: 0.8125rem;
+  font-weight: var(--font-weight-medium);
+}
+
+.w60-epic-soon {
+  color: var(--color-warning);
+  font-size: 0.8125rem;
+  font-weight: var(--font-weight-medium);
+}
+
+.w60-epic-original {
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  text-decoration: line-through;
+}
+
+/* ── 热搜列表 ──────────────────────────────────────────────────── */
+
+.w60-card__hot {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 1rem;
+  cursor: pointer;
+  border-bottom: 1px solid var(--color-borders);
+}
+
+.w60-card__hot:last-child {
+  border-bottom: none;
+}
+
+.w60-card__hot:active {
+  background: var(--color-item-active);
+}
+
+.w60-card__rank {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-background-secondary);
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-medium);
+  flex-shrink: 0;
+}
+
+.w60-card__hot:nth-child(-n+3) .w60-card__rank {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.w60-card__hot-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.875rem;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.w60-card__hot-value {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+/* ── 价格 / 汇率 ──────────────────────────────────────────────── */
+
+.w60-card__detail {
+  padding: 1rem;
+}
+
+.w60-card__price-big {
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.w60-card__change {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin-top: 0.25rem;
+}
+
+.w60-card__fuel-row,
+.w60-card__exchange-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--color-borders);
+}
+
+.w60-card__fuel-row:last-child,
+.w60-card__exchange-row:last-child {
+  border-bottom: none;
+}
+
+.w60-card__fuel-grade,
+.w60-card__exchange-name {
+  font-size: 0.875rem;
+  color: var(--color-text);
+}
+
+.w60-card__fuel-price,
+.w60-card__exchange-rate {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+/* ── 电影 / 豆瓣 ──────────────────────────────────────────────── */
+
+.w60-card__movie-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  padding: 0.75rem;
+}
+
+.w60-card__movie {
+  cursor: pointer;
+}
+
+.w60-card__movie:active {
+  opacity: 0.7;
+}
+
+.w60-card__movie-cover {
+  width: 100%;
+  aspect-ratio: 2/3;
+  object-fit: cover;
+  border-radius: var(--border-radius-default-tiny);
+}
+
+.w60-card__movie-title {
+  font-size: 0.75rem;
+  color: var(--color-text);
+  margin-top: 0.375rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.w60-card__movie-score {
+  font-size: 0.6875rem;
+  color: var(--color-text-secondary);
+}
+
+/* ── 百度百科 ──────────────────────────────────────────────────── */
+
+.w60-card__baike-title {
+  font-weight: var(--font-weight-medium);
+  display: block;
+}
+
+.w60-card__baike-desc {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  margin-top: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

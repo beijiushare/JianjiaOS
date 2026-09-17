@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 
 import AddIcon from '@/assets/icons/add-line.svg?react'
+import InfoIcon from '@/assets/icons/information-line.svg?react'
 import { ScreenShell } from '@/components/ScreenShell'
 import { showToast } from '@/components/toastStore'
 import { AddGameDialog } from '@/components/steam/AddGameDialog'
 import { GameCard } from '@/components/steam/GameCard'
+import { Browser } from '@capacitor/browser'
 
 import { useSteamPriceStore } from '../steam-price/store'
 import { fetchSteamDetail } from '../steam-price/api'
@@ -76,14 +78,24 @@ export function SteamPricePage() {
       headerClassName="screen-header--steam"
       bodyClassName="screen-body--steam"
       headerRight={
-        <button
-          type="button"
-          className="icon-btn"
-          aria-label="添加游戏"
-          onClick={() => setShowAdd(true)}
-        >
-          <AddIcon className="icon-btn__icon" />
-        </button>
+        <>
+          <button
+            type="button"
+            className="icon-btn"
+            aria-label="关于"
+            onClick={() => Browser.open({ url: 'https://github.com/beijiushare/JianjiaOS' })}
+          >
+            <InfoIcon className="icon-btn__icon" />
+          </button>
+          <button
+            type="button"
+            className="icon-btn"
+            aria-label="添加游戏"
+            onClick={() => setShowAdd(true)}
+          >
+            <AddIcon className="icon-btn__icon" />
+          </button>
+        </>
       }
     >
       {showAdd && (

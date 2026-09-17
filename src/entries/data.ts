@@ -164,4 +164,5 @@ export const credits: CreditLink[] = [
   { name: 'oxlint', url: 'https://github.com/oxc-project/oxc/blob/main/LICENSE' },
   { name: 'telegram-tt', url: 'https://github.com/Ajaxy/telegram-tt' },
   { name: 'RemixIcon', url: 'https://github.com/Remix-Design/RemixIcon/blob/master/License' },
+  { name: '60s API', url: 'https://github.com/vikiboss/60s' },
 ]
