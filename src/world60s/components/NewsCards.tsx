@@ -13,7 +13,7 @@ export function Day60sCard() {
   if (loading || error || !data?.image) return null
   return (
     <div className="w60-card">
-      <ZoomableImage src={data.image} alt="每天60秒读懂世界" />
+      <ZoomableImage key={data.image} src={data.image} alt="每天60秒读懂世界" />
     </div>
   )
 }
