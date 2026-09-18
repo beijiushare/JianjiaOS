@@ -36,11 +36,11 @@
   transition: color 0.2s;
 }
 
-.w60-tab--active {
+.w60-tab[data-state="active"] {
   color: var(--color-primary);
 }
 
-.w60-tab--active::after {
+.w60-tab[data-state="active"]::after {
   content: '';
   position: absolute;
   bottom: 0;

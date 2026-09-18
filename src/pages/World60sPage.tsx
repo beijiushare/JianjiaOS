@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import { ScreenShell } from '@/components/ScreenShell'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Browser } from '@capacitor/browser'
 
 import {
@@ -90,21 +91,24 @@ export function World60sPage() {
         </button>
       }
     >
-      <div className="w60-tabs">
-        {TABS.map((t) => (
-          <button
-            key={t.key}
-            className={`w60-tab ${tab === t.key ? 'w60-tab--active' : ''}`}
-            onClick={() => setTab(t.key)}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      {tab === 'news' && <NewsTab />}
-      {tab === 'trending' && <TrendingTab />}
-      {tab === 'utility' && <UtilityTab />}
+      <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)}>
+        <TabsList className="w60-tabs">
+          {TABS.map((t) => (
+            <TabsTrigger key={t.key} value={t.key} className="w60-tab">
+              {t.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        <TabsContent value="news">
+          <NewsTab />
+        </TabsContent>
+        <TabsContent value="trending">
+          <TrendingTab />
+        </TabsContent>
+        <TabsContent value="utility">
+          <UtilityTab />
+        </TabsContent>
+      </Tabs>
     </ScreenShell>
   )
 }
