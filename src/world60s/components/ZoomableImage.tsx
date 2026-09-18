@@ -49,7 +49,7 @@ export function ZoomableImage({ src, alt }: { src: string; alt: string }) {
           pointerEvents: 'none',
           whiteSpace: 'nowrap',
         }}>
-          双指捏合可放大图片
+          双指缩放，单指平移
         </span>
       )}
     </div>
