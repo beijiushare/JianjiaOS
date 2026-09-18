@@ -50,7 +50,7 @@ export function ZoomableImage({ src, alt }: { src: string; alt: string }) {
       {scale === 1 && (
         <span style={{
           position: 'absolute',
-          top: 24,
+          top: 32,
           left: '50%',
           transform: 'translateX(-50%)',
           padding: '3px 10px',
