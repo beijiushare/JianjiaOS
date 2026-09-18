@@ -6,6 +6,21 @@ export function ZoomableImage({ src, alt }: { src: string; alt: string }) {
 
   return (
     <div style={{ position: 'relative', overflow: 'hidden' }}>
+      {!loaded && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '100%',
+          paddingBottom: '133%',
+          background: 'var(--color-background-secondary)',
+          color: 'var(--color-text-secondary)',
+          fontSize: 13,
+          position: 'relative',
+        }}>
+          <span style={{ position: 'absolute', top: '50%' }}>图片加载中</span>
+        </div>
+      )}
       <img
         src={src}
         alt={alt}
