@@ -7,11 +7,35 @@ export function ZoomableImage({ src, alt }: { src: string; alt: string }) {
   const lastDist = useRef(0)
   const lastPos = useRef({ x: 0, y: 0 })
   const isDragging = useRef(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const imgRef = useRef<HTMLImageElement>(null)
 
   const getDist = (touches: React.TouchList): number => {
     const dx = touches[0].clientX - touches[1].clientX
     const dy = touches[0].clientY - touches[1].clientY
     return Math.hypot(dx, dy)
+  }
+
+  const clampTranslate = (x: number, y: number, s: number) => {
+    const container = containerRef.current
+    const img = imgRef.current
+    if (!container || !img) return { x, y }
+
+    const cw = container.clientWidth
+    const ch = container.clientHeight
+    const iw = img.naturalWidth || cw
+    const ih = img.naturalHeight || ch
+
+    const scaledW = Math.max(cw, iw * s)
+    const scaledH = Math.max(ch, ih * s)
+
+    const maxX = Math.max(0, (scaledW - cw) / 2)
+    const maxY = Math.max(0, (scaledH - ch) / 2)
+
+    return {
+      x: Math.max(-maxX, Math.min(maxX, x)),
+      y: Math.max(-maxY, Math.min(maxY, y)),
+    }
   }
 
   const onTouchStart = useCallback((e: React.TouchEvent) => {
@@ -29,13 +53,17 @@ export function ZoomableImage({ src, alt }: { src: string; alt: string }) {
       const dist = getDist(e.touches)
       const ratio = dist / lastDist.current
       lastDist.current = dist
-      setScale((s) => Math.min(Math.max(s * ratio, 1), 4))
+      setScale((s) => {
+        const newScale = Math.min(Math.max(s * ratio, 1), 4)
+        setTranslate((t) => clampTranslate(t.x, t.y, newScale))
+        return newScale
+      })
     } else if (e.touches.length === 1 && isDragging.current && scale > 1) {
       e.preventDefault()
       const dx = e.touches[0].clientX - lastPos.current.x
       const dy = e.touches[0].clientY - lastPos.current.y
       lastPos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
-      setTranslate((t) => ({ x: t.x + dx, y: t.y + dy }))
+      setTranslate((t) => clampTranslate(t.x + dx, t.y + dy, scale))
     }
   }, [scale])
 
@@ -50,6 +78,7 @@ export function ZoomableImage({ src, alt }: { src: string; alt: string }) {
 
   return (
     <div
+      ref={containerRef}
       style={{ position: 'relative', overflow: 'hidden', touchAction: scale > 1 ? 'none' : 'pan-y' }}
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
@@ -72,6 +101,7 @@ export function ZoomableImage({ src, alt }: { src: string; alt: string }) {
         </div>
       )}
       <img
+        ref={imgRef}
         src={src}
         alt={alt}
         onLoad={() => setLoaded(true)}
