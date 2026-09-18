@@ -17,6 +17,8 @@ const INSTANCES = [
 
 const TIMEOUT_MS = 8000
 
+const cache = new Map<string, unknown>()
+
 async function fetchWithTimeout(url: string, ms: number): Promise<Response> {
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), ms)
@@ -32,12 +34,17 @@ async function fetchWithTimeout(url: string, ms: number): Promise<Response> {
  * 返回解析后的 data 字段，失败返回 null。
  */
 export async function fetchJson<T>(path: string): Promise<T | null> {
+  if (cache.has(path)) return cache.get(path) as T
+
   for (const base of INSTANCES) {
     try {
       const resp = await fetchWithTimeout(`${base}${path}`, TIMEOUT_MS)
       if (!resp.ok) continue
       const json = await resp.json() as { code: number; data: T }
-      if (json.code === 200 && json.data != null) return json.data
+      if (json.code === 200 && json.data != null) {
+        cache.set(path, json.data)
+        return json.data
+      }
     } catch {
       // 超时或网络错误，尝试下一个实例
     }
