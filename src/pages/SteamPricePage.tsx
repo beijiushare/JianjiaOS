@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import AddIcon from '@/assets/icons/add-line.svg?react'
 import InfoIcon from '@/assets/icons/information-line.svg?react'
@@ -23,13 +23,10 @@ export function SteamPricePage() {
   const [prices, setPrices] = useState<
     Record<string, { currentCents: number; current: string; original: string; discount: number }>
   >({})
-  const fetchedRef = useRef<Set<string>>(new Set())
-
   useEffect(() => {
     let cancelled = false
     for (const game of games) {
-      if (prices[game.appId] || fetchedRef.current.has(game.appId)) continue
-      fetchedRef.current.add(game.appId)
+      if (prices[game.appId]) continue
 
       fetchSteamDetail(game.appId)
         .then((raw) => {
@@ -118,7 +115,6 @@ export function SteamPricePage() {
             game={game}
             price={prices[game.appId]}
             onDelete={() => {
-              fetchedRef.current.delete(game.appId)
               removeGame(game.appId)
             }}
           />
