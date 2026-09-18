@@ -7,6 +7,7 @@ import { CreditsPage } from '@/pages/CreditsPage'
 import { EntriesPage } from '@/pages/EntriesPage'
 import { MessagesPage } from '@/pages/MessagesPage'
 import { SettingsPage } from '@/pages/SettingsPage'
+import { SteamPriceAboutPage } from '@/pages/SteamPriceAboutPage'
 import { SteamPricePage } from '@/pages/SteamPricePage'
 import { World60sPage } from '@/pages/World60sPage'
 
@@ -18,6 +19,7 @@ const PAGES: Record<PageId, ComponentType> = {
   settings: SettingsPage,
   chatBackground: ChatBackgroundPage,
   steamPrice: SteamPricePage,
+  steamPriceAbout: SteamPriceAboutPage,
   entries: EntriesPage,
   credits: CreditsPage,
   world60s: World60sPage,

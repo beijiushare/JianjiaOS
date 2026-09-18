@@ -6,13 +6,14 @@ import { ScreenShell } from '@/components/ScreenShell'
 import { showToast } from '@/components/toastStore'
 import { AddGameDialog } from '@/components/steam/AddGameDialog'
 import { GameCard } from '@/components/steam/GameCard'
-import { Browser } from '@capacitor/browser'
 
+import { useNavStore } from '../nav/store'
 import { useSteamPriceStore } from '../steam-price/store'
 import { fetchSteamDetail } from '../steam-price/api'
 import type { SteamAppDetailResponse } from '../steam-price/types'
 
 export function SteamPricePage() {
+  const push = useNavStore((s) => s.push)
   const games = useSteamPriceStore((s) => s.games)
   const addGame = useSteamPriceStore((s) => s.addGame)
   const removeGame = useSteamPriceStore((s) => s.removeGame)
@@ -80,7 +81,7 @@ export function SteamPricePage() {
             type="button"
             className="icon-btn"
             aria-label="关于"
-            onClick={() => Browser.open({ url: 'https://github.com/beijiushare/JianjiaOS' })}
+            onClick={() => push('steamPriceAbout')}
           >
             <InfoIcon className="icon-btn__icon" />
           </button>
