@@ -83,6 +83,7 @@ export function World60sPage() {
   return (
     <ScreenShell
       title="60s知世界"
+      bodyClassName="screen-body--w60"
       headerRight={
         <button type="button" className="icon-btn" onClick={() => openUrl('https://github.com/vikiboss/60s')}>
           <span className="icon-btn__text">致谢</span>
