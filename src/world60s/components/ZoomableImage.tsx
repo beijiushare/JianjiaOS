@@ -1,20 +1,16 @@
-import { useCallback, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export function ZoomableImage({ src, alt }: { src: string; alt: string }) {
   const [scale, setScale] = useState(1)
   const [translate, setTranslate] = useState({ x: 0, y: 0 })
   const [loaded, setLoaded] = useState(false)
+  const scaleRef = useRef(1)
+  const translateRef = useRef({ x: 0, y: 0 })
   const lastDist = useRef(0)
   const lastPos = useRef({ x: 0, y: 0 })
   const isDragging = useRef(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const imgRef = useRef<HTMLImageElement>(null)
-
-  const getDist = (touches: React.TouchList): number => {
-    const dx = touches[0].clientX - touches[1].clientX
-    const dy = touches[0].clientY - touches[1].clientY
-    return Math.hypot(dx, dy)
-  }
 
   const clampTranslate = (x: number, y: number, s: number) => {
     const container = containerRef.current
@@ -40,52 +36,80 @@ export function ZoomableImage({ src, alt }: { src: string; alt: string }) {
     }
   }
 
-  const onTouchStart = useCallback((e: React.TouchEvent) => {
-    if (e.touches.length === 2) {
-      lastDist.current = getDist(e.touches)
-    } else if (e.touches.length === 1 && scale > 1) {
-      lastPos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
-      isDragging.current = true
-    }
-  }, [scale])
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
 
-  const onTouchMove = useCallback((e: React.TouchEvent) => {
-    if (e.touches.length === 2) {
-      e.preventDefault()
-      const dist = getDist(e.touches)
-      const ratio = dist / lastDist.current
-      lastDist.current = dist
-      setScale((s) => {
-        const newScale = Math.min(Math.max(s * ratio, 1), 4)
-        setTranslate((t) => clampTranslate(t.x, t.y, newScale))
-        return newScale
-      })
-    } else if (e.touches.length === 1 && isDragging.current && scale > 1) {
-      e.preventDefault()
-      const dx = e.touches[0].clientX - lastPos.current.x
-      const dy = e.touches[0].clientY - lastPos.current.y
-      lastPos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
-      setTranslate((t) => clampTranslate(t.x + dx, t.y + dy, scale))
+    const getDist = (touches: TouchList): number => {
+      const dx = touches[0].clientX - touches[1].clientX
+      const dy = touches[0].clientY - touches[1].clientY
+      return Math.hypot(dx, dy)
     }
-  }, [scale])
 
-  const onTouchEnd = useCallback(() => {
-    isDragging.current = false
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 2) {
+        lastDist.current = getDist(e.touches)
+      } else if (e.touches.length === 1 && scaleRef.current > 1) {
+        lastPos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+        isDragging.current = true
+      }
+    }
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length === 2) {
+        e.preventDefault()
+        const dist = getDist(e.touches)
+        const ratio = dist / lastDist.current
+        lastDist.current = dist
+        const newScale = Math.min(Math.max(scaleRef.current * ratio, 1), 4)
+        scaleRef.current = newScale
+        const clamped = clampTranslate(translateRef.current.x, translateRef.current.y, newScale)
+        translateRef.current = clamped
+        setScale(newScale)
+        setTranslate(clamped)
+      } else if (e.touches.length === 1 && isDragging.current && scaleRef.current > 1) {
+        e.preventDefault()
+        const dx = e.touches[0].clientX - lastPos.current.x
+        const dy = e.touches[0].clientY - lastPos.current.y
+        lastPos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+        const newTranslate = clampTranslate(
+          translateRef.current.x + dx,
+          translateRef.current.y + dy,
+          scaleRef.current,
+        )
+        translateRef.current = newTranslate
+        setTranslate(newTranslate)
+      }
+    }
+
+    const onTouchEnd = () => {
+      isDragging.current = false
+    }
+
+    el.addEventListener('touchstart', onTouchStart, { passive: true })
+    el.addEventListener('touchmove', onTouchMove, { passive: false })
+    el.addEventListener('touchend', onTouchEnd, { passive: true })
+
+    return () => {
+      el.removeEventListener('touchstart', onTouchStart)
+      el.removeEventListener('touchmove', onTouchMove)
+      el.removeEventListener('touchend', onTouchEnd)
+    }
   }, [])
 
-  const onDoubleClick = useCallback(() => {
-    setScale((s) => (s > 1 ? 1 : 2))
+  const handleDoubleClick = () => {
+    const newScale = scaleRef.current > 1 ? 1 : 2
+    scaleRef.current = newScale
+    translateRef.current = { x: 0, y: 0 }
+    setScale(newScale)
     setTranslate({ x: 0, y: 0 })
-  }, [])
+  }
 
   return (
     <div
       ref={containerRef}
       style={{ position: 'relative', overflow: 'hidden', touchAction: scale > 1 ? 'none' : 'pan-y' }}
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
-      onDoubleClick={onDoubleClick}
+      onDoubleClick={handleDoubleClick}
     >
       {!loaded && (
         <div style={{
