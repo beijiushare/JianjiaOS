@@ -31,7 +31,7 @@ export function ZoomableImage({ src, alt }: { src: string; alt: string }) {
 
   return (
     <div
-      style={{ overflow: 'hidden', touchAction: 'pan-y' }}
+      style={{ position: 'relative', overflow: 'hidden', touchAction: 'pan-y' }}
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onDoubleClick={onDoubleClick}
@@ -47,6 +47,20 @@ export function ZoomableImage({ src, alt }: { src: string; alt: string }) {
           transition: scale === 1 ? 'transform 0.2s' : undefined,
         }}
       />
+      {scale === 1 && (
+        <span style={{
+          position: 'absolute',
+          top: 8,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          fontSize: 11,
+          color: 'rgba(255,255,255,0.6)',
+          pointerEvents: 'none',
+          whiteSpace: 'nowrap',
+        }}>
+          双指捏合可放大图片
+        </span>
+      )}
     </div>
   )
 }
