@@ -12,7 +12,7 @@ export function ZoomableImage({ src, alt }: { src: string; alt: string }) {
           alignItems: 'center',
           justifyContent: 'center',
           width: '100%',
-          paddingBottom: '56.25%',
+          aspectRatio: '1344 / 2166',
           background: 'var(--color-background-secondary)',
           color: 'var(--color-text-secondary)',
           fontSize: 13,
