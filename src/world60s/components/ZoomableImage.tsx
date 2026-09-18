@@ -35,6 +35,23 @@ export function ZoomableImage({ src, alt }: { src: string; alt: string }) {
           </TransformWrapper>
         </div>
       )}
+      {loaded && (
+        <span style={{
+          position: 'absolute',
+          top: 38,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          padding: '3px 10px',
+          borderRadius: 4,
+          background: 'rgba(0,0,0,0.45)',
+          fontSize: 11,
+          color: '#fff',
+          pointerEvents: 'none',
+          whiteSpace: 'nowrap',
+        }}>
+          双指捏合可放大图片
+        </span>
+      )}
     </div>
   )
 }
