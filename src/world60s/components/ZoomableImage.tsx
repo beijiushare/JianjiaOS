@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from 'react'
 
 export function ZoomableImage({ src, alt }: { src: string; alt: string }) {
   const [scale, setScale] = useState(1)
+  const [loaded, setLoaded] = useState(false)
   const lastDist = useRef(0)
 
   const getDist = (touches: TouchList): number => {
@@ -36,21 +37,29 @@ export function ZoomableImage({ src, alt }: { src: string; alt: string }) {
       onTouchMove={onTouchMove}
       onDoubleClick={onDoubleClick}
     >
+      {!loaded && (
+        <div style={{
+          width: '100%',
+          paddingBottom: '133%',
+          background: 'var(--color-background-secondary)',
+        }} />
+      )}
       <img
         src={src}
         alt={alt}
+        onLoad={() => setLoaded(true)}
         style={{
-          display: 'block',
+          display: loaded ? 'block' : 'none',
           width: '100%',
           transform: `scale(${scale})`,
           transformOrigin: 'center center',
           transition: scale === 1 ? 'transform 0.2s' : undefined,
         }}
       />
-      {scale === 1 && (
+      {scale === 1 && loaded && (
         <span style={{
           position: 'absolute',
-          top: 32,
+          top: 38,
           left: '50%',
           transform: 'translateX(-50%)',
           padding: '3px 10px',
