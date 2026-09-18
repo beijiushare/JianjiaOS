@@ -19,12 +19,14 @@ export function ZoomableImage({ src, alt }: { src: string; alt: string }) {
   const clampTranslate = (x: number, y: number, s: number) => {
     const container = containerRef.current
     const img = imgRef.current
-    if (!container || !img) return { x, y }
+    if (!container || !img) return { x: 0, y: 0 }
 
     const cw = container.clientWidth
     const ch = container.clientHeight
     const iw = img.naturalWidth || cw
     const ih = img.naturalHeight || ch
+
+    if (iw === 0 || ih === 0) return { x: 0, y: 0 }
 
     const scaledW = Math.max(cw, iw * s)
     const scaledH = Math.max(ch, ih * s)
