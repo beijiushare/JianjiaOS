@@ -13,43 +13,29 @@
 /* ── Tabs ──────────────────────────────────────────────────────── */
 
 .w60-tabs {
-  display: flex;
-  gap: 0;
-  padding: 0 1rem;
-  border-bottom: 1px solid var(--color-borders);
-  background: var(--color-background);
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  padding: 3px;
+  background: var(--color-background-secondary);
+  border-radius: 0.5rem;
 }
 
 .w60-tab {
   flex: 1;
-  padding: 0.75rem 0;
+  padding: 0.25rem 0.5rem;
   border: none;
-  background: none;
+  background: transparent;
   color: var(--color-text-secondary);
-  font-size: 0.9375rem;
-  font-weight: var(--font-weight-medium);
+  font-size: 0.875rem;
+  font-weight: 500;
   cursor: pointer;
   position: relative;
-  transition: color 0.2s;
+  transition: all 0.2s;
+  border-radius: 0.375rem;
 }
 
 .w60-tab[data-state="active"] {
-  color: var(--color-primary);
-}
-
-.w60-tab[data-state="active"]::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 2rem;
-  height: 2px;
-  background: var(--color-primary);
-  border-radius: 1px;
+  background: var(--color-background);
+  color: var(--color-text);
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
 /* ── Tab Content ───────────────────────────────────────────────── */
