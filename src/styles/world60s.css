@@ -1,7 +1,7 @@
 /* ==========================================================================
    60s 知世界
 
-   Telegram 风格卡片设计
+   shadcn/ui Card 风格
    ========================================================================== */
 
 /* ── 去除 screen-body 上边距 ──────────────────────────────────── */
@@ -43,18 +43,23 @@
 /* ── Tab Content ───────────────────────────────────────────────── */
 
 .w60-tab-content {
-  padding: 0.75rem;
+  padding: 1rem 0.75rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
-/* ── Card Base ─────────────────────────────────────────────────── */
+/* ── Card Base (shadcn/ui style) ──────────────────────────────── */
 
 .w60-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
   background: var(--color-background);
-  border-radius: var(--border-radius-default);
-  overflow: hidden;
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-borders);
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
 .w60-card--loading,
@@ -69,14 +74,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--color-borders);
+  gap: 0.5rem;
 }
 
 .w60-card__title {
-  font-size: 0.9375rem;
-  font-weight: var(--font-weight-medium);
+  font-size: 1rem;
+  font-weight: 600;
   color: var(--color-text);
+  line-height: 1;
 }
 
 .w60-card__meta {
@@ -99,7 +104,10 @@
 }
 
 .w60-card__item {
-  padding: 0.625rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
   color: var(--color-text);
   font-size: 0.875rem;
   line-height: 1.5;
@@ -117,9 +125,9 @@
 
 .w60-card__year {
   color: var(--color-primary);
-  font-weight: var(--font-weight-medium);
-  margin-right: 0.5rem;
+  font-weight: 500;
   font-size: 0.8125rem;
+  flex-shrink: 0;
 }
 
 /* ── Epic Games ────────────────────────────────────────────────── */
@@ -127,16 +135,18 @@
 .w60-epic-list {
   display: flex;
   flex-direction: column;
+  gap: 0.75rem;
 }
 
 .w60-epic-item {
-  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background: var(--color-background-secondary);
+  border-radius: 0.5rem;
   cursor: pointer;
-  border-bottom: 1px solid var(--color-borders);
-}
-
-.w60-epic-item:last-child {
-  border-bottom: none;
+  transition: background 0.2s;
 }
 
 .w60-epic-item:active {
@@ -144,24 +154,18 @@
 }
 
 .w60-epic-item--soon {
-  opacity: 0.7;
-}
-
-.w60-epic-info {
-  display: flex;
-  flex-direction: column;
+  opacity: 0.6;
 }
 
 .w60-epic-name {
   font-size: 0.9375rem;
-  font-weight: var(--font-weight-medium);
+  font-weight: 500;
   color: var(--color-text);
 }
 
 .w60-epic-desc {
   font-size: 0.8125rem;
   color: var(--color-text-secondary);
-  margin-top: 0.25rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -178,13 +182,13 @@
 .w60-epic-free {
   color: var(--color-success);
   font-size: 0.8125rem;
-  font-weight: var(--font-weight-medium);
+  font-weight: 500;
 }
 
 .w60-epic-soon {
   color: var(--color-warning);
   font-size: 0.8125rem;
-  font-weight: var(--font-weight-medium);
+  font-weight: 500;
 }
 
 .w60-epic-original {
@@ -199,7 +203,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.625rem 1rem;
+  padding: 0.625rem 0;
   cursor: pointer;
   border-bottom: 1px solid var(--color-borders);
 }
@@ -222,7 +226,7 @@
   background: var(--color-background-secondary);
   color: var(--color-text-secondary);
   font-size: 0.75rem;
-  font-weight: var(--font-weight-medium);
+  font-weight: 500;
   flex-shrink: 0;
 }
 
@@ -250,25 +254,27 @@
 /* ── 价格 / 汇率 ──────────────────────────────────────────────── */
 
 .w60-card__detail {
-  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .w60-card__price-big {
   font-size: 1.5rem;
-  font-weight: var(--font-weight-semibold);
+  font-weight: 600;
   color: var(--color-text);
 }
 
 .w60-card__change {
   font-size: 0.875rem;
   color: var(--color-text-secondary);
-  margin-top: 0.25rem;
 }
 
 .w60-card__fuel-row,
 .w60-card__exchange-row {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 0.5rem 0;
   border-bottom: 1px solid var(--color-borders);
 }
@@ -287,13 +293,13 @@
 .w60-card__fuel-price,
 .w60-card__exchange-rate {
   font-size: 0.875rem;
-  font-weight: var(--font-weight-medium);
+  font-weight: 500;
   color: var(--color-text);
 }
 
 .w60-card__fuel-trend {
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
   border-top: 1px solid var(--color-borders);
   font-size: 0.8125rem;
   color: var(--color-text-secondary);
@@ -304,8 +310,7 @@
 .w60-card__movie-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 0.5rem;
-  padding: 0.75rem;
+  gap: 0.75rem;
 }
 
 .w60-card__movie {
@@ -320,7 +325,7 @@
   width: 100%;
   aspect-ratio: 2/3;
   object-fit: cover;
-  border-radius: var(--border-radius-default-tiny);
+  border-radius: 0.5rem;
 }
 
 .w60-card__movie-title {
@@ -336,4 +341,3 @@
   font-size: 0.6875rem;
   color: var(--color-text-secondary);
 }
-
