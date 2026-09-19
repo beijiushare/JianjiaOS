@@ -95,12 +95,6 @@
 
 /* ── 60s 每日资讯 ──────────────────────────────────────────────── */
 
-.w60-card__image {
-  display: block;
-  width: 100%;
-  object-fit: cover;
-}
-
 .w60-card__list {
   margin: 0;
   padding: 0;
@@ -302,42 +296,5 @@
   padding-top: 0.75rem;
   border-top: 1px solid var(--color-borders);
   font-size: 0.8125rem;
-  color: var(--color-text-secondary);
-}
-
-/* ── 电影 / 豆瓣 ──────────────────────────────────────────────── */
-
-.w60-card__movie-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.75rem;
-}
-
-.w60-card__movie {
-  cursor: pointer;
-}
-
-.w60-card__movie:active {
-  opacity: 0.7;
-}
-
-.w60-card__movie-cover {
-  width: 100%;
-  aspect-ratio: 9 / 16;
-  object-fit: cover;
-  border-radius: 0.5rem;
-}
-
-.w60-card__movie-title {
-  font-size: 0.75rem;
-  color: var(--color-text);
-  margin-top: 0.375rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.w60-card__movie-score {
-  font-size: 0.6875rem;
   color: var(--color-text-secondary);
 }

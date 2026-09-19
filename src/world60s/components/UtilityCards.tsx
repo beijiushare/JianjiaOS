@@ -110,13 +110,16 @@ function DoubanCard({ title, fetcher }: { title: string; fetcher: () => Promise<
       <div className="w60-card__header">
         <span className="w60-card__title">{title}</span>
       </div>
-      <div className="w60-card__movie-grid">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.375rem' }}>
         {data?.slice(0, 6).map((item) => (
-          <div key={item.id} className="w60-card__movie" onClick={() => openUrl(item.url)}>
-            <img className="w60-card__movie-cover" src={item.cover_proxy || item.cover} alt={item.title} />
-            <div className="w60-card__movie-title">{item.title}</div>
-            <div className="w60-card__movie-score">{item.rating}</div>
-          </div>
+          <a key={item.id} href={item.url} target="_blank" rel="noopener noreferrer" style={{ position: 'relative', display: 'block', aspectRatio: '9 / 16', borderRadius: '0.5rem', overflow: 'hidden' }}>
+            <img src={item.cover_proxy || item.cover} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 40%, transparent 100%)' }} />
+            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0.5rem', color: '#fff' }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 500, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{item.title}</div>
+              <div style={{ fontSize: '0.6875rem', color: 'rgba(255,255,255,0.7)', marginTop: '0.125rem' }}>{item.rating}</div>
+            </div>
+          </a>
         ))}
       </div>
     </CardShell>

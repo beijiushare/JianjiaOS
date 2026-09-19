@@ -12,7 +12,7 @@ export function Day60sCard() {
   const { data, loading, error } = useCard(fetchDay60s)
   if (loading || error || !data?.image) return null
   return (
-    <div className="w60-card">
+    <div className="w60-card w60-card--flush">
       <ZoomableImage key={data.image} src={data.image} alt="每天60秒读懂世界" />
     </div>
   )
