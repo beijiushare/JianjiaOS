@@ -43,9 +43,9 @@ export function FuelCard() {
       </div>
       <div className="w60-card__detail">
         {data?.items.map((item) => (
-          <div key={item.name} className="w60-card__fuel-row">
-            <span className="w60-card__fuel-grade">{item.name}</span>
-            <span className="w60-card__fuel-price">{item.price_desc}</span>
+          <div key={item.name} className="w60-card__row">
+            <span className="w60-card__row-label">{item.name}</span>
+            <span className="w60-card__row-value">{item.price_desc}</span>
           </div>
         ))}
         {data?.trend && (
@@ -72,9 +72,9 @@ export function ExchangeCard() {
             GBP: '英镑', HKD: '港币', KRW: '韩元',
           }
           return data?.rates.filter((r) => currencies.includes(r.currency)).slice(0, 6).map((item) => (
-            <div key={item.currency} className="w60-card__exchange-row">
-              <span className="w60-card__exchange-name">{names[item.currency] || item.currency}</span>
-              <span className="w60-card__exchange-rate">{item.rate}</span>
+            <div key={item.currency} className="w60-card__row">
+              <span className="w60-card__row-label">{names[item.currency] || item.currency}</span>
+              <span className="w60-card__row-value">{item.rate}</span>
             </div>
           ))
         })()}

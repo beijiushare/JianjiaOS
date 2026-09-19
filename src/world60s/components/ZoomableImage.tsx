@@ -23,15 +23,19 @@ export function ZoomableImage({ src, alt }: { src: string; alt: string }) {
         </div>
       )}
       <img
+        ref={(el) => {
+          if (el && !loaded) {
+            el.onload = () => {
+              loadedImages.add(src)
+              setLoaded(true)
+            }
+          }
+        }}
         src={src}
         alt={alt}
-        onLoad={() => {
-          loadedImages.add(src)
-          setLoaded(true)
-        }}
         style={{
           width: '100%',
-          display: loaded ? 'block' : 'none',
+          display: loaded ? 'none' : 'block',
         }}
       />
       {loaded && (

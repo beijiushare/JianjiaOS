@@ -62,6 +62,10 @@
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
+.w60-card--flush {
+  padding: 0;
+}
+
 .w60-card--loading,
 .w60-card--error {
   padding: 2rem 1rem;
@@ -270,8 +274,7 @@
   color: var(--color-text-secondary);
 }
 
-.w60-card__fuel-row,
-.w60-card__exchange-row {
+.w60-card__row {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -279,19 +282,16 @@
   border-bottom: 1px solid var(--color-borders);
 }
 
-.w60-card__fuel-row:last-child,
-.w60-card__exchange-row:last-child {
+.w60-card__row:last-child {
   border-bottom: none;
 }
 
-.w60-card__fuel-grade,
-.w60-card__exchange-name {
+.w60-card__row-label {
   font-size: 0.875rem;
   color: var(--color-text);
 }
 
-.w60-card__fuel-price,
-.w60-card__exchange-rate {
+.w60-card__row-value {
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--color-text);
@@ -323,7 +323,7 @@
 
 .w60-card__movie-cover {
   width: 100%;
-  aspect-ratio: 2/3;
+  aspect-ratio: 9 / 16;
   object-fit: cover;
   border-radius: 0.5rem;
 }
