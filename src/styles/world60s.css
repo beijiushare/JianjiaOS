@@ -16,6 +16,8 @@
   padding: 3px;
   background: var(--color-background-secondary);
   border-radius: 0.5rem;
+  margin: 0 auto;
+  width: fit-content;
 }
 
 .w60-tab {
