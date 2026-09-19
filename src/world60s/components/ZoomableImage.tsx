@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 
+const loadedImages = new Set<string>()
+
 export function ZoomableImage({ src, alt }: { src: string; alt: string }) {
-  const [loaded, setLoaded] = useState(false)
+  const [loaded, setLoaded] = useState(() => loadedImages.has(src))
 
   return (
     <div style={{ position: 'relative', overflow: 'hidden' }}>
@@ -24,7 +26,10 @@ export function ZoomableImage({ src, alt }: { src: string; alt: string }) {
       <img
         src={src}
         alt={alt}
-        onLoad={() => setLoaded(true)}
+        onLoad={() => {
+          loadedImages.add(src)
+          setLoaded(true)
+        }}
         style={{
           width: '100%',
           filter: loaded ? 'none' : 'blur(20px)',
