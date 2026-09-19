@@ -18,9 +18,8 @@ export function ZoomableImage({ src, alt }: { src: string; alt: string }) {
           background: 'var(--color-background-secondary)',
           color: 'var(--color-text-secondary)',
           fontSize: 13,
-          position: 'relative',
         }}>
-          <span style={{ position: 'absolute', top: '50%' }}>图片加载中</span>
+          <span>图片加载中</span>
         </div>
       )}
       <img
@@ -32,14 +31,11 @@ export function ZoomableImage({ src, alt }: { src: string; alt: string }) {
         }}
         style={{
           width: '100%',
-          filter: loaded ? 'none' : 'blur(20px)',
-          transform: loaded ? 'none' : 'scale(1.1)',
-          opacity: loaded ? 0 : 1,
-          transition: 'opacity 0.3s',
+          display: loaded ? 'block' : 'none',
         }}
       />
       {loaded && (
-        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: loaded ? 1 : 0, transition: 'opacity 0.3s' }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
           <TransformWrapper
             minScale={1}
             maxScale={4}
