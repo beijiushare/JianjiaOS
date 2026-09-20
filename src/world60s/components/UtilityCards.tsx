@@ -10,11 +10,6 @@ import {
   fetchDoubanShow,
   type DoubanItem,
 } from '../api'
-import { Browser } from '@capacitor/browser'
-
-function openUrl(url: string): void {
-  void Browser.open({ url })
-}
 
 export function GoldCard() {
   const { data, loading, error } = useCard(fetchGoldPrice)
