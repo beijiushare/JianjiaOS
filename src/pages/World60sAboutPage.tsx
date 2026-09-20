@@ -1,4 +1,4 @@
-import { ScreenShell } from '@/components/ScreenShell'
+import { AboutContent } from '@/components/AboutContent'
 
 const INSTANCES = [
   '60s.crystelf.top',
@@ -12,39 +12,31 @@ const INSTANCES = [
 
 export function World60sAboutPage() {
   return (
-    <ScreenShell title="致谢">
-      <div style={{ padding: '1rem', fontSize: '0.9375rem', lineHeight: 1.7, color: 'var(--color-text)' }}>
-        <p style={{ margin: '0 0 1rem' }}>
-          API 来自
-        </p>
-        <p style={{ margin: '0 0 1rem' }}>
-          <a
-            href="https://github.com/dogxii/60s-web"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: 'var(--color-primary)', textDecoration: 'none' }}
-          >
-            dogxii/60s-web
-          </a>
-        </p>
-        <p style={{ margin: '0 0 1rem' }}>
-          感谢以下公共实例：
-        </p>
-        <ul style={{ margin: '0 0 1rem', paddingLeft: '1.25rem' }}>
-          {INSTANCES.map((instance) => (
-            <li key={instance} style={{ margin: '0.25rem 0' }}>
-              <a
-                href={`https://${instance}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: 'var(--color-primary)', textDecoration: 'none' }}
-              >
-                {instance}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </ScreenShell>
+    <AboutContent title="致谢">
+      <p>API 来自</p>
+      <p>
+        <a
+          href="https://github.com/dogxii/60s-web"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          dogxii/60s-web
+        </a>
+      </p>
+      <p>感谢以下公共实例：</p>
+      <ul className="about-content__list">
+        {INSTANCES.map((instance) => (
+          <li key={instance}>
+            <a
+              href={`https://${instance}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {instance}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </AboutContent>
   )
 }

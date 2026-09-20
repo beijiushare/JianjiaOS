@@ -1,0 +1,36 @@
+/* ==========================================================================
+   About 页面
+   ========================================================================== */
+
+.about-content {
+  padding: 1rem;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--color-text);
+}
+
+.about-content p {
+  margin: 0 0 1rem;
+}
+
+.about-content p:last-child {
+  margin-bottom: 0;
+}
+
+.about-content__secondary {
+  color: var(--color-text-secondary);
+}
+
+.about-content__list {
+  margin: 0 0 1rem;
+  padding-left: 1.25rem;
+}
+
+.about-content__list li {
+  margin: 0.25rem 0;
+}
+
+.about-content a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
