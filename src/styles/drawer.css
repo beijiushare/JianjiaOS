@@ -60,6 +60,7 @@
   background: transparent;
   color: var(--color-text-secondary);
   font-size: 0.8125rem;
+  white-space: nowrap;
   cursor: pointer;
   transition: all 0.2s;
 }
