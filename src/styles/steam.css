@@ -66,11 +66,11 @@
 }
 
 .steam-price__label {
-  color: #57606a;
+  color: var(--color-text-secondary);
 }
 
 .steam-price__value {
-  color: #111827;
+  color: var(--color-text);
   font-weight: 500;
 }
 
