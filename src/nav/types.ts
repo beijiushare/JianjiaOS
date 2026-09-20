@@ -4,7 +4,7 @@
  * 不变量：主屏不占栈位 —— `stack.length === 0` 等价于「位于主屏」。
  */
 
-export type PageId = 'messages' | 'chat' | 'settings' | 'chatBackground' | 'steamPrice' | 'steamPriceAbout' | 'entries' | 'credits' | 'world60s'
+export type PageId = 'messages' | 'chat' | 'settings' | 'chatBackground' | 'steamPrice' | 'steamPriceAbout' | 'entries' | 'credits' | 'world60s' | 'world60sAbout'
 
 export type DrawerId = 'appDrawer'
 

@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import { ScreenShell } from '@/components/ScreenShell'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Browser } from '@capacitor/browser'
+import { useNavStore } from '../nav/store'
 
 import {
   fetchBiliHot,
@@ -21,10 +21,6 @@ import { Day60sCard, HistoryCard, ItNewsCard, EpicCard, AiNewsCard } from '../wo
 import { GoldCard, FuelCard, ExchangeCard, MaoyanCard, DoubanMovieCard, DoubanTvCard, DoubanShowCard } from '../world60s/components/UtilityCards'
 
 type Tab = 'news' | 'trending' | 'utility'
-
-function openUrl(url: string): void {
-  void Browser.open({ url })
-}
 
 // ── Tab Content ───────────────────────────────────────────────────
 
@@ -80,13 +76,14 @@ const TABS: { key: Tab; label: string }[] = [
 
 export function World60sPage() {
   const [tab, setTab] = useState<Tab>('news')
+  const push = useNavStore((s) => s.push)
 
   return (
     <ScreenShell
       title="60s知世界"
       bodyClassName="screen-body--w60"
       headerRight={
-        <button type="button" className="icon-btn" onClick={() => openUrl('https://github.com/vikiboss/60s')}>
+        <button type="button" className="icon-btn" onClick={() => push('world60sAbout')}>
           <span className="icon-btn__text">致谢</span>
         </button>
       }
