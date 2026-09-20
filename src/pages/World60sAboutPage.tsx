@@ -15,7 +15,7 @@ export function World60sAboutPage() {
     <ScreenShell title="致谢">
       <div style={{ padding: '1rem', fontSize: '0.9375rem', lineHeight: 1.7, color: 'var(--color-text)' }}>
         <p style={{ margin: '0 0 1rem' }}>
-          本功能的数据和 API 来自开源项目
+          API 来自
         </p>
         <p style={{ margin: '0 0 1rem' }}>
           <a
@@ -24,22 +24,26 @@ export function World60sAboutPage() {
             rel="noopener noreferrer"
             style={{ color: 'var(--color-primary)', textDecoration: 'none' }}
           >
-            60s-web
+            dogxii/60s-web
           </a>
         </p>
         <p style={{ margin: '0 0 1rem' }}>
-          感谢以下公共实例的运营者，让数据可以稳定获取：
+          感谢以下公共实例：
         </p>
         <ul style={{ margin: '0 0 1rem', paddingLeft: '1.25rem' }}>
           {INSTANCES.map((instance) => (
-            <li key={instance} style={{ margin: '0.25rem 0', color: 'var(--color-text-secondary)' }}>
-              {instance}
+            <li key={instance} style={{ margin: '0.25rem 0' }}>
+              <a
+                href={`https://${instance}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: 'var(--color-primary)', textDecoration: 'none' }}
+              >
+                {instance}
+              </a>
             </li>
           ))}
         </ul>
-        <p style={{ margin: 0, color: 'var(--color-text-secondary)' }}>
-          主站 60s.viki.moe 压力大，不在列表中。
-        </p>
       </div>
     </ScreenShell>
   )
