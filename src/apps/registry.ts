@@ -30,13 +30,6 @@ export interface AppInfo {
  */
 export const APP_REGISTRY: AppInfo[] = [
   {
-    id: 'settings',
-    name: '设置',
-    group: '系统',
-    icon: SettingsIcon,
-    entry: { kind: 'push', page: 'settings' },
-  },
-  {
     id: 'steamPrice',
     name: 'Steam Price',
     group: '工具',
@@ -56,5 +49,12 @@ export const APP_REGISTRY: AppInfo[] = [
     group: '信息',
     icon: AlarmIcon,
     entry: { kind: 'push', page: 'world60s' },
+  },
+  {
+    id: 'settings',
+    name: '设置',
+    group: '系统',
+    icon: SettingsIcon,
+    entry: { kind: 'push', page: 'settings' },
   },
 ]

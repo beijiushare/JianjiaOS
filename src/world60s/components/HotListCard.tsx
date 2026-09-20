@@ -1,10 +1,6 @@
 import { useCard } from '../hooks/useCard'
 import { CardShell } from './CardShell'
-import { Browser } from '@capacitor/browser'
-
-function openUrl(url: string): void {
-  void Browser.open({ url })
-}
+import { openUrl } from '@/utils'
 
 function formatHotValue(v: number): string {
   return v >= 10000 ? `${(v / 10000).toFixed(1)}万` : String(v)

@@ -13,12 +13,7 @@ import { findBackground } from '@/settings/backgrounds'
 import { useSettingsStore } from '@/settings/store'
 import { getAppVersion } from '@/settings/version'
 import { manualCheckForUpdate } from '@/update/bridge'
-
-import { Browser } from '@capacitor/browser'
-
-function openExternal(url: string): void {
-  void Browser.open({ url })
-}
+import { openUrl } from '@/utils'
 
 export function SettingsPage() {
   const [version, setVersion] = useState('…')
@@ -94,14 +89,14 @@ export function SettingsPage() {
             icon={<UserIcon />}
             title="关于作者"
             chevron
-            onClick={() => openExternal('https://www.beijiu.top/')}
+            onClick={() => openUrl('https://www.beijiu.top/')}
           />
 
           <ListItem
             icon={<LinkIcon />}
             title="开源地址"
             chevron
-            onClick={() => openExternal('https://github.com/beijiushare/JianjiaOS')}
+            onClick={() => openUrl('https://github.com/beijiushare/JianjiaOS')}
           />
 
           <ListItem

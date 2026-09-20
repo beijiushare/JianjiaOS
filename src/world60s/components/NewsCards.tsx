@@ -2,11 +2,7 @@ import { useCard } from '../hooks/useCard'
 import { CardShell } from './CardShell'
 import { ZoomableImage } from './ZoomableImage'
 import { fetchDay60s, fetchTodayInHistory, fetchItNews, fetchEpicFree, fetchAiNews } from '../api'
-import { Browser } from '@capacitor/browser'
-
-function openUrl(url: string): void {
-  void Browser.open({ url })
-}
+import { openUrl } from '@/utils'
 
 export function Day60sCard() {
   const { data, loading, error } = useCard(fetchDay60s)

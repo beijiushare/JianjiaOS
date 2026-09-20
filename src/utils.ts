@@ -6,6 +6,13 @@
  * `[object Object]`，真实错误信息全丢。本项目为此白抓过两次日志。
  */
 
+import { Browser } from '@capacitor/browser'
+
+/** 用 Capacitor Browser 打开外部链接 */
+export function openUrl(url: string): void {
+  void Browser.open({ url })
+}
+
 /** 把未知类型的异常转成可读字符串 */
 export function errText(e: unknown): string {
   if (e instanceof Error) return `${e.name}: ${e.message}`
