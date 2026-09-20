@@ -14,11 +14,7 @@ import {
 export function GoldCard() {
   const { data, loading, error } = useCard(fetchGoldPrice)
   return (
-    <CardShell title="黄金价格" loading={loading} error={error || !data}>
-      <div className="w60-card__header">
-        <span className="w60-card__title">黄金价格</span>
-        <span className="w60-card__meta">{data?.metals[0]?.updated}</span>
-      </div>
+    <CardShell title="黄金价格" meta={data?.metals[0]?.updated} loading={loading} error={error || !data}>
       <div className="w60-card__detail">
         <div className="w60-card__price-big">{data?.metals[0]?.sell_price} {data?.metals[0]?.unit}</div>
         <div className="w60-card__change">
@@ -32,10 +28,7 @@ export function GoldCard() {
 export function FuelCard() {
   const { data, loading, error } = useCard(fetchFuelPrice)
   return (
-    <CardShell title="汽油价格" loading={loading} error={error || !data}>
-      <div className="w60-card__header">
-        <span className="w60-card__title">汽油价格 · {data?.region}</span>
-      </div>
+    <CardShell title={`汽油价格 · ${data?.region}`} loading={loading} error={error || !data}>
       <div className="w60-card__detail">
         {data?.items.map((item) => (
           <div key={item.name} className="w60-card__row">
@@ -54,11 +47,7 @@ export function FuelCard() {
 export function ExchangeCard() {
   const { data, loading, error } = useCard(fetchExchangeRate)
   return (
-    <CardShell title="当日货币汇率" loading={loading} error={error || !data}>
-      <div className="w60-card__header">
-        <span className="w60-card__title">当日货币汇率</span>
-        <span className="w60-card__meta">{data?.updated}</span>
-      </div>
+    <CardShell title="当日货币汇率" meta={data?.updated} loading={loading} error={error || !data}>
       <div className="w60-card__detail">
         {(() => {
           const currencies = ['USD', 'EUR', 'JPY', 'GBP', 'HKD', 'KRW']
@@ -82,9 +71,6 @@ export function MaoyanCard() {
   const { data, loading, error } = useCard(fetchMaoyanMovies)
   return (
     <CardShell title="猫眼全球票房总榜" loading={loading} error={error || !data}>
-      <div className="w60-card__header">
-        <span className="w60-card__title">猫眼全球票房总榜</span>
-      </div>
       <ul className="w60-card__list">
         {data?.list.slice(0, 10).map((item) => (
           <li key={item.maoyan_id} className="w60-card__hot">
@@ -102,9 +88,6 @@ function DoubanCard({ title, fetcher }: { title: string; fetcher: () => Promise<
   const { data, loading, error } = useCard(fetcher)
   return (
     <CardShell title={title} loading={loading} error={error || !data}>
-      <div className="w60-card__header">
-        <span className="w60-card__title">{title}</span>
-      </div>
       <div className="w60-douban-grid">
         {data?.slice(0, 6).map((item) => (
           <a key={item.id} href={item.url} target="_blank" rel="noopener noreferrer" className="w60-douban-item">

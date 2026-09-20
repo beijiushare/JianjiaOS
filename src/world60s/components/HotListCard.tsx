@@ -46,9 +46,6 @@ export function HotListCard({
 
   return (
     <CardShell title={title} loading={loading} error={error}>
-      <div className="w60-card__header">
-        <span className="w60-card__title">{title}</span>
-      </div>
       <ul className="w60-card__list">
         {data?.slice(0, 10).map((item, i) => (
           <li

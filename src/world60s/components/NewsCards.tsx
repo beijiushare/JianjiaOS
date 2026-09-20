@@ -17,11 +17,7 @@ export function Day60sCard() {
 export function HistoryCard() {
   const { data, loading, error } = useCard(fetchTodayInHistory)
   return (
-    <CardShell title="历史上的今天" loading={loading} error={error || !data}>
-      <div className="w60-card__header">
-        <span className="w60-card__title">历史上的今天</span>
-        <span className="w60-card__meta">{data?.month}月{data?.day}日</span>
-      </div>
+    <CardShell title="历史上的今天" meta={data ? `${data.month}月${data.day}日` : undefined} loading={loading} error={error || !data}>
       <ul className="w60-card__list">
         {data?.items.slice(0, 8).map((item, i) => (
           <li key={i} className="w60-card__item" onClick={() => openUrl(item.link)}>
@@ -38,9 +34,6 @@ export function ItNewsCard() {
   const { data, loading, error } = useCard(fetchItNews)
   return (
     <CardShell title="实时IT资讯" loading={loading} error={error || !data}>
-      <div className="w60-card__header">
-        <span className="w60-card__title">实时IT资讯</span>
-      </div>
       <ul className="w60-card__list">
         {data?.slice(0, 6).map((item, i) => (
           <li key={i} className="w60-card__item" onClick={() => openUrl(item.link)}>
@@ -56,9 +49,6 @@ export function EpicCard() {
   const { data, loading, error } = useCard(fetchEpicFree)
   return (
     <CardShell title="Epic每周免费游戏" loading={loading} error={error || !data}>
-      <div className="w60-card__header">
-        <span className="w60-card__title">Epic每周免费游戏</span>
-      </div>
       <div className="w60-epic-list">
         {data?.filter((g) => g.is_free_now).map((game) => (
           <div key={game.id} className="w60-epic-item" onClick={() => openUrl(game.link)}>

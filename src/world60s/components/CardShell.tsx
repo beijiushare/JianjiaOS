@@ -2,18 +2,20 @@ import type { ReactNode } from 'react'
 
 interface CardShellProps {
   title?: string
+  meta?: string
   loading: boolean
   error: boolean
   children: ReactNode
 }
 
-export function CardShell({ title, loading, error, children }: CardShellProps) {
+export function CardShell({ title, meta, loading, error, children }: CardShellProps) {
   if (loading || error) {
     return (
       <div className="w60-card">
         {title && (
           <div className="w60-card__header">
             <span className="w60-card__title">{title}</span>
+            {meta && <span className="w60-card__meta">{meta}</span>}
           </div>
         )}
         <div className={loading ? 'w60-card--loading' : 'w60-card--error'}>
