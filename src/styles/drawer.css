@@ -10,6 +10,7 @@
   ⚠️ 与 .layer--drawer 的圆角配合：圆角裁剪由该层的 overflow: hidden 完成。
 */
 .drawer {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -32,19 +33,23 @@
   flex: 1 1 auto;
   overflow-y: auto;
   padding: 1rem;
+  padding-bottom: 3.5rem;
 }
 
 /* ==========================================================================
-   筛选 Tab
+   筛选 Tab（底部悬浮）
    ========================================================================== */
 
 .drawer-filter {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   padding: 3px;
   background: var(--color-background-secondary);
   border-radius: 0.5rem;
-  margin: 0 auto;
-  width: fit-content;
+  z-index: 10;
 }
 
 .drawer-filter__tab {
