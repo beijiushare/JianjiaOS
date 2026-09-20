@@ -23,29 +23,45 @@ export function AppDrawer() {
     }
   }
 
+  // 按 group 分组，保持注册顺序
+  const groups = APP_REGISTRY.reduce<{ name: string; items: AppInfo[] }[]>((acc, app) => {
+    const last = acc[acc.length - 1]
+    if (last && last.name === app.group) {
+      last.items.push(app)
+    } else {
+      acc.push({ name: app.group, items: [app] })
+    }
+    return acc
+  }, [])
+
   return (
     <div className="drawer">
       <div className="drawer-handle" aria-hidden="true" />
 
       <div className="drawer-body">
-        <div className="app-grid">
-          {APP_REGISTRY.map((app) => {
-            const Icon = app.icon
-            return (
-              <button
-                key={app.id}
-                type="button"
-                className="app-grid__item"
-                onClick={() => openApp(app)}
-              >
-                <span className="app-grid__icon">
-                  <Icon />
-                </span>
-                <span className="app-grid__name">{app.name}</span>
-              </button>
-            )
-          })}
-        </div>
+        {groups.map((group) => (
+          <div key={group.name} className="app-group">
+            <div className="app-group__name">{group.name}</div>
+            <div className="app-grid">
+              {group.items.map((app) => {
+                const Icon = app.icon
+                return (
+                  <button
+                    key={app.id}
+                    type="button"
+                    className="app-grid__item"
+                    onClick={() => openApp(app)}
+                  >
+                    <span className="app-grid__icon">
+                      <Icon />
+                    </span>
+                    <span className="app-grid__name">{app.name}</span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )

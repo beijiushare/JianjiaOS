@@ -15,6 +15,8 @@ export interface AppInfo {
   id: string
   /** 展示名，同时用于搜索匹配 */
   name: string
+  /** 分组名 */
+  group: string
   /** RemixIcon 图标组件（通过 svgr 导入的 svg） */
   icon: ComponentType<{ className?: string }>
   entry: AppEntry
@@ -28,26 +30,30 @@ export interface AppInfo {
  */
 export const APP_REGISTRY: AppInfo[] = [
   {
-    id: 'entries',
-    name: '集锦',
-    icon: BookmarkIcon,
-    entry: { kind: 'push', page: 'entries' },
-  },
-  {
     id: 'settings',
     name: '设置',
+    group: '系统',
     icon: SettingsIcon,
     entry: { kind: 'push', page: 'settings' },
   },
   {
     id: 'steamPrice',
     name: 'Steam Price',
+    group: '工具',
     icon: SteamIcon,
     entry: { kind: 'push', page: 'steamPrice' },
   },
   {
+    id: 'entries',
+    name: '集锦',
+    group: '信息',
+    icon: BookmarkIcon,
+    entry: { kind: 'push', page: 'entries' },
+  },
+  {
     id: 'world60s',
     name: '60s知世界',
+    group: '信息',
     icon: AlarmIcon,
     entry: { kind: 'push', page: 'world60s' },
   },
