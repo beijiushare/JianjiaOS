@@ -293,8 +293,6 @@
 
 .w60-card__fuel-trend {
   margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--color-borders);
   font-size: 0.8125rem;
   color: var(--color-text-secondary);
 }
