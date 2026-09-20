@@ -5,6 +5,8 @@
  * 主站 60s.viki.moe 压力大，不在列表中。
  */
 
+import { fetchWithTimeout } from '@/utils'
+
 const INSTANCES = [
   'https://60s.crystelf.top',
   'https://api.elysiayanyu.top',
@@ -18,16 +20,6 @@ const INSTANCES = [
 const TIMEOUT_MS = 8000
 
 const cache = new Map<string, unknown>()
-
-async function fetchWithTimeout(url: string, ms: number): Promise<Response> {
-  const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), ms)
-  try {
-    return await fetch(url, { signal: controller.signal })
-  } finally {
-    clearTimeout(timer)
-  }
-}
 
 /**
  * 对单个接口路径，在多个实例间轮询降级。

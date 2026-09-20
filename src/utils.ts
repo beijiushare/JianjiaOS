@@ -13,6 +13,25 @@ export function openUrl(url: string): void {
   void Browser.open({ url })
 }
 
+/** 带超时的 fetch，默认不缓存 */
+export async function fetchWithTimeout(
+  url: string,
+  ms: number,
+  options?: { headers?: Record<string, string>; cache?: RequestCache },
+): Promise<Response> {
+  const ctrl = new AbortController()
+  const timer = setTimeout(() => ctrl.abort(), ms)
+  try {
+    return await fetch(url, {
+      signal: ctrl.signal,
+      cache: options?.cache ?? 'no-store',
+      headers: options?.headers,
+    })
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
 /** 把未知类型的异常转成可读字符串 */
 export function errText(e: unknown): string {
   if (e instanceof Error) return `${e.name}: ${e.message}`

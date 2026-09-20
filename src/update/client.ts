@@ -3,6 +3,7 @@
  * ========================================================================== */
 
 import { App } from '@capacitor/app'
+import { fetchWithTimeout as fetchWithTimeoutUtil } from '@/utils'
 
 import {
   API_TIMEOUT_MS,
@@ -31,17 +32,7 @@ async function fetchWithTimeout(
   ms: number,
   headers?: Record<string, string>,
 ): Promise<Response> {
-  const ctrl = new AbortController()
-  const timer = setTimeout(() => ctrl.abort(), ms)
-  try {
-    return await fetch(url, {
-      signal: ctrl.signal,
-      cache: 'no-store',
-      headers,
-    })
-  } finally {
-    clearTimeout(timer)
-  }
+  return fetchWithTimeoutUtil(url, ms, { headers })
 }
 
 const TAG_RE = /^v[\d.]+-build(\d+)$/
