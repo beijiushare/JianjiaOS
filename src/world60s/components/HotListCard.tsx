@@ -6,7 +6,7 @@ function formatHotValue(v: number): string {
   return v >= 10000 ? `${(v / 10000).toFixed(1)}万` : String(v)
 }
 
-interface HotItem {
+interface HotListItem {
   title: string
   link?: string
   hot_value?: number
@@ -17,13 +17,13 @@ interface HotItem {
 
 interface HotListCardProps {
   title: string
-  fetcher: () => Promise<HotItem[] | null>
+  fetcher: () => Promise<HotListItem[] | null>
   /** 取 rank 字段作为排序号（百度/贴吧/小红书有 rank） */
   useRank?: boolean
   /** 显示热度值的方式 */
   valueField?: 'hot_value' | 'score_desc' | 'score' | null
   /** 点击跳转：false=不跳转, true=用 link, 函数=自定义 */
-  onClick?: false | true | ((item: HotItem) => void)
+  onClick?: false | true | ((item: HotListItem) => void)
 }
 
 export function HotListCard({
@@ -35,7 +35,7 @@ export function HotListCard({
 }: HotListCardProps) {
   const { data, loading, error } = useCard(fetcher)
 
-  const handleClick = (item: HotItem): void => {
+  const handleClick = (item: HotListItem): void => {
     if (onClick === false) return
     if (onClick === true) {
       if (item.link) openUrl(item.link)
